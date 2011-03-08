@@ -9,7 +9,7 @@
    :g5 { :doc "High-precision contour control" }
    :g7 { :doc "Imaginary axis designation" }
    :g9 { :doc "Exact stop check" }
-   :g10 { :doc "Programmable data input" }
+   :g10 { :doc " " }
    :g11 { :doc "Data write cancel" }
    :g12 { :doc "Full-circle interpolation, clockwise" }
    :g13 { :doc "Full-circle interpolation, counterclockwise" }
@@ -67,37 +67,35 @@
    12 "coordinate system selection"
    13 "path control mode" })
 
-
 (defn gcode-execution-string [ code args ]
   "Print a pretty looking string"
   (.toUpperCase (name code)))
 
+;; (def-code name modal args doc-string function)
 
-(def-code name modal args doc-string function)
-
-(def-code g00 1
-  "Rapid positioning"
-  [ ]
-  ;; draw a line here
-  nil)
-
+;; (def-code g00 1
+;;   "Rapid positioning"
+;;   [ ]
+;;   ;; draw a line here
+;;   nil)
 
 ;; wrap functions like this?
 ;; ((let [x 1 ] (fn [] x)))
 
 ;; what about getting parameters from the line and pushing the values into a map, and then
 ;; binding the map to values some how?
-(defn foo [bar {:keys [baz quux]}] 
-  (list bar baz quux))
+;; (defn foo [bar {:keys [baz quux]}] 
+;;   (list bar baz quux))
 
-(foo 1 {:quux 3 :baz 2}) ; => (1 2 3)
+;; (foo 1 {:quux 3 :baz 2}) ; => (1 2 3)
 
 (defn
   ^{:doc "Rapid positioning"
-	:modal 1}
-  g00 [ { :key [ a b c x y z ] } ]
+	:modal 1
+	:precedence 20.0
+	}
+  g0 [ { :keys [ a b c x y z ] } ]
   nil)
-
 
 ;; a line like this could turn into something like
 ;; G00 X1 Y1 Z1.0
@@ -107,18 +105,53 @@
 ;; but how do we know that it shouldn't be:
 ;; (x1 { :g 0 :y 1 :z 1.0 } )?
 
-
 (defn
   ^{:doc "Linear interpolation"
-	:modal 1}
-  g01 [ {f :f x :x y :y z :z} ])
+	:modal 1
+	:precedence 20.1}
+  g1 [ {f :f x :x y :y z :z} ])
 
 (defn
   ^{:doc "Circular interpolation, clockwise"
-	:modal 1}
-  g02 [ ])
+	:modal 1
+	:precedence 20.2}
+  g2 [ ])
 
 (defn
-  ^{:doc "Pause" }
-  g04 [ seconds ]
+  ^{:doc "Circular interpolation, counterclockwise"
+	:modal 1
+	:precedence 20.3}
+  g3 [ ])
+
+(defn
+  ^{:doc "Pause"
+	:precedence 10.0 }
+  g4 [ seconds ]
   (Thread/sleep (* 1000 seconds)))
+
+(defn
+  ^{:doc "Coordinate system origin setting"
+	:precedence 19.3}
+  g10 [ { l :l p :p x :x y :y z :z } ]
+  )
+
+(defn
+  ^{:doc "XY-plane selection"
+	:precedence 11.1
+	:modal 2}
+  g17
+  [ ])
+
+(defn
+  ^{:doc "XZ-plane selection"
+	:precedence 11.2
+	:modal 2}
+  g18
+  [ ])
+
+(defn
+  ^{:doc "YZ-plane selection"
+	:precedence 11.3
+	:modal 2}
+  g19
+  [ ])
