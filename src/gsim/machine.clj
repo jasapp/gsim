@@ -47,8 +47,8 @@
 (defn word-eval [ word args ]
   "Take our representation of a block and turn it into
    a keyword map that our functions in gcode use."
-  (let [ keyword-args (zipmap (map :key (:used args))
-							  (map :arg (:used args)))]
+  (let [ keyword-args (zipmap (map :key args)
+							  (map :arg args))]
 	((:fn word) keyword-args)))
 
 (defn sort-block [ block ]
