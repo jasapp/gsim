@@ -116,7 +116,9 @@
   ^{:doc "Circular interpolation, clockwise"
 	:modal 1
 	:precedence 20.2}
-  g2 [ ])
+  g2 [ { :keys [ ] } ]
+	   (print "Circular interpolation\n")
+	   )
 
 (defn
   ^{:doc "Circular interpolation, counterclockwise"
