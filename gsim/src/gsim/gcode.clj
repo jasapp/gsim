@@ -95,6 +95,7 @@
 	:precedence 20.0
 	}
   g0 [ { :keys [ a b c x y z ] } ]
+  (print "Moving around really fast\n")
   nil)
 
 ;; a line like this could turn into something like

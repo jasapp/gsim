@@ -30,25 +30,32 @@
 (defn code-name [ code ]
   (:word code))
 
+(defn get-code-var [ word ]
+  (find-var (symbol "gsim.gcode" (:word word))))
+
 (defn get-precedence [ word ]
-  (:precedence (meta (find-var (symbol "gsim.gcode" word)))))
+  (:precedence (meta (get-code-var word))))
 
 (defn get-args [ word ]
   (:keys
    (first
 	(first
-	 (:arglists (meta (find-var (symbol "gsim.gcode" word))))))))
+	 (:arglists (meta (get-code-var word)))))))
+
+(defn word-eval [ word args ]
+  ((get-code-var word) args))
 
 (defn sort-block [ block ]
   "Order the block by precedence. The next code to be executed will be first."
   (let [sort-fn (fn [x]
-				  (if (get-precedence (:word x))
-					(get-precedence (:word x))
+				  (if (get-precedence x)
+					(get-precedence x)
 					100000))]
 	(sort-by sort-fn block)))
 
+
 (defn split-args [ code remaining-block ]
-  (let [args (set (map keyword (get-args (code-name code))))
+  (let [args (set (map keyword (get-args code)))
 		used (fn [x] (contains? args (:key x)))]
 	{:used (filter used remaining-block)
 	 :not-used (remove used remaining-block)}))
@@ -64,7 +71,9 @@
   (let [sorted-block (sort-block block)
 		next-code (first sorted-block)
 		args (split-args next-code (rest sorted-block))]
-	
-	
-	
-
+	(if (get-code-var next-code)
+	  (do (word-eval next-code (:used args))
+		  (if (< 0 (count (:not-used args)))
+			(recur machine (:not-used args))
+			machine))
+	  machine)))
