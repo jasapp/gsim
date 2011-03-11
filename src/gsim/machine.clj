@@ -18,43 +18,46 @@
 	   (re-find #"^[A-Za-z]" word) ;; all words should start with a character (?)
 	   (not (str/substring? " " word))))
 
+(defn get-code-var [ word-str ]
+  (find-var (symbol "gsim.gcode" word-str)))
+
 (defn parse-word [ word ]
   (if (valid-word? word)
 	(let [key (keyword (str/lower-case (re-find #"^[A-Za-z]" word)))
-		  arg (read-string (str/tail (dec (. word length)) word)) ]
-	  {:word word
-	   :code (str key arg)
-	   :key key
-	   :arg arg })))
+		  arg (read-string (str/tail (dec (. word length)) word))
+		  without-fn {:word word :code (str key arg) :key key :arg arg }]
+	  (if (get-code-var word)
+		(assoc without-fn :fn (get-code-var word))
+		without-fn))))
 
 (defn code-name [ code ]
   (:word code))
 
-(defn get-code-var [ word ]
-  (find-var (symbol "gsim.gcode" (:word word))))
-
 (defn get-precedence [ word ]
-  (:precedence (meta (get-code-var word))))
+  (if (:fn word)
+	(:precedence (meta (:fn word)))
+	10000000))
 
 (defn get-args [ word ]
   (:keys
    (first
 	(first
-	 (:arglists (meta (get-code-var word)))))))
+	 (:arglists (meta (:fn word)))))))
 
 (defn word-eval [ word args ]
-  ((get-code-var word) args))
+  "Take our representation of a block and turn it into
+   a keyword map that our functions in gcode use."
+  (let [ keyword-args (zipmap (map :key args)
+							  (map :arg args))]
+	((:fn word) keyword-args)))
 
 (defn sort-block [ block ]
   "Order the block by precedence. The next code to be executed will be first."
-  (let [sort-fn (fn [x]
-				  (if (get-precedence x)
-					(get-precedence x)
-					100000))]
-	(sort-by sort-fn block)))
-
+  (sort-by get-precedence block))
 
 (defn split-args [ code remaining-block ]
+  "Take a code, and the rest of the arguments and split them
+   based on which arguments that particular code uses."
   (let [args (set (map keyword (get-args code)))
 		used (fn [x] (contains? args (:key x)))]
 	{:used (filter used remaining-block)
@@ -71,7 +74,7 @@
   (let [sorted-block (sort-block block)
 		next-code (first sorted-block)
 		args (split-args next-code (rest sorted-block))]
-	(if (get-code-var next-code)
+	(if (:fn next-code)
 	  (do (word-eval next-code (:used args))
 		  (if (< 0 (count (:not-used args)))
 			(recur machine (:not-used args))

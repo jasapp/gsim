@@ -1,13 +1,10 @@
 # gsim
 
-FIXME: write description
+TODO:
+	Macro for easy machine code definition.
+	Shore up the machine object. (a hash?)
+	Scribble all over the machine with OpenGL?
+	Tests, duh.
+	Some kind of fancy web browser interaction.
 
-## Usage
-
-FIXME: write
-
-## License
-
-Copyright (C) 2010 FIXME
-
-Distributed under the Eclipse Public License, the same as Clojure.
+Copyright (C) 2010 Jeff Sapp

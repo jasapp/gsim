@@ -116,7 +116,9 @@
   ^{:doc "Circular interpolation, clockwise"
 	:modal 1
 	:precedence 20.2}
-  g2 [ ])
+  g2 [ { :keys [ ] } ]
+	   (print "Circular interpolation\n")
+	   )
 
 (defn
   ^{:doc "Circular interpolation, counterclockwise"
@@ -127,8 +129,9 @@
 (defn
   ^{:doc "Pause"
 	:precedence 10.0 }
-  g4 [ seconds ]
-  (Thread/sleep (* 1000 seconds)))
+  g4 [ { :keys [p] } ]
+  (print "Pause\n")
+  (Thread/sleep (* 1000 p)))
 
 (defn
   ^{:doc "Coordinate system origin setting"
