@@ -1,10 +1,19 @@
 # gsim
 
 TODO:
-	Macro for easy machine code definition.
-	Shore up the machine object. (a hash?)
-	Scribble all over the machine with OpenGL?
-	Tests, duh.
-	Some kind of fancy web browser interaction.
+		Working on storing stuff in the machine
+		Keep modals in the machine.....
+		Keep track of line numbers 
+		Parse multiple lines, maybe read from a file
+		
+		Think about redoing / undoing / stepping through a file...
+			  *should the machine store an open gl object, or an image?
+			  JOGL, or LWJGL?
+
+		Macro for easy machine code definition.
+		Shore up the machine object. (a hash?)
+		Scribble all over the machine with OpenGL?
+		Tests, duh.
+		Some kind of fancy web browser interaction.
 
 Copyright (C) 2010 Jeff Sapp
