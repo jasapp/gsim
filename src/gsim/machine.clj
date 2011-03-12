@@ -19,7 +19,8 @@
 	   (not (str/substring? " " word))))
 
 (defn get-code-var [ word-str ]
-  (find-var (symbol "gsim.gcode" word-str)))
+  (or (find-var (symbol "gsim.gcode" (str/lower-case word-str)))
+	  (find-var (symbol "gsim.gcode" (str/upper-case word-str)))))
 
 (defn parse-word [ word ]
   (if (valid-word? word)
@@ -40,16 +41,18 @@
 
 (defn get-args [ word ]
   (:keys
-   (first
+   (second
 	(first
 	 (:arglists (meta (:fn word)))))))
-
-(defn word-eval [ word args ]
+  
+(defn word-eval [ machine word args ]
   "Take our representation of a block and turn it into
    a keyword map that our functions in gcode use."
   (let [ keyword-args (zipmap (map :key args)
 							  (map :arg args))]
-	((:fn word) keyword-args)))
+	(if (:verbose machine)
+	  (println (apply str (interpose " " (cons (:word word) (map :word args))))))
+	((:fn word) machine keyword-args)))
 
 (defn sort-block [ block ]
   "Order the block by precedence. The next code to be executed will be first."
@@ -75,7 +78,7 @@
 		next-code (first sorted-block)
 		args (split-args next-code (rest sorted-block))]
 	(if (:fn next-code)
-	  (do (word-eval next-code (:used args))
+	  (do (word-eval machine next-code (:used args))
 		  (if (< 0 (count (:not-used args)))
 			(recur machine (:not-used args))
 			machine))

@@ -94,9 +94,8 @@
 	:modal 1
 	:precedence 20.0
 	}
-  g0 [ { :keys [ a b c x y z ] } ]
-  (print "Moving around really fast\n")
-  nil)
+  g0 [ m { :keys [ a b c x y z ] } ]
+  m)
 
 ;; a line like this could turn into something like
 ;; G00 X1 Y1 Z1.0
@@ -116,7 +115,7 @@
   ^{:doc "Circular interpolation, clockwise"
 	:modal 1
 	:precedence 20.2}
-  g2 [ { :keys [ ] } ]
+  g2 [ m { :keys [ ] } ]
 	   (print "Circular interpolation\n")
 	   )
 
@@ -129,8 +128,7 @@
 (defn
   ^{:doc "Pause"
 	:precedence 10.0 }
-  g4 [ { :keys [p] } ]
-  (print "Pause\n")
+  g4 [ m { :keys [p] } ]
   (Thread/sleep (* 1000 p)))
 
 (defn
