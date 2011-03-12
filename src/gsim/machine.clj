@@ -40,11 +40,8 @@
 	10000000))
 
 (defn get-args [ word ]
-  (:keys
-   (second
-	(first
-	 (:arglists (meta (:fn word)))))))
-  
+  (:keys (first (filter :keys (first (:arglists (meta (:fn word))))))))
+   
 (defn word-eval [ machine word args ]
   "Take our representation of a block and turn it into
    a keyword map that our functions in gcode use."
@@ -78,8 +75,8 @@
 		next-code (first sorted-block)
 		args (split-args next-code (rest sorted-block))]
 	(if (:fn next-code)
-	  (do (word-eval machine next-code (:used args))
+	  (let [new-machine (word-eval machine next-code (:used args))]
 		  (if (< 0 (count (:not-used args)))
-			(recur machine (:not-used args))
-			machine))
+			(recur new-machine (:not-used args))
+			new-machine))
 	  machine)))

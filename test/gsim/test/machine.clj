@@ -1,10 +1,12 @@
 (ns gsim.test.machine
   (:use [gsim.machine] :reload)
+  (:use [gsim.gcode] :reload)
   (:use [clojure.test]))
 
 (def invalid-words ["1" "a" "1a" "2a " "2 a " " 2a "])
 
 (deftest parsing
+  
   (testing "tokenize-block"
 	(is (tokenize-block "") [])
 	(is (tokenize-block " ") [])
@@ -21,4 +23,8 @@
 	(not (valid-word? "  2a ")))
 
   (testing "code-name"
-	(is (code-name {:word "foo"}) "fooasdfasdf")))
+	(is (code-name {:word "foo"}) "fooasdfasdf"))
+
+  (testing "get-code-var"
+	(is (get-code-var "g0"))
+	(is (get-code-var "G0")))

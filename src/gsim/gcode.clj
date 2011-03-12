@@ -129,7 +129,9 @@
   ^{:doc "Pause"
 	:precedence 10.0 }
   g4 [ m { :keys [p] } ]
-  (Thread/sleep (* 1000 p)))
+  (if p
+	(Thread/sleep (* 1000 p))
+	(throw (Exception. "G4 requires a value for P"))))
 
 (defn
   ^{:doc "Coordinate system origin setting"
