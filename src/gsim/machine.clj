@@ -5,9 +5,25 @@
 
 (defn new-machine []
   {:config {}
-   :code "FOO BAR BAZ"})
+   :g-modals { 1 :g0 2 :g17 3 :g90 5 :g93 6 :g20 7 :g40 8 :g43 10 :g98 12 :g54 13 :g61 }
+   :m-modals { 4 :m0 6 :m6 7 :m3 8 :m7 9 :m48 }
+   :code "FOO BAR BAZ" })
 
 (def *machine* (new-machine))
+
+(defn get-modal-map [ words ]
+  (zipmap
+   (map (fn [w] (if (:fn w)
+				  (:modal (meta (:fn w)))
+				  (keyword (gensym))))
+		words)
+   words))
+
+(defn get-machine-modals [ machine ]
+  (let [ b (fn [x] (parse-word (. (str/as-str x) toUpperCase))) ]
+	(get-modal-map
+	 (map b (concat (vals (:g-modals machine))
+					(vals (:m-modals machine)))))))
 
 (defn tokenize-block [ block ]
   (remove empty? (str/split #"\s" block)))
@@ -69,9 +85,15 @@
 (defn machine-state [ code ]
   "FOO BAR BAZ")
 
+(defn merge-block [ machine block ]
+  "Take a machine, a block and merge the defaults from the
+   machine with the block giving precedence to the block."
+  (vals (merge (get-machine-modals machine)
+			   (get-modal-map block)))
+
 ;; should this recurse until the block is gone?
 (defn machine-eval [ machine block ]
-  (let [sorted-block (sort-block block)
+  (let [sorted-block (sort-block (merge-block machine block))
 		next-code (first sorted-block)
 		args (split-args next-code (rest sorted-block))]
 	(if (:fn next-code)
