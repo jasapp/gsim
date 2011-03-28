@@ -16,7 +16,6 @@
    :g17 { :modal 2 :doc "XY plane selection" }
    :g18 { :modal 2 :doc "ZX plane selection" }
    :g19 { :modal 2 :doc "YZ plane selection" }
-   :g20 { :modal 6 }
    :g21 { :modal 6 }
    :g38.2 { :modal 1 :doc "Straight probe" }
    :g40 { :modal 7 }
@@ -109,21 +108,23 @@
   ^{:doc "Linear interpolation"
 	:modal 1
 	:precedence 20.1}
-  g1 [ {f :f x :x y :y z :z} ])
+  g1 [ m {f :f x :x y :y z :z} ]
+  m)
 
 (defn
   ^{:doc "Circular interpolation, clockwise"
 	:modal 1
 	:precedence 20.2}
   g2 [ m { :keys [ ] } ]
-	   (print "Circular interpolation\n")
-	   )
+  (print "Circular interpolation\n")
+  m)
 
 (defn
   ^{:doc "Circular interpolation, counterclockwise"
 	:modal 1
 	:precedence 20.3}
-  g3 [ ])
+  g3 [ m { } ]
+  m)
 
 (defn
   ^{:doc "Pause"
@@ -131,32 +132,40 @@
   g4 [ m { :keys [p] } ]
   (if p
 	(Thread/sleep (* 1000 p))
-	(throw (Exception. "G4 requires a value for P"))))
+	(throw (Exception. "G4 requires a value for P")))
+  m)
 
 (defn
   ^{:doc "Coordinate system origin setting"
 	:precedence 19.3}
-  g10 [ { l :l p :p x :x y :y z :z } ]
-  )
+  g10 [ m { l :l p :p x :x y :y z :z } ]
+  m)
 
 (defn
   ^{:doc "XY-plane selection"
 	:precedence 11.1
 	:modal 2}
   g17
-  [ ])
+  [ m { } ]
+  m)
 
 (defn
   ^{:doc "XZ-plane selection"
 	:precedence 11.2
 	:modal 2}
   g18
-  [ ])
+  [ m { }] m)
 
 (defn
   ^{:doc "YZ-plane selection"
 	:precedence 11.3
 	:modal 2}
   g19
-  [ ])
+  [ m { } ] m )
 
+(defn
+  ^{:doc "Inch system selection"
+	:precedence 12.1
+	:modal 6}
+  g20 [ m { } ]
+  m )
