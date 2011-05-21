@@ -27,4 +27,10 @@
 
   (testing "get-code-var"
 	(is (get-code-var "g0"))
-	(is (get-code-var "G0"))))
+	(is (get-code-var "G0")))
+
+  (testing "parse-word"
+	(is "g0" (:word (parse-word "g00")))
+	(is "g0" (:word (parse-word "g0")))
+	(is "g0" (:word (parse-word "G0")))
+	(is "g0" (:word (parse-word "G00")))))

@@ -42,9 +42,10 @@
   (if (valid-word? word)
 	(let [key (keyword (str/lower-case (re-find #"^[A-Za-z]" word)))
 		  arg (parse-gcode-number (str/tail (dec (. word length)) word)) 
-		  without-fn {:word word :code (read-string (str key arg)) :key key :arg arg :explicit true }]
-	  (if (get-code-var word)
-		(assoc without-fn :fn (get-code-var word))
+		  cleaned-word (str (name key) arg)
+		  without-fn {:word cleaned-word :code (read-string (str key arg)) :key key :arg arg :explicit true }]
+	  (if (get-code-var cleaned-word)
+		(assoc without-fn :fn (get-code-var cleaned-word))
 		without-fn))))
 
 (defn get-machine-modals [ machine ]
