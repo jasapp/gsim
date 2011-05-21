@@ -27,4 +27,4 @@
 
   (testing "get-code-var"
 	(is (get-code-var "g0"))
-	(is (get-code-var "G0")))
+	(is (get-code-var "G0"))))

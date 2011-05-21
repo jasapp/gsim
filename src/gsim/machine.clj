@@ -129,7 +129,7 @@
 	(machine-eval-inside machine sorted-block)))
 
 (defn run-machine [ machine blocks ]
-  (if blocks
+  (if (not (empty? blocks))
 	(do
 	  (println blocks)
 	  (recur (machine-eval machine (first blocks)) (rest blocks)))

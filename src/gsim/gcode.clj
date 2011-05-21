@@ -169,3 +169,15 @@
 	:modal 6}
   g20 [ m { } ]
   m )
+
+(defn
+  ^{:doc "Program stop"
+	:precedence 0 }
+  m0 [ m { } ]
+  m )
+
+(defn
+  ^{:doc "Tool change" }
+  m6 [ m { } ]
+  m )
+	
