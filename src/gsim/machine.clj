@@ -5,7 +5,7 @@
 
 (defn new-machine []
   {:config {}
-   :verbose true
+   :verbose false
    :g-modals { 1 :g0 2 :g17 3 :g90 5 :g93 6 :g20 7 :g40 8 :g43 10 :g98 12 :g54 13 :g61 }
    :m-modals { 4 :m0 6 :m6 7 :m3 8 :m7 9 :m48 }})
 
@@ -86,7 +86,7 @@
 		new-machine ((:fn word) machine keyword-args) ]
 	(if (:verbose machine)
 	  (println (apply str (interpose " " (cons (:word word) (map :word args))))))
-	(update-machine-modals machine word)))
+	(update-machine-modals new-machine word)))
 
 (defn sort-block [ block ]
   "Order the block by precedence. The next code to be executed will be first."
@@ -113,12 +113,23 @@
    (merge (get-machine-modals machine)
 		  (get-modal-map block))))
 
+;; this should be distinguished between a block that calls 
+;; a code without enough arguments. That should be handled
+;; during parsing, this is used to see what codes we can 
+;; call with the available arguments
+;;
+(defn available-args [ code args ]
+  "Return true if there are enough args to execute the code."
+  false)
+
+
 (defn machine-eval-inside [ machine block ]
   (let [sorted-block (sort-block block)
 		next-code (first sorted-block)
 		args (split-args next-code (rest sorted-block)) ]
-	(if (:fn next-code)
+	(if (and (:fn next-code) (available-args next-code args))
 	  (let [new-machine (word-eval machine next-code (:use args))]
+		(println (:word next-code))
 		(if (< 0 (count (:not-used args)))
 		  (recur new-machine (:not-used args))
 		  new-machine))
@@ -131,9 +142,7 @@
 
 (defn run-machine [ machine blocks ]
   (if (not (empty? blocks))
-	(do
-	  (println blocks)
-	  (recur (machine-eval machine (first blocks)) (rest blocks)))
+	(recur (machine-eval machine (first blocks)) (rest blocks))
 	machine))
 
 (defn run-file [ file ]

@@ -178,6 +178,13 @@
   m)
 
 (defn
+  ^{:doc "Cutter length compensation on"
+	:precedence 14.1
+	:modal 8}
+  g43 [ m { } ]
+  m)
+
+(defn
   ^{:doc "Select coordinate system 1"
 	:precedence 15.1
 	:modal 12}
