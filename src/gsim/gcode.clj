@@ -171,13 +171,85 @@
   m )
 
 (defn
+  ^{:doc "Cutter radius compensation off"
+	:precendence 13.1
+	:modal 7}
+  g40 [ m { } ]
+  m)
+
+(defn
+  ^{:doc "Select coordinate system 1"
+	:precedence 15.1
+	:modal 12}
+  g54 [m { } ]
+  m)
+
+(defn
+  ^{:doc "Cancel modal motion"
+	:precedence 20.5
+	:modal 1}
+  g80 [ m { } ]
+  m)
+
+(defn
+  ^{:doc "Drilling cycle"
+	:precedence 20.7
+	:modal 1}
+  g82 [ m { } ]
+  m)
+
+(defn
+  ^{:doc "Set absolute distance mode"
+	:precedence 17.1
+	:modal 3}
+  g90 [ m { } ]
+  m)
+
+(defn
+  ^{:doc "Set canned cycle return level"
+	:precedence 18.1
+	:modal 10}
+  g98 [ m { } ]
+  m)
+
+(defn
+  ^{:doc "Set canned cycle return level"
+	:precedence 18.2
+	:modal 10}
+  g99 [ m { } ]
+  m)
+
+(defn
+  ^{:doc ""
+	:precedence 100 }
+  t1 [ m { } ]
+  m)
+
+(defn
   ^{:doc "Program stop"
-	:precedence 0 }
+	:precedence 21.0
+	:modal 4}
   m0 [ m { } ]
   m )
 
 (defn
-  ^{:doc "Tool change" }
+  ^{:doc ""
+	:precedence 100
+	:modal 7 }
+  m3 [ m { } ]
+  m)
+
+(defn
+  ^{:doc "Tool change"
+	:precedence 6.0
+	:modal 6 }
   m6 [ m { } ]
   m )
+
+(defn
+  ^{:doc ""
+	:precedence 100
+	:modal 8 }
+  m8 [ m { } ]
+  m)
 	
