@@ -5,7 +5,7 @@
 
 (defn new-machine []
   {:config {}
-   :verbose false
+   :verbose true
    :g-modals { 1 :g0 2 :g17 3 :g90 5 :g93 6 :g20 7 :g40 8 :g43 10 :g98 12 :g54 13 :g61 }
    :m-modals { 4 :m0 6 :m6 7 :m3 8 :m7 9 :m48 }})
 
@@ -38,18 +38,20 @@
 	(catch Exception _
 	  (read-string (str "10r" number-str))))) ;; specify base 10
 
-(defn parse-word [ word ]
-  (if (valid-word? word)
-	(let [key (keyword (str/lower-case (re-find #"^[A-Za-z]" word)))
-		  arg (parse-gcode-number (str/tail (dec (. word length)) word)) 
-		  cleaned-word (str (name key) arg)
-		  without-fn {:word cleaned-word :code (read-string (str key arg)) :key key :arg arg :explicit true }]
-	  (if (get-code-var cleaned-word)
-		(assoc without-fn :fn (get-code-var cleaned-word))
-		without-fn))))
+(defn parse-word
+  ([ word ] (parse-word word true))
+  ([ word explicit ]
+	 (if (valid-word? word)
+	   (let [key (keyword (str/lower-case (re-find #"^[A-Za-z]" word)))
+			 arg (parse-gcode-number (str/tail (dec (. word length)) word)) 
+			 cleaned-word (str (name key) arg)
+			 without-fn {:word cleaned-word :code (read-string (str key arg)) :key key :arg arg :explicit explicit }]
+		 (if (get-code-var cleaned-word)
+		   (assoc without-fn :fn (get-code-var cleaned-word))
+		   without-fn)))))
 
 (defn get-machine-modals [ machine ]
-  (let [ b (fn [x] (parse-word (. (str/as-str x) toUpperCase))) ]
+  (let [ b (fn [x] (parse-word (. (str/as-str x) toUpperCase) false)) ]
 	(get-modal-map
 	 (map b (concat (vals (:g-modals machine))
 					(vals (:m-modals machine)))))))
@@ -84,8 +86,8 @@
    a keyword map that our functions in gcode use."
   (let [keyword-args (zipmap (map :key args) (map :arg args))
 		new-machine ((:fn word) machine keyword-args) ]
-	(if (:verbose machine)
-	  (println (apply str (interpose " " (cons (:word word) (map :word args))))))
+	(if (and (:verbose machine) (:explicit word))
+	(println (apply str (interpose " " (cons (:word word) (map :word args))))))
 	(update-machine-modals new-machine word)))
 
 (defn sort-block [ block ]
@@ -106,6 +108,9 @@
 (defn parse-file [ file ]
   (map parse-block (str/split #"\n" (slurp file))))
 
+(defn mark-not-explicit [ parsed-word ]
+  (assoc parsed-word :explicit false))
+
 (defn merge-block [ machine block ]
   "Take a machine, a block and merge the defaults from the
    machine with the block giving precedence to the block."
@@ -113,23 +118,12 @@
    (merge (get-machine-modals machine)
 		  (get-modal-map block))))
 
-;; this should be distinguished between a block that calls 
-;; a code without enough arguments. That should be handled
-;; during parsing, this is used to see what codes we can 
-;; call with the available arguments
-;;
-(defn available-args [ code args ]
-  "Return true if there are enough args to execute the code."
-  false)
-
-
 (defn machine-eval-inside [ machine block ]
   (let [sorted-block (sort-block block)
 		next-code (first sorted-block)
 		args (split-args next-code (rest sorted-block)) ]
-	(if (and (:fn next-code) (available-args next-code args))
-	  (let [new-machine (word-eval machine next-code (:use args))]
-		(println (:word next-code))
+	(if (:fn next-code)
+	  (let [new-machine (word-eval machine next-code (:used args))]
 		(if (< 0 (count (:not-used args)))
 		  (recur new-machine (:not-used args))
 		  new-machine))
