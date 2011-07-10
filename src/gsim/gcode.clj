@@ -41,6 +41,7 @@
 	:precedence 20.0
 	}
   g0 [ m { :keys [ a b c x y z ] } ]
+  (println "Rapid positioning: " a b c x y z)
   m)
 
 (defn
@@ -107,7 +108,7 @@
 	:precedence 12.1
 	:modal 6}
   g20 [ m { } ]
-  
+  (println "G20: Switching to inches, bitch!")
   m )
 
 (defn
@@ -128,8 +129,17 @@
   ^{:doc "Select coordinate system 1"
 	:precedence 15.1
 	:modal 12}
-  g54 [m { } ]
+  g54 [ m { } ]
   m)
+
+(defn
+  ^{:doc "Setting exact path mode"
+	:precedence 99
+	:modal 13}
+  g61 [ m { } ]
+  m)
+
+
 
 (defn
   ^{:doc "Cancel modal motion"
@@ -150,6 +160,20 @@
 	:precedence 17.1
 	:modal 3}
   g90 [ m { } ]
+  m)
+
+(defn
+  ^{:doc "Start inverse time mode"
+	:precedence 99
+	:modal 99 }
+  g93 [ m { } ]
+  m)
+
+(defn
+  ^{:doc "Start units per minute mode"
+	:precedence 99
+	:modal 99 }
+  g94 [ m { } ]
   m)
 
 (defn

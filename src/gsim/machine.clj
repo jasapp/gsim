@@ -5,7 +5,7 @@
 
 (defn new-machine []
   {:config {}
-   :verbose true
+   :verbose false
    :g-modals { 1 :g0 2 :g17 3 :g90 5 :g93 6 :g20 7 :g40 8 :g43 10 :g98 12 :g54 13 :g61 }
    :m-modals { 4 :m0 6 :m6 7 :m3 8 :m7 9 :m48 }})
 
@@ -24,7 +24,7 @@
 
 (defn valid-word? [ word ]
   (and (< 1 (. word length))
-	   (not (str/blank? word)) ;; all blanks should be remove by now
+	   (not (str/blank? word)) ;; all blanks should be removed by now
 	   (re-find #"^[A-Za-z]" word) ;; all words should start with a character (?)
 	   (not (str/substring? " " word))))
 
@@ -86,8 +86,8 @@
    a keyword map that our functions in gcode use."
   (let [keyword-args (zipmap (map :key args) (map :arg args))
 		new-machine ((:fn word) machine keyword-args) ]
-	(if (and (:verbose machine) (:explicit word))
-	(println (apply str (interpose " " (cons (:word word) (map :word args))))))
+	(if (and (:verbose machine)) ;; (:explicit word))
+	  (println (apply str (interpose " " (cons (:word word) (map :word args))))))
 	(update-machine-modals new-machine word)))
 
 (defn sort-block [ block ]
@@ -141,4 +141,3 @@
 
 (defn run-file [ file ]
   (run-machine (new-machine) (parse-file file)))
-	
