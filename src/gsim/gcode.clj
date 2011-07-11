@@ -41,14 +41,17 @@
 	:precedence 20.0
 	}
   g0 [ m { :keys [ a b c x y z ] } ]
-  (println "Rapid positioning: " a b c x y z)
+  (if (and (:verbose m) (or a b c x y z))
+	(println "Rapid positioning:" a b c x y z))
   m)
 
 (defn
   ^{:doc "Linear interpolation"
 	:modal 1
 	:precedence 20.1}
-  g1 [ m {f :f x :x y :y z :z} ]
+  g1 [ m { :keys [ f x y z ] } ]
+  (if (and (:verbose m) (or f x y z))
+	(println "Linear interpolation:" f x y z))
   m)
 
 (defn
@@ -108,6 +111,9 @@
 	:precedence 12.1
 	:modal 6 }
   g20 [ m { } ]
+  ;; is there an easy way to do this from inside the function?
+  (if (not (= (:g6-modal (:g-modals m)) :g20))
+	(println "Switching to the inch selection system."))
   m )
 
 (defn
@@ -138,8 +144,6 @@
   g61 [ m { } ]
   m)
 
-
-
 (defn
   ^{:doc "Cancel modal motion"
 	:precedence 20.5
@@ -150,14 +154,16 @@
 (defn
   ^{:doc "Drilling cycle"
 	:precedence 20.7
-	:modal 1}
-  g82 [ m { } ]
+	:modal 1 }
+  g82 [ m { :keys [ x y r z ] } ]
+  (if (and (:verbose m) (or x y r z))
+	(println "Drilling cycle:" x y r z))
   m)
 
 (defn
   ^{:doc "Set absolute distance mode"
 	:precedence 17.1
-	:modal 3}
+	:modal 3 }
   g90 [ m { } ]
   m)
 
@@ -190,9 +196,10 @@
   m)
 
 (defn
-  ^{:doc ""
+  ^{:doc "Select tool"
 	:precedence 5 }
   t1 [ m { } ]
+;;   (println "Select tool")
   m)
 
 (defn
