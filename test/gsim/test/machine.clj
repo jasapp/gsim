@@ -6,34 +6,53 @@
 (def invalid-words ["1" "a" "1a" "2a " "2 a " " 2a "])
 
 (deftest parsing
-  
   (testing "tokenize-block"
-	(is (tokenize-block "") [])
-	(is (tokenize-block " ") [])
-	(is (tokenize-block "  ") [])
-	(is (tokenize-block "    ") [])
-	(is (tokenize-block "g0 g0    g0    ") ["g0" "g0" "g0"]))
+	(is (= (tokenize-block "") []))
+	(is (= (tokenize-block " ") []))
+	(is (= (tokenize-block "  ") []))
+	(is (= (tokenize-block "    ") []))
+	(is (= (tokenize-block "g0 g0    g0    ") ["g0" "g0" "g0"])))
 
   (testing "valid-word?"
-	(not (valid-word? "1"))
-	(not (valid-word? "a"))
-	(not (valid-word? "1a"))
-	(not (valid-word? "2a "))
-	(not (valid-word? "2 a "))
-	(not (valid-word? "  2a ")))
+	(is (not (valid-word? "1")))
+	(is (not (valid-word? "a")))
+	(is (not (valid-word? "1a")))
+	(is (not (valid-word? "2a ")))
+	(is (not (valid-word? "2 a ")))
+	(is (not (valid-word? "  2a "))))
 
   (testing "code-name"
-	(is (code-name {:word "foo"}) "fooasdfasdf"))
+	(is (= (code-name {:word "foo"}) "fooasdfasdf")))
 
   (testing "get-code-var"
-	(is (get-code-var "g0"))
-	(is (get-code-var "G0")))
+	(is (= (get-code-var "g0")))
+	(is (= (get-code-var "G0"))))
 
   (testing "parse-word"
-	(is "g0" (:word (parse-word "g00")))
-	(is "g0" (:word (parse-word "g0")))
-	(is "g0" (:word (parse-word "G0")))
-	(is "g0" (:word (parse-word "G00")))))
+	(is (= "g0" (:word (parse-word "g00"))))
+	(is (= "g0" (:word (parse-word "g0"))))
+	(is (= "g0" (:word (parse-word "G0"))))
+	(is (= "g0" (:word (parse-word "G00"))))))
+
+(deftest default-modals
+  (testing "machine default G modals"
+	(let [modals (get-machine-modals (new-machine))
+		  keys (keys modals)
+		  words (vals modals)]
+	  (is (= :g0 (:code (modals 1))))
+	  (is (= :g17 (:code (modals 2))))
+	  (is (= :g90 (:code (modals 3))))
+	  (is (= :g93 (:code (modals 5))))
+	  (is (= :g20 (:code (modals 6))))
+	  (is (= :g40 (:code (modals 7))))
+	  (is (= :g42 (:code (modals 8))))
+	  (is (= :g98 (:code (modals 10))))
+	  (is (= :g54 (:code (modals 12))))
+	  (is (= :g61 (:code (modals 13))))))
+  (testing "machine default M modals"
+	(let [modals (get-machine-modals (new-machine))]
+	  (is (= :m0 (:code (modals 4))))
+	  (is (= :m6 (:code (modals 6)))))))
 
 (deftest switching-modals
   (testing "modal change from eval"
@@ -43,9 +62,9 @@
 		  m3 (machine-eval m2 (parse-block "G03"))
 		  m80 (machine-eval m3 (parse-block "G80"))
 		  m82 (machine-eval m80 (parse-block "G82"))]
-	  (is :g0 (:code ((get-machine-modals m) 1)))
-	  (is :g1 (:code ((get-machine-modals m1) 1)))
-	  (is :g2 (:code ((get-machine-modals m2) 1)))
-	  (is :g3 (:code ((get-machine-modals m3) 1)))
-	  (is :g80 (:code ((get-machine-modals m80) 1)))
-	  (is :g82 (:code ((get-machine-modals m82) 1))))))
+	  (is (= :g0 (:code ((get-machine-modals m) 1))))
+	  (is (= :g1 (:code ((get-machine-modals m1) 1))))
+	  (is (= :g2 (:code ((get-machine-modals m2) 1))))
+	  (is (= :g3 (:code ((get-machine-modals m3) 1))))
+	  (is (= :g80 (:code ((get-machine-modals m80) 1))))
+	  (is (= :g82 (:code ((get-machine-modals m82) 1)))))))

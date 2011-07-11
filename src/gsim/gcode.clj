@@ -164,15 +164,13 @@
 
 (defn
   ^{:doc "Start inverse time mode"
-	:precedence 99
-	:modal 99 }
+	:modal 5 }
   g93 [ m { } ]
   m)
 
 (defn
   ^{:doc "Start units per minute mode"
-	:precedence 99
-	:modal 99 }
+	:modal 5 }
   g94 [ m { } ]
   m)
 
