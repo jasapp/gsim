@@ -103,13 +103,20 @@
 	{:used (filter used remaining-block)
 	 :not-used (remove used remaining-block)}))
 
-(defn parse-block [ block-str ]
+(defn parse-block
   "Take a gcode block and map parse-word across it."
-  (map parse-word (tokenize-block block-str)))
+  ([ block-str ] (parse-block block-str -1))
+  ([ block-str line-number]
+	 (let [ words (map parse-word (tokenize-block block-str)) ]
+	   (if (< -1 line-number)
+		 (map (fn [w] (assoc w :line-number line-number)) words)
+		 words))))
 
 (defn parse-file [ file ]
   "Take a file and map parse-block across it."
-  (map parse-block (str/split #"\n" (slurp file))))
+  (let [file-str (str/split #"\n" (slurp file))
+		line-count (count file-str)]
+	(map parse-block file-str (take line-count (iterate (fn [x] (+ x 1)) 1)))))
 
 (defn mark-not-explicit [ parsed-word ]
   (assoc parsed-word :explicit false))
