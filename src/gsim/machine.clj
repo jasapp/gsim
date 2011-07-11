@@ -11,10 +11,15 @@
 
 (def *machine* (new-machine))
 
+(defn get-modal-group [ word ]
+  (if (:fn word)
+	(let [m (meta (:fn word))]
+	  (keyword (str/as-str (:key word) (:modal m) "-modal")))))
+
 (defn get-modal-map [ words ]
   (zipmap
    (map (fn [w] (if (:fn w)
-				  (:modal (meta (:fn w)))
+				  (get-modal-group w)
 				  (keyword (gensym))))
 		words)
    words))
@@ -67,10 +72,6 @@
 	(:precedence (meta (:fn word)))
 	1000))
 
-(defn get-modal-group [ word ]
-  (if (:fn word)
-	(:modal (meta (:fn word)))))
-
 (defn get-args [ word ]
   (:keys (first (filter :keys (first (:arglists (meta (:fn word))))))))
 
@@ -103,9 +104,11 @@
 	 :not-used (remove used remaining-block)}))
 
 (defn parse-block [ block-str ]
+  "Take a gcode block and map parse-word across it."
   (map parse-word (tokenize-block block-str)))
 
 (defn parse-file [ file ]
+  "Take a file and map parse-block across it."
   (map parse-block (str/split #"\n" (slurp file))))
 
 (defn mark-not-explicit [ parsed-word ]

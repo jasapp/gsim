@@ -92,50 +92,49 @@
 (defn
   ^{:doc "XZ-plane selection"
 	:precedence 11.2
-	:modal 2}
+	:modal 2 }
   g18
   [ m { } ] m)
 
 (defn
   ^{:doc "YZ-plane selection"
 	:precedence 11.3
-	:modal 2}
+	:modal 2 }
   g19
   [ m { } ] m )
 
 (defn
   ^{:doc "Inch system selection"
 	:precedence 12.1
-	:modal 6}
+	:modal 6 }
   g20 [ m { } ]
-  (println "G20: Switching to inches, bitch!")
   m )
 
 (defn
   ^{:doc "Cutter radius compensation off"
-	:precendence 13.1
-	:modal 7}
+	:precedence 13.1
+	:modal 7 }
   g40 [ m { } ]
   m)
 
 (defn
   ^{:doc "Cutter length compensation on"
 	:precedence 14.1
-	:modal 8}
+	:modal 8 }
   g43 [ m { :keys [ h ] } ]
   m)
 
 (defn
   ^{:doc "Select coordinate system 1"
 	:precedence 15.1
-	:modal 12}
+	:modal 12 }
   g54 [ m { } ]
   m)
 
 (defn
   ^{:doc "Setting exact path mode"
 	:precedence 99
-	:modal 13}
+	:modal 13 }
   g61 [ m { } ]
   m)
 
@@ -164,12 +163,14 @@
 
 (defn
   ^{:doc "Start inverse time mode"
+	:precedence 2.1
 	:modal 5 }
   g93 [ m { } ]
   m)
 
 (defn
   ^{:doc "Start units per minute mode"
+	:precedence 2.2
 	:modal 5 }
   g94 [ m { } ]
   m)
@@ -177,27 +178,27 @@
 (defn
   ^{:doc "Set canned cycle return level"
 	:precedence 18.1
-	:modal 10}
+	:modal 10 }
   g98 [ m { } ]
   m)
 
 (defn
   ^{:doc "Set canned cycle return level"
 	:precedence 18.2
-	:modal 10}
+	:modal 10 }
   g99 [ m { } ]
   m)
 
 (defn
   ^{:doc ""
-	:precedence 100 }
+	:precedence 5 }
   t1 [ m { } ]
   m)
 
 (defn
   ^{:doc "Program stop"
 	:precedence 21.0
-	:modal 4}
+	:modal 4 }
   m0 [ m { } ]
   m )
 
@@ -213,12 +214,33 @@
 	:precedence 6.0
 	:modal 6 }
   m6 [ m { :keys [ ] } ]
-
   m )
 
 (defn
-  ^{:doc ""
+  ^{:doc "Coolant ..."
+	:precedence 8.1
+	:modal 8 }
+  m7 [ m { } ]
+  m)
+
+(defn
+  ^{:doc "Coolant ..."
 	:precedence 100
 	:modal 8 }
   m8 [ m { } ]
   m)
+
+(defn
+  ^{:doc ""
+	:precedence 9.1
+	:modal 9 }
+  m48 [ m { } ]
+  m)
+
+(defn
+  ^{:doc ""
+	:precedence 9.2
+	:modal 9 }
+  m49 [ m { } ]
+  m)
+

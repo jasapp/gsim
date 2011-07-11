@@ -22,7 +22,7 @@
 	(is (not (valid-word? "  2a "))))
 
   (testing "code-name"
-	(is (= (code-name {:word "foo"}) "fooasdfasdf")))
+	(is (= (code-name {:word "foo"}) "foo")))
 
   (testing "get-code-var"
 	(is (= (get-code-var "g0")))
@@ -36,23 +36,24 @@
 
 (deftest default-modals
   (testing "machine default G modals"
-	(let [modals (get-machine-modals (new-machine))
-		  keys (keys modals)
-		  words (vals modals)]
-	  (is (= :g0 (:code (modals 1))))
-	  (is (= :g17 (:code (modals 2))))
-	  (is (= :g90 (:code (modals 3))))
-	  (is (= :g93 (:code (modals 5))))
-	  (is (= :g20 (:code (modals 6))))
-	  (is (= :g40 (:code (modals 7))))
-	  (is (= :g42 (:code (modals 8))))
-	  (is (= :g98 (:code (modals 10))))
-	  (is (= :g54 (:code (modals 12))))
-	  (is (= :g61 (:code (modals 13))))))
+	(let [modals (get-machine-modals (new-machine))]
+	  (is (= :g0 (:code (:g1-modal modals))))
+	  (is (= :g17 (:code (:g2-modal modals))))
+	  (is (= :g90 (:code (:g3-modal modals))))
+	  (is (= :g93 (:code (:g5-modal modals))))
+	  (is (= :g20 (:code (:g6-modal modals))))
+	  (is (= :g40 (:code (:g7-modal modals))))
+	  (is (= :g43 (:code (:g8-modal modals))))
+	  (is (= :g98 (:code (:g10-modal modals))))
+	  (is (= :g54 (:code (:g12-modal modals))))
+	  (is (= :g61 (:code (:g13-modal modals))))))
   (testing "machine default M modals"
 	(let [modals (get-machine-modals (new-machine))]
-	  (is (= :m0 (:code (modals 4))))
-	  (is (= :m6 (:code (modals 6)))))))
+	  (is (= :m0 (:code (:m4-modal modals))))
+	  (is (= :m6 (:code (:m6-modal modals))))
+	  (is (= :m3 (:code (:m7-modal modals))))
+	  (is (= :m7 (:code (:m8-modal modals))))
+	  (is (= :m48 (:code (:m9-modal modals)))))))
 
 (deftest switching-modals
   (testing "modal change from eval"
@@ -62,9 +63,9 @@
 		  m3 (machine-eval m2 (parse-block "G03"))
 		  m80 (machine-eval m3 (parse-block "G80"))
 		  m82 (machine-eval m80 (parse-block "G82"))]
-	  (is (= :g0 (:code ((get-machine-modals m) 1))))
-	  (is (= :g1 (:code ((get-machine-modals m1) 1))))
-	  (is (= :g2 (:code ((get-machine-modals m2) 1))))
-	  (is (= :g3 (:code ((get-machine-modals m3) 1))))
-	  (is (= :g80 (:code ((get-machine-modals m80) 1))))
-	  (is (= :g82 (:code ((get-machine-modals m82) 1)))))))
+	  (is (= :g0 (:code (:g1-modal (get-machine-modals m)))))
+	  (is (= :g1 (:code (:g1-modal (get-machine-modals m1)))))
+	  (is (= :g2 (:code (:g1-modal (get-machine-modals m2)))))
+	  (is (= :g3 (:code (:g1-modal (get-machine-modals m3)))))
+	  (is (= :g80 (:code (:g1-modal (get-machine-modals m80)))))
+	  (is (= :g82 (:code (:g1-modal (get-machine-modals m82))))))))
