@@ -34,6 +34,15 @@
 	(is (= "g0" (:word (parse-word "G0"))))
 	(is (= "g0" (:word (parse-word "G00"))))))
 
+(deftest parsing-files
+  (testing "parse-output"
+	(let [filename "test/data/simple.gc"
+		  blocks (parse-file filename)
+		  first-block (first (nth blocks 0))
+		  last-line (last blocks)]
+	  (is (= (:line-number first-block) 1))
+	  (is (= (:code first-block) :g20)))))
+
 (deftest default-modals
   (testing "machine default G modals"
 	(let [modals (get-machine-modals (new-machine))]
