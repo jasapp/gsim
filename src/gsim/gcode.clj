@@ -199,7 +199,8 @@
   ^{:doc "Select tool"
 	:precedence 5 }
   t1 [ m { } ]
-;;   (println "Select tool")
+  (if (not (:t-modal (:other-modals m)))
+	(println "Select tool: 1"))
   m)
 
 (defn

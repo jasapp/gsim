@@ -78,9 +78,12 @@
 (defn update-machine-modals [ machine word ]
   (let [modal-group (get-modal-group word)
 		modal-key (:key word) ]
-	(if (= (:key word) :g)
-	  (assoc machine :g-modals (assoc (:g-modals machine) modal-group (:code word)))
-	  (assoc machine :m-modals (assoc (:m-modals machine) modal-group (:code word))))))
+	(cond (= (:key word) :g)
+		  (assoc machine :g-modals (assoc (:g-modals machine) modal-group (:code word)))
+		  (= (:key word) :m)
+		  (assoc machine :m-modals (assoc (:m-modals machine) modal-group (:code word)))
+		  true
+		  (assoc machine :other-modals (assoc (:other-modals machine) modal-group (:code word))))))
 
 (defn word-eval [ machine word args ]
   "Take our representation of a block and turn it into
