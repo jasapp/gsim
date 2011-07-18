@@ -43,7 +43,9 @@
   g0 [ m { :keys [ a b c x y z ] } ]
   (if (and (:verbose m) (or a b c x y z))
 	(println "Rapid positioning:" a b c x y z))
-  m)
+  {:machine m
+   :message (str "Rapid positioning:" (apply str (interpose " " [ a b c x y z])))}
+  )
 
 (defn
   ^{:doc "Linear interpolation"
@@ -90,7 +92,8 @@
 	:modal 2}
   g17
   [ m { } ]
-  m)
+  {:machine m
+   :message "XY-plane selection"})
 
 (defn
   ^{:doc "XZ-plane selection"
@@ -114,28 +117,33 @@
   ;; is there an easy way to do this from inside the function?
   (if (not (= (:g6-modal (:g-modals m)) :g20))
 	(println "Switching to the inch selection system."))
-  m )
+  {:machine m
+   :message "Inch system selection"}
+   )
 
 (defn
   ^{:doc "Cutter radius compensation off"
 	:precedence 13.1
 	:modal 7 }
   g40 [ m { } ]
-  m)
+  {:machine m
+   :message "Cutter radius compensation off"})
 
 (defn
   ^{:doc "Cutter length compensation on"
 	:precedence 14.1
 	:modal 8 }
   g43 [ m { :keys [ h ] } ]
-  m)
+  {:machine m
+   :message "Cutter length compensation on"})
 
 (defn
   ^{:doc "Select coordinate system 1"
 	:precedence 15.1
 	:modal 12 }
   g54 [ m { } ]
-  m)
+  {:machine m
+   :message "Select coordinate system 1"})
 
 (defn
   ^{:doc "Setting exact path mode"
@@ -149,7 +157,8 @@
 	:precedence 20.5
 	:modal 1}
   g80 [ m { } ]
-  m)
+  {:machine m
+   :message "Cancel modal motion"})
 
 (defn
   ^{:doc "Drilling cycle"
@@ -158,14 +167,16 @@
   g82 [ m { :keys [ x y r z ] } ]
   (if (and (:verbose m) (or x y r z))
 	(println "Drilling cycle:" x y r z))
-  m)
+  {:machine m
+   :message (str "Drilling cycle:" x y r z)})
 
 (defn
   ^{:doc "Set absolute distance mode"
 	:precedence 17.1
 	:modal 3 }
   g90 [ m { } ]
-  m)
+  {:machine m
+   :message "Set absolute distance mode"})
 
 (defn
   ^{:doc "Start inverse time mode"
@@ -186,14 +197,16 @@
 	:precedence 18.1
 	:modal 10 }
   g98 [ m { } ]
-  m)
+  {:machine m
+   :message "Set canned cycle return level"})
 
 (defn
   ^{:doc "Set canned cycle return level"
 	:precedence 18.2
 	:modal 10 }
   g99 [ m { } ]
-  m)
+  {:machine m
+   :message "Set canned cycle return level"})
 
 (defn
   ^{:doc "Select tool"
@@ -201,7 +214,8 @@
   t1 [ m { } ]
   (if (not (:t-modal (:other-modals m)))
 	(println "Select tool: 1"))
-  m)
+  {:machine m
+   :message "Select tool: 1"})
 
 (defn
   ^{:doc "Program stop"
@@ -215,14 +229,16 @@
 	:precedence 100
 	:modal 7 }
   m3 [ m { } ]
-  m)
+  {:machine m
+   :message "Something to do with tools."})
 
 (defn
   ^{:doc "Tool change"
 	:precedence 6.0
 	:modal 6 }
   m6 [ m { :keys [ ] } ]
-  m )
+  {:machine m 
+   :message "Tool change"})
 
 (defn
   ^{:doc "Coolant ..."
@@ -232,11 +248,12 @@
   m)
 
 (defn
-  ^{:doc "Coolant ..."
+  ^{:doc "Coolant..."
 	:precedence 100
 	:modal 8 }
   m8 [ m { } ]
-  m)
+  {:machine m
+   :message "Coolant..."})
 
 (defn
   ^{:doc ""

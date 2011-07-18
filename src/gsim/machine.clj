@@ -108,7 +108,7 @@
   "Take a gcode block and map parse-word across it."
   ([ block-str ] (parse-block block-str -1))
   ([ block-str line-number]
-	 (let [ words (map parse-word (tokenize-block block-str)) ]
+	 (let [ words (map (fn [w] (parse-word w true)) (tokenize-block block-str)) ]
 	   (if (< -1 line-number)
 		 (map (fn [w] (assoc w :line-number line-number)) words)
 		 words))))
@@ -122,6 +122,9 @@
 (defn mark-not-explicit [ parsed-word ]
   (assoc parsed-word :explicit false))
 
+(defn explicit? [ parsed-word ]
+  (:explicit parsed-word))
+
 (defn merge-block [ machine block ]
   "Take a machine, a block and merge the defaults from the
    machine with the block giving precedence to the block."
@@ -131,23 +134,25 @@
    (merge (get-machine-modals machine)
 		  (get-modal-map block))))
 
-(defn machine-eval-inside [ machine block ]
+(defn machine-eval-inside [ machine block responses ]
   (let [sorted-block (sort-block block)
 		next-code (first sorted-block)
 		args (split-args next-code (rest sorted-block)) ]
 	(if (:fn next-code)
-	  (let [new-machine (word-eval machine next-code (:used args))]
-		; (if (:verbose new-machine)
-		; (println (map :code sorted-block)))
+	  (let [{ new-machine :machine message :message code :code}
+			(word-eval machine next-code (:used args))]
 		(if (< 0 (count (:not-used args)))
-		  (recur new-machine (:not-used args))
-		  new-machine))
-	  machine)))
+		  (recur new-machine (:not-used args)
+				 (if (and (explicit? next-code) (or message code))
+				   (conj responses {:message message :code code})
+				   responses))
+		  {:machine new-machine :responses responses}))
+	  {:machine machine :responses responses})))
 
 ;; should this recurse until the block is gone?
 (defn machine-eval [ machine block ]
   (let [sorted-block (sort-block (merge-block machine block))]
-	(machine-eval-inside machine sorted-block)))
+	(machine-eval-inside machine sorted-block [])))
 
 (defn run-machine [ machine blocks ]
   (if (not (empty? blocks))
