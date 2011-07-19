@@ -1,26 +1,11 @@
 (ns gsim.test.machine
-  (:use [gsim.machine] :reload)
-  (:use [gsim.gcode] :reload)
-  (:use [clojure.test]))
+  (:use [gsim.machine]
+		[gsim.gcode]
+		[clojure.test]))
 
 (def invalid-words ["1" "a" "1a" "2a " "2 a " " 2a "])
 
 (deftest parsing
-  (testing "tokenize-block"
-	(is (= (tokenize-block "") []))
-	(is (= (tokenize-block " ") []))
-	(is (= (tokenize-block "  ") []))
-	(is (= (tokenize-block "    ") []))
-	(is (= (tokenize-block "g0 g0    g0    ") ["g0" "g0" "g0"])))
-
-  (testing "valid-word?"
-	(is (not (valid-word? "1")))
-	(is (not (valid-word? "a")))
-	(is (not (valid-word? "1a")))
-	(is (not (valid-word? "2a ")))
-	(is (not (valid-word? "2 a ")))
-	(is (not (valid-word? "  2a "))))
-
   (testing "code-name"
 	(is (= (code-name {:word "foo"}) "foo")))
 
@@ -64,17 +49,17 @@
 	  (is (= :m7 (:code (:m8-modal modals))))
 	  (is (= :m48 (:code (:m9-modal modals)))))))
 
-(deftest switching-modals
-  (testing "modal change from eval"
-	(let [m (new-machine)
-		  m1 (machine-eval m (parse-block "G01"))
-		  m2 (machine-eval m1 (parse-block "G02"))
-		  m3 (machine-eval m2 (parse-block "G03"))
-		  m80 (machine-eval m3 (parse-block "G80"))
-		  m82 (machine-eval m80 (parse-block "G82"))]
-	  (is (= :g0 (:code (:g1-modal (get-machine-modals m)))))
-	  (is (= :g1 (:code (:g1-modal (get-machine-modals m1)))))
-	  (is (= :g2 (:code (:g1-modal (get-machine-modals m2)))))
-	  (is (= :g3 (:code (:g1-modal (get-machine-modals m3)))))
-	  (is (= :g80 (:code (:g1-modal (get-machine-modals m80)))))
-	  (is (= :g82 (:code (:g1-modal (get-machine-modals m82))))))))
+;; (deftest switching-modals
+;;   (testing "modal change from eval"
+;; 	(let [m (new-machine)
+;; 		  m1 (machine-eval m (parse-block "G01"))
+;; 		  m2 (machine-eval m1 (parse-block "G02"))
+;; 		  m3 (machine-eval m2 (parse-block "G03"))
+;; 		  m80 (machine-eval m3 (parse-block "G80"))
+;; 		  m82 (machine-eval m80 (parse-block "G82"))]
+;; 	  (is (= :g0 (:code (:g1-modal (get-machine-modals m)))))
+;; 	  (is (= :g1 (:code (:g1-modal (get-machine-modals m1)))))
+;; 	  (is (= :g2 (:code (:g1-modal (get-machine-modals m2)))))
+;; 	  (is (= :g3 (:code (:g1-modal (get-machine-modals m3)))))
+;; 	  (is (= :g80 (:code (:g1-modal (get-machine-modals m80)))))
+;; 	  (is (= :g82 (:code (:g1-modal (get-machine-modals m82))))))))

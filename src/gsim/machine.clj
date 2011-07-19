@@ -1,7 +1,7 @@
 (ns gsim.machine
-  (:use [ring.handler.dump])
-  (:require [gsim.gcode :as gcode])
-  (:require [clojure.contrib.string :as str]))
+  (:require [gsim.gcode :as gcode]
+			[gsim.parser :as parser]
+			[clojure.contrib.string :as str]))
 
 (defn new-machine []
   {:config {}
@@ -23,9 +23,6 @@
 				  (keyword (gensym))))
 		words)
    words))
-
-(defn tokenize-block [ block ]
-  (remove empty? (str/split #"\s" block)))
 
 (defn valid-word? [ word ]
   (and (< 1 (. word length))
@@ -108,7 +105,7 @@
   "Take a gcode block and map parse-word across it."
   ([ block-str ] (parse-block block-str -1))
   ([ block-str line-number]
-	 (let [ words (map (fn [w] (parse-word w true)) (tokenize-block block-str)) ]
+	 (let [ words (map (fn [w] (parse-word w true)) (parser/tokenize-block block-str)) ]
 	   (if (< -1 line-number)
 		 (map (fn [w] (assoc w :line-number line-number)) words)
 		 words))))
