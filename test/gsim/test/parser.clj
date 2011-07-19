@@ -5,6 +5,9 @@
 (def invalid-words ["1" "a" "1a" "2a " "2 a " " 2a "])
 
 (deftest parsing
+
+  (testing "code-name"
+	(is (= (code-name {:word "foo"}) "foo")))
   
   (testing "tokenize-block"
 	(is (= (tokenize-block "") []))
@@ -21,12 +24,14 @@
 	(is (not (valid-word? "2 a ")))
 	(is (not (valid-word? "  2a "))))
 
-  (testing "code-name"
-	(is (= (code-name {:word "foo"}) "foo")))
-
   (testing "get-code-var"
-	(is (= (get-code-var "g0")))
-	(is (= (get-code-var "G0"))))
+	(is (= #'gsim.gcode/g0 (get-code-var "g0")))
+	(is (= #'gsim.gcode/g0 (get-code-var "G0"))))
+
+  (testing "parse-gcode-number"
+	(is (= 1 (parse-gcode-number "01")))
+	(is (= 1 (parse-gcode-number "1")))
+	(is (= 10 (parse-gcode-number "10"))))
 
   (testing "parse-word"
 	(is (= "g0" (:word (parse-word "g00"))))
@@ -37,9 +42,8 @@
 	(is (= :g (:key (parse-word "G00"))))
 	(is (= 20 (:arg (parse-word "g20"))))
 	(is (= true (:explicit (parse-word "g20"))))
-	(is (= false (:explicit (parse-word "g20" false))))
-	)
-  
+	(is (= false (:explicit (parse-word "g20" false)))))
+
   )
 
 (deftest parsing-files
