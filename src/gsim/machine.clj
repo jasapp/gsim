@@ -1,13 +1,14 @@
 (ns gsim.machine
-  (:use [gsim.parser])
+  (:use [gsim.parser :only [parse-word parse-file]])
   (:require [gsim.gcode :as gcode]
 			[clojure.contrib.string :as str]))
 
 (defn new-machine []
   {:config {}
    :verbose true
-   :g-modals { :g1-modal :g0 :g2-modal :g17 :g3-modal :g90 :g5-modal :g93 :g6-modal :g20 :g7-modal :g40 :g8-modal :g43 :g10-modal :g98 :g12-modal :g54 :g13-modal :g61 }
-   :m-modals { :m4-modal :m0 :m6-modal :m6 :m7-modal :m3 :m8-modal :m7 :m9-modal :m48 }})
+   :g-modals {:g1-modal :g0 :g2-modal :g17 :g3-modal :g90 :g5-modal :g93 :g6-modal :g20 :g7-modal
+			  :g40 :g8-modal :g43 :g10-modal :g98 :g12-modal :g54 :g13-modal :g61 }
+   :m-modals {:m4-modal :m0 :m6-modal :m6 :m7-modal :m3 :m8-modal :m7 :m9-modal :m48 }})
 
 (def *machine* (new-machine))
 

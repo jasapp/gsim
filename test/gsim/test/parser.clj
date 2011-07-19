@@ -2,8 +2,6 @@
   (:use [gsim parser]
 		[clojure.test]))
 
-(def invalid-words ["1" "a" "1a" "2a " "2 a " " 2a "])
-
 (deftest parsing
 
   (testing "code-name"
@@ -44,7 +42,10 @@
 	(is (= true (:explicit (parse-word "g20"))))
 	(is (= false (:explicit (parse-word "g20" false)))))
 
-  )
+  (testing "parse-block"
+	(is (= (parse-word "g20") (first (parse-block "g20"))))
+	(is (= (parse-word "g30") (last (parse-block "g10 g20 g30"))))
+	(is (= 5 (count (parse-block "g20 g20 g20 g20 g20"))))))
 
 (deftest parsing-files
   (testing "parse-output"
