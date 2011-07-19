@@ -1,6 +1,6 @@
 (ns gsim.machine
+  (:use [gsim.parser])
   (:require [gsim.gcode :as gcode]
-			[gsim.parser :as parser]
 			[clojure.contrib.string :as str]))
 
 (defn new-machine []
@@ -24,34 +24,6 @@
 		words)
    words))
 
-(defn valid-word? [ word ]
-  (and (< 1 (. word length))
-	   (not (str/blank? word)) ;; all blanks should be removed by now
-	   (re-find #"^[A-Za-z]" word) ;; all words should start with a character (?)
-	   (not (str/substring? " " word))))
-
-(defn get-code-var [ word-str ]
-  (or (find-var (symbol "gsim.gcode" (str/lower-case word-str)))
-	  (find-var (symbol "gsim.gcode" (str/upper-case word-str)))))
-
-(defn parse-gcode-number [ number-str ]
-  (try
-	(read-string number-str)
-	(catch Exception _
-	  (read-string (str "10r" number-str))))) ;; specify base 10
-
-(defn parse-word
-  ([ word ] (parse-word word true))
-  ([ word explicit ]
-	 (if (valid-word? word)
-	   (let [key (keyword (str/lower-case (re-find #"^[A-Za-z]" word)))
-			 arg (parse-gcode-number (str/tail (dec (. word length)) word)) 
-			 cleaned-word (str (name key) arg)
-			 without-fn {:word cleaned-word :code (read-string (str key arg)) :key key :arg arg :explicit explicit }]
-		 (if (get-code-var cleaned-word)
-		   (assoc without-fn :fn (get-code-var cleaned-word))
-		   without-fn)))))
-
 (defn get-machine-modals [ machine ]
   (let [ b (fn [x] (parse-word (. (str/as-str x) toUpperCase) false)) ]
 	(get-modal-map
@@ -60,9 +32,6 @@
 
 (defn make-implicit [ word ]
   (assoc (dissoc word :explicit) :explicit false))
-
-(defn code-name [ code ]
-  (:word code))
 
 (defn get-precedence [ word ]
   (if (:fn word)
@@ -100,21 +69,6 @@
 		used (fn [x] (contains? args (:key x)))]
 	{:used (filter used remaining-block)
 	 :not-used (remove used remaining-block)}))
-
-(defn parse-block
-  "Take a gcode block and map parse-word across it."
-  ([ block-str ] (parse-block block-str -1))
-  ([ block-str line-number]
-	 (let [ words (map (fn [w] (parse-word w true)) (parser/tokenize-block block-str)) ]
-	   (if (< -1 line-number)
-		 (map (fn [w] (assoc w :line-number line-number)) words)
-		 words))))
-
-(defn parse-file [ file ]
-  "Take a file and map parse-block across it."
-  (let [file-str (str/split #"\n" (slurp file))
-		line-count (count file-str)]
-	(map parse-block file-str (take line-count (iterate (fn [x] (+ x 1)) 1)))))
 
 (defn mark-not-explicit [ parsed-word ]
   (assoc parsed-word :explicit false))

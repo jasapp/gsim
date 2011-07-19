@@ -7,6 +7,7 @@
             [compojure.handler :as handler]
 			[ring.util.serve :as serve]
  			[gsim.middleware :as mdw]
+			[gsim.parser :as parser]
  			[gsim.machine :as machine]))
 
 (defn index-page []
@@ -31,7 +32,7 @@
 (defn run-block [block dir]
   (binding [*out* *err*]
 	(let [m (machine/new-machine)
-		  {responses :responses} (machine/machine-eval m (machine/parse-block block))]
+		  {responses :responses} (machine/machine-eval m (parser/parse-block block))]
 	  {:responses responses})))
   
 (defn json-response [data & [status]]
