@@ -32,7 +32,15 @@
 	(is (= "g0" (:word (parse-word "g00"))))
 	(is (= "g0" (:word (parse-word "g0"))))
 	(is (= "g0" (:word (parse-word "G0"))))
-	(is (= "g0" (:word (parse-word "G00"))))))
+	(is (= "g0" (:word (parse-word "G00"))))
+	(is (= :g20 (:code (parse-word "G20"))))
+	(is (= :g (:key (parse-word "G00"))))
+	(is (= 20 (:arg (parse-word "g20"))))
+	(is (= true (:explicit (parse-word "g20"))))
+	(is (= false (:explicit (parse-word "g20" false))))
+	)
+  
+  )
 
 (deftest parsing-files
   (testing "parse-output"

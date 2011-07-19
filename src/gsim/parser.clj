@@ -28,6 +28,7 @@
 	  (read-string (str "10r" number-str))))) ;; specify base 10
 
 (defn parse-word
+  "Take a word string and turn it into a word."
   ([ word ] (parse-word word true))
   ([ word explicit ]
 	 (if (valid-word? word)
