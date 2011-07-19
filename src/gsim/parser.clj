@@ -53,4 +53,4 @@
   "Take a file and map parse-block across it."
   (let [file-str (str/split #"\n" (slurp file))
 		line-count (count file-str)]
-	(map parse-block file-str (take line-count (iterate (fn [x] (+ x 1)) 1)))))
+	(map parse-block file-str (range 1 (+ line-count 1)))))
