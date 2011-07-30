@@ -41,9 +41,9 @@
     (is (not (valid-word? "2 a ")))
     (is (not (valid-word? "  2a "))))
 
-  (testing "get-code-var"
-    (is (= #'gsim.gcode/g0 (get-code-var "g0")))
-    (is (= #'gsim.gcode/g0 (get-code-var "G0"))))
+  (testing "code-var"
+    (is (= #'gsim.gcode/g0 (code-var "g0")))
+    (is (= #'gsim.gcode/g0 (code-var "G0"))))
 
   (testing "parse-gcode-number"
     (is (= 1 (parse-gcode-number "01")))

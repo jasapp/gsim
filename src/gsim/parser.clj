@@ -15,7 +15,7 @@
        (re-find #"^[A-Za-z]" word) ;; all words should start with a character (?)
        (not (str/substring? " " word))))
 
-(defn get-code-var [ #^String word ]
+(defn code-var [ #^String word ]
   "Find the symbol over in gsim.gcode for word-str."
   (or (find-var (symbol "gsim.gcode" (str/lower-case word)))
       (find-var (symbol "gsim.gcode" (str/upper-case word)))))
@@ -48,8 +48,8 @@
 
 (defn add-block-fn [ word ]
   "Add a function to this word if one exists."
-  (if (get-code-var (:word word))
-    (assoc word :fn (get-code-var (:word word)))
+  (if (code-var (:word word))
+    (assoc word :fn (code-var (:word word)))
     word))
 
 (defn add-modal-group [ word ]
