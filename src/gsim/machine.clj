@@ -67,7 +67,7 @@
   "Take a code, and the rest of the arguments and split them
    based on which arguments that particular code uses."
   (let [args (set (map keyword (get-args code)))
-		used (fn [x] (contains? args (:key x)))]
+	used (fn [x] (contains? args (:key x)))]
 	{:used (filter used remaining-block)
 	 :not-used (remove used remaining-block)}))
 
