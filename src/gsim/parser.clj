@@ -20,11 +20,6 @@
   (or (find-var (symbol "gsim.gcode" (str/lower-case word)))
       (find-var (symbol "gsim.gcode" (str/upper-case word)))))
 
-(defn get-modal-group [ word ]
-  "Takes a *parsed* word and builds the map describing the word's mode."
-  (if (:fn word)
-    {:type (:key word) :modal (:modal (meta (:fn word))) }))
-
 (defn parse-gcode-number [ #^String number ]
   "Read the number off the back of a word. Turns it into an integer."
   (try
@@ -32,18 +27,65 @@
     (catch Exception _
       (read-string (str "10r" number))))) ;; specify base 10
 
+(defn add-key [ word #^String word-string ]
+  (assoc word
+    :key (keyword (str/lower-case (re-find #"^[A-Za-z]" word-string)))))
+
+(defn add-arg [ word #^String word-string ]
+  (assoc word
+    :arg (parse-gcode-number (str/tail (dec (. word-string length)) word-string))))
+
+(defn modal-group [ word ]
+  "Takes a *parsed* word and builds the map describing the word's mode."
+  (if (:fn word)
+    {:type (:key word) :group (:modal (meta (:fn word))) }))
+
+(defn add-cleaned-word [ word ]
+  (assoc word :word (str (name (:key word)) (:arg word))))
+
+(defn add-code [ word ]
+  (assoc word :code (read-string (str (:key word) (:arg word)))))
+
+(defn add-block-fn [ word ]
+  "Add a function to this word if one exists."
+  (if (get-code-var (:word word))
+    (assoc word :fn (get-code-var (:word word)))
+    word))
+
+(defn add-modal-group [ word ]
+  "Add the modal group."
+  (if (modal-group word)
+    (assoc word :modal (modal-group word))
+    word))
+
+(defn add-precedence [ word ]
+  "Add precedence." 
+  (if (:fn word)
+    (assoc word :precedence (:precedence (meta (:fn word))))
+    word))
+
+(defn add-explicit [ word explicit ]
+  "Mark a word as explicit."
+  (assoc word :explicit explicit))
+
+(defn explicit? [ word ]
+  "Check to see if a word is marked as explicit."
+  (:explicit word))
+
 (defn parse-word
   "Take a word string and turn it into a word."
-  ([ #^String word ] (parse-word word true))
-  ([ #^String word explicit ]
-     (if (valid-word? word)
-       (let [key (keyword (str/lower-case (re-find #"^[A-Za-z]" word)))
-	     arg (parse-gcode-number (str/tail (dec (. word length)) word)) 
-	     cleaned-word (str (name key) arg)
-	     without-fn {:word cleaned-word :code (read-string (str key arg)) :key key :arg arg :explicit explicit }]
-	 (if (get-code-var cleaned-word)
-	   (assoc without-fn :fn (get-code-var cleaned-word))
-	   without-fn)))))
+  ([ #^String word-string ] (parse-word word-string true))
+  ([ #^String word-string explicit ]
+     (if (valid-word? word-string)
+       (-> { }
+	   (add-key word-string)
+	   (add-arg word-string)
+	   add-cleaned-word
+	   add-code
+	   add-block-fn
+	   add-modal-group
+	   add-precedence 
+	   (add-explicit explicit)))))
 
 (defn parse-block
   "Take a gcode block and map parse-word across it."
@@ -59,3 +101,4 @@
   (let [file-str (str/split #"\n" (slurp file))
 	line-count (count file-str)]
     (map parse-block file-str (range 1 (+ line-count 1)))))
+ 

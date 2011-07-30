@@ -1,5 +1,5 @@
 (ns gsim.machine
-  (:use [gsim.parser :only [parse-word parse-file]])
+  (:use [gsim.parser :only [parse-word parse-file explicit? ]])
   (:require [gsim.gcode :as gcode]
 	    [clojure.contrib.string :as str]))
 
@@ -31,14 +31,6 @@
      (map b (concat (vals (:g-modals machine))
 		    (vals (:m-modals machine)))))))
 
-(defn make-implicit [ word ]
-  (assoc (dissoc word :explicit) :explicit false))
-
-(defn get-precedence [ word ]
-  (if (:fn word)
-    (:precedence (meta (:fn word)))
-	1000))
-
 (defn get-args [ word ]
   (:keys (first (filter :keys (first (:arglists (meta (:fn word))))))))
 
@@ -61,7 +53,7 @@
 
 (defn sort-block [ block ]
   "Order the block by precedence. The next code to be executed will be first."
-  (sort-by get-precedence block))
+  (sort-by (fn [b] (:precedence b)) block))
 
 (defn split-args [ code remaining-block ]
   "Take a code, and the rest of the arguments and split them
@@ -70,12 +62,6 @@
 	used (fn [x] (contains? args (:key x)))]
 	{:used (filter used remaining-block)
 	 :not-used (remove used remaining-block)}))
-
-(defn mark-not-explicit [ parsed-word ]
-  (assoc parsed-word :explicit false))
-
-(defn explicit? [ parsed-word ]
-  (:explicit parsed-word))
 
 (defn merge-block [ machine block ]
   "Take a machine, a block and merge the defaults from the

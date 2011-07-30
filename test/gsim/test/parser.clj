@@ -11,16 +11,17 @@
       (is (= (type (:key word)) clojure.lang.Keyword))
       (is (= (type (:explicit word)) java.lang.Boolean))
       (is (= (type (:fn word)) clojure.lang.Var))
-      (is (= (type (:precedence word)) java.lang.Integer))
-      (is (= (type (:modal word)) java.lang.Integer)))))
+      (is (= (type (:precedence word)) java.lang.Double))
+      (is (= (type (:group (:modal word))) java.lang.Integer))
+      (is (= (type (:type (:modal word))) clojure.lang.Keyword)))))
 
 (deftest functions
 
-  (testing "get-modal-group"
+  (testing "modal-group"
     (let [word (parse-word "g00")
-	  modal-group (get-modal-group word)]
+	  modal-group (modal-group word)]
       (is (= (:type modal-group) :g)
-      (is (= (:modal modal-group) 1)))))
+      (is (= (:group modal-group) 1)))))
 
   (testing "code-name"
     (is (= (code-name {:word "foo"}) "foo")))
