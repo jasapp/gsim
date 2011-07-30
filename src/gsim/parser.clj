@@ -20,6 +20,11 @@
   (or (find-var (symbol "gsim.gcode" (str/lower-case word)))
       (find-var (symbol "gsim.gcode" (str/upper-case word)))))
 
+(defn get-modal-group [ word ]
+  "Takes a *parsed* word and builds the map describing the word's mode."
+  (if (:fn word)
+    {:type (:key word) :modal (:modal (meta (:fn word))) }))
+
 (defn parse-gcode-number [ #^String number ]
   "Read the number off the back of a word. Turns it into an integer."
   (try
