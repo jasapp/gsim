@@ -3,14 +3,15 @@
   (:require [gsim.gcode :as gcode]
 	    [clojure.contrib.string :as str]))
 
-(defn new-machine []
-  {:config {}
-   :verbose true
-   :g-modals {:g1-modal :g0 :g2-modal :g17 :g3-modal :g90 :g5-modal :g93 :g6-modal :g20 :g7-modal
-			  :g40 :g8-modal :g43 :g10-modal :g98 :g12-modal :g54 :g13-modal :g61 }
-   :m-modals {:m4-modal :m0 :m6-modal :m6 :m7-modal :m3 :m8-modal :m7 :m9-modal :m48 }})
+(defn default-modals [ ]
+  {:g { :1 0 :2 17 :3 90 :5 93 :6 20 :7 40 :8 43 :10 98 :12 54 :13 61 }
+   :m { :4 0 :6 6 :7 3 :8 7 :9 48 }})
 
-(def *machine* (new-machine))
+(defn new-machine [ ]
+  {:config { }
+   :verbose true
+   :registers { }
+   :modals (default-modals)})
 
 (defn get-modal-group [ word ]
   (if (:fn word)

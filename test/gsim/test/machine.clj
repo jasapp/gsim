@@ -1,30 +1,31 @@
 (ns gsim.test.machine
   (:use [gsim.machine]
-		[gsim.gcode]
-		[clojure.test]))
+	[gsim.gcode]
+	[clojure.test]))
 
 (def invalid-words ["1" "a" "1a" "2a " "2 a " " 2a "])
 
-(deftest default-modals
+(deftest machine-default-modals
   (testing "machine default G modals"
-	(let [modals (get-machine-modals (new-machine))]
-	  (is (= :g0 (:code (:g1-modal modals))))
-	  (is (= :g17 (:code (:g2-modal modals))))
-	  (is (= :g90 (:code (:g3-modal modals))))
-	  (is (= :g93 (:code (:g5-modal modals))))
-	  (is (= :g20 (:code (:g6-modal modals))))
-	  (is (= :g40 (:code (:g7-modal modals))))
-	  (is (= :g43 (:code (:g8-modal modals))))
-	  (is (= :g98 (:code (:g10-modal modals))))
-	  (is (= :g54 (:code (:g12-modal modals))))
-	  (is (= :g61 (:code (:g13-modal modals))))))
-  (testing "machine default M modals"
-	(let [modals (get-machine-modals (new-machine))]
-	  (is (= :m0 (:code (:m4-modal modals))))
-	  (is (= :m6 (:code (:m6-modal modals))))
-	  (is (= :m3 (:code (:m7-modal modals))))
-	  (is (= :m7 (:code (:m8-modal modals))))
-	  (is (= :m48 (:code (:m9-modal modals)))))))
+    (let [g-modals (:g (default-modals))
+	  m-modals (:m (default-modals))]
+      (are [mode default] (= (mode g-modals) default)
+	   :6 20
+	   :7 40
+	   :5 93
+	   :1 0
+	   :3 90
+	   :2 17
+	   :8 43
+	   :10 98
+	   :12 54
+	   :13 61)
+      (are [mode default] (= (mode m-modals) default)
+	   :4 0
+	   :6 6
+	   :7 3
+	   :8 7
+	   :9 48))))
 
 ;; (deftest switching-modals
 ;;   (testing "modal change from eval"

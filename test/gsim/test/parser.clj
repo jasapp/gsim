@@ -32,7 +32,7 @@
     (is (= (tokenize-block "  ") []))
     (is (= (tokenize-block "    ") []))
     (is (= (tokenize-block "g0 g0    g0    ") ["g0" "g0" "g0"])))
-  
+
   (testing "valid-word?"
     (is (not (valid-word? "1")))
     (is (not (valid-word? "a")))
