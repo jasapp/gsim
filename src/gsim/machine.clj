@@ -1,7 +1,7 @@
 (ns gsim.machine
   (:use [gsim.parser :only [parse-word parse-file]])
   (:require [gsim.gcode :as gcode]
-			[clojure.contrib.string :as str]))
+	    [clojure.contrib.string :as str]))
 
 (defn new-machine []
   {:config {}
@@ -20,23 +20,23 @@
 (defn get-modal-map [ words ]
   (zipmap
    (map (fn [w] (if (:fn w)
-				  (get-modal-group w)
-				  (keyword (gensym))))
-		words)
+		  (get-modal-group w)
+		  (keyword (gensym))))
+	words)
    words))
 
 (defn get-machine-modals [ machine ]
   (let [ b (fn [x] (parse-word (. (str/as-str x) toUpperCase) false)) ]
-	(get-modal-map
-	 (map b (concat (vals (:g-modals machine))
-					(vals (:m-modals machine)))))))
+    (get-modal-map
+     (map b (concat (vals (:g-modals machine))
+		    (vals (:m-modals machine)))))))
 
 (defn make-implicit [ word ]
   (assoc (dissoc word :explicit) :explicit false))
 
 (defn get-precedence [ word ]
   (if (:fn word)
-	(:precedence (meta (:fn word)))
+    (:precedence (meta (:fn word)))
 	1000))
 
 (defn get-args [ word ]
