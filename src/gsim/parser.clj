@@ -38,7 +38,8 @@
 (defn modal-group [ word ]
   "Takes a *parsed* word and builds the map describing the word's mode."
   (if (:fn word)
-    {:type (:key word) :group (keyword (str (:modal (meta (:fn word))))) }))
+    {:type (:key word)
+     :group (-> word :fn meta :modal str keyword)}))
 
 (defn add-cleaned-word [ word ]
   (assoc word :word (str (name (:key word)) (:arg word))))
@@ -61,7 +62,7 @@
 (defn add-precedence [ word ]
   "Add precedence." 
   (if (:fn word)
-    (assoc word :precedence (:precedence (meta (:fn word))))
+    (->> word :fn meta :precedence (assoc word :precedence))
     word))
 
 (defn add-explicit [ word explicit ]
