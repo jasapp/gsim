@@ -1,6 +1,6 @@
 (ns gsim.test.machine
   (:use [gsim.machine]
-	[gsim.gcode]
+	[gsim.parser :only [parse-word modal-group]]
 	[clojure.test]))
 
 (def invalid-words ["1" "a" "1a" "2a " "2 a " " 2a "])
@@ -24,4 +24,15 @@
       (is (:verbose m)))
     (testing "modals"
       (is (= (:modals m) (default-modals))))))
-  
+
+(deftest accessing-modals
+  (let [m (new-machine)]
+    (is (= (modal :g :1 m) 0))
+    (is (= (modal :m :8 m) 7))))
+
+(deftest modal-updates
+  (testing "update-machine-modals"
+    (let [word (parse-word "g19")
+	  {correct-type :type correct-group :group} (modal-group word)
+	  m (new-machine)]
+      (is (= (modal correct-type correct-group (update-modal word m)) 19)))))

@@ -38,7 +38,7 @@
 (defn modal-group [ word ]
   "Takes a *parsed* word and builds the map describing the word's mode."
   (if (:fn word)
-    {:type (:key word) :group (:modal (meta (:fn word))) }))
+    {:type (:key word) :group (keyword (str (:modal (meta (:fn word))))) }))
 
 (defn add-cleaned-word [ word ]
   (assoc word :word (str (name (:key word)) (:arg word))))
@@ -68,6 +68,11 @@
   "Mark a word as explicit."
   (assoc word :explicit explicit))
 
+(defn add-fn-args [ word ]
+  "Return the arguments that a word can possibly accept."
+  (assoc word :fn-args
+	 (:keys (first (filter :keys (first (:arglists (meta (:fn word)))))))))
+
 (defn explicit? [ word ]
   "Check to see if a word is marked as explicit."
   (:explicit word))
@@ -84,7 +89,8 @@
 	   add-code
 	   add-block-fn
 	   add-modal-group
-	   add-precedence 
+	   add-precedence
+	   add-fn-args
 	   (add-explicit explicit)))))
 
 (defn parse-block

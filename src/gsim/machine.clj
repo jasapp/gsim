@@ -1,5 +1,5 @@
 (ns gsim.machine
-  (:use [gsim.parser :only [parse-word parse-file explicit? ]])
+  (:use [gsim.parser :only [parse-word parse-file modal-group explicit? ]])
   (:require [gsim.gcode :as gcode]
 	    [clojure.contrib.string :as str]))
 
@@ -12,6 +12,15 @@
    :verbose true
    :registers { }
    :modals (default-modals)})
+
+(defn modal [ modal-type group machine ]
+  (group (modal-type (:modals machine))))
+
+(defn update-modal [ word machine ]
+  (let [{new-type :type new-group :group} (modal-group word)]
+    (assoc machine :modals
+	   (assoc (:modals machine) new-type
+		  (assoc (new-type (:modals machine)) new-group (:arg word))))))
 
 (defn get-modal-group [ word ]
   (if (:fn word)
@@ -32,10 +41,7 @@
      (map b (concat (vals (:g-modals machine))
 		    (vals (:m-modals machine)))))))
 
-(defn get-args [ word ]
-  (:keys (first (filter :keys (first (:arglists (meta (:fn word))))))))
-
-(defn update-machine-modals [ machine word ]
+(defn update-machine-modals [ word machine ]
   (let [modal-group (get-modal-group word)
 		modal-key (:key word) ]
 	(cond (= (:key word) :g)
@@ -45,12 +51,12 @@
 		  true
 		  (assoc machine :other-modals (assoc (:other-modals machine) modal-group (:code word))))))
 
-(defn word-eval [ machine word args ]
+(defn word-eval [ word machine args ]
   "Take our representation of a block and turn it into
    a keyword map that our functions in gcode use."
   (let [keyword-args (zipmap (map :key args) (map :arg args))
-		new-machine ((:fn word) machine keyword-args) ]
-	(update-machine-modals new-machine word)))
+	new-machine ((:fn word) machine keyword-args) ]
+    (update-machine-modals new-machine word)))
 
 (defn sort-block [ block ]
   "Order the block by precedence. The next code to be executed will be first."
@@ -59,7 +65,7 @@
 (defn split-args [ code remaining-block ]
   "Take a code, and the rest of the arguments and split them
    based on which arguments that particular code uses."
-  (let [args (set (map keyword (get-args code)))
+  (let [args (set (map keyword (:fn-args code)))
 	used (fn [x] (contains? args (:key x)))]
 	{:used (filter used remaining-block)
 	 :not-used (remove used remaining-block)}))

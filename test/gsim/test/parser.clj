@@ -12,7 +12,7 @@
       (is (= (type (:explicit word)) java.lang.Boolean))
       (is (= (type (:fn word)) clojure.lang.Var))
       (is (= (type (:precedence word)) java.lang.Double))
-      (is (= (type (:group (:modal word))) java.lang.Integer))
+      (is (= (type (:group (:modal word))) clojure.lang.Keyword))
       (is (= (type (:type (:modal word))) clojure.lang.Keyword)))))
 
 (deftest functions
@@ -21,7 +21,7 @@
     (let [word (parse-word "g00")
 	  modal-group (modal-group word)]
       (is (= (:type modal-group) :g)
-      (is (= (:group modal-group) 1)))))
+      (is (= (:group modal-group) :1)))))
 
   (testing "code-name"
     (is (= (code-name {:word "foo"}) "foo")))
