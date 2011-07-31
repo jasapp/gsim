@@ -49,7 +49,7 @@
 (defn add-block-fn [ word ]
   "Add a function to this word if one exists."
   (if (code-var (:word word))
-    (assoc word :fn (code-var (:word word)))
+    (->> word :word code-var (assoc word :fn))
     word))
 
 (defn add-modal-group [ word ]
