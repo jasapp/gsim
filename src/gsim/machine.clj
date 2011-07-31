@@ -18,9 +18,9 @@
 
 (defn update-modal [ word machine ]
   (let [{new-type :type new-group :group} (modal-group word)]
-    (assoc machine :modals
-	   (assoc (:modals machine) new-type
-		  (assoc (new-type (:modals machine)) new-group (:arg word))))))
+    (->> (assoc (new-type (:modals machine)) new-group (:arg word))
+	 (assoc (:modals machine) new-type)
+	 (assoc machine :modals))))
 
 (defn get-modal-group [ word ]
   (if (:fn word)
