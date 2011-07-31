@@ -23,20 +23,6 @@
 	 (assoc (:modals machine) new-type)
 	 (assoc machine :modals))))
 
-(defn get-modal-map [ words ]
-  (zipmap
-   (map (fn [w] (if (:fn w)
-		  (modal-group w)
-		  (keyword (gensym))))
-	words)
-   words))
-
-(defn get-machine-modals [ machine ]
-  (let [ b (fn [x] (parse-word (. (str/as-str x) toUpperCase) false)) ]
-    (get-modal-map
-     (map b (concat (vals (:g-modals machine))
-		    (vals (:m-modals machine)))))))
-
 (defn word-eval [ word machine args ]
   "Take our representation of a block and turn it into
    a keyword map that our functions in gcode use."
@@ -57,13 +43,9 @@
 	 :not-used (remove used remaining-block)}))
 
 (defn merge-block [ machine block ]
-  "Take a machine, a block and merge the defaults from the
-   machine with the block giving precedence to the block."
-  (vals
    ;; and special support for M7 and M8 support here, since they're in
-   ;; the same modal group and can both be enabled at the same time
-   (merge (get-machine-modals machine)
-		  (get-modal-map block))))
+  ;; the same modal group and can both be enabled at the same time
+  { } )
 
 (defn machine-eval-inside [ machine block responses ]
   (let [sorted-block (sort-block block)

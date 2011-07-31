@@ -17,6 +17,10 @@
 
 (deftest functions
 
+  (testing "fn-args"
+    (is (= (:fn-args (parse-word "g0"))
+	   (:keys (second (first (:arglists (meta (:fn (parse-word "g0"))))))))))
+
   (testing "modal-group"
     (let [word (parse-word "g00")
 	  modal-group (modal-group word)]
