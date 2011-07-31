@@ -70,8 +70,9 @@
 
 (defn add-fn-args [ word ]
   "Return the arguments that a word can possibly accept."
-  (assoc word :fn-args
-	 (:keys (first (filter :keys (first (:arglists (meta (:fn word)))))))))
+  (if (:fn word)
+    (->> word :fn meta :arglists first (filter :keys) first :keys (assoc word :fn-args))
+    word))
 
 (defn explicit? [ word ]
   "Check to see if a word is marked as explicit."

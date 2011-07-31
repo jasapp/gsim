@@ -14,7 +14,7 @@
    :modals (default-modals)})
 
 (defn modal [ modal-type group machine ]
-  (group (modal-type (:modals machine))))
+  (-> machine :modals modal-type group))
 
 (defn update-modal [ word machine ]
   (let [{new-type :type new-group :group} (modal-group word)]
@@ -49,18 +49,18 @@
 
 (defn machine-eval-inside [ machine block responses ]
   (let [sorted-block (sort-block block)
-		next-code (first sorted-block)
-		args (split-args next-code (rest sorted-block)) ]
-	(if (:fn next-code)
-	  (let [{ new-machine :machine message :message code :code}
-			(word-eval machine next-code (:used args))]
-		(if (< 0 (count (:not-used args)))
-		  (recur new-machine (:not-used args)
-				 (if (and (explicit? next-code) (or message code))
-				   (conj responses {:message message :code code})
-				   responses))
-		  {:machine new-machine :responses responses}))
-	  {:machine machine :responses responses})))
+	next-code (first sorted-block)
+	args (split-args next-code (rest sorted-block)) ]
+    (if (:fn next-code)
+      (let [{ new-machine :machine message :message code :code}
+	    (word-eval machine next-code (:used args))]
+	(if (< 0 (count (:not-used args)))
+	  (recur new-machine (:not-used args)
+		 (if (and (explicit? next-code) (or message code))
+		   (conj responses {:message message :code code})
+		   responses))
+	  {:machine new-machine :responses responses}))
+      {:machine machine :responses responses})))
 
 ;; should this recurse until the block is gone?
 (defn machine-eval [ machine block ]
