@@ -65,12 +65,12 @@
 ;; should this recurse until the block is gone?
 (defn machine-eval [ machine block ]
   (let [sorted-block (sort-block (merge-block machine block))]
-	(machine-eval-inside machine sorted-block [])))
+    (machine-eval-inside machine sorted-block [])))
 
 (defn run-machine [ machine blocks ]
   (if (not (empty? blocks))
-	(recur (machine-eval machine (first blocks)) (rest blocks))
-	machine))
+    (recur (machine-eval machine (first blocks)) (rest blocks))
+    machine))
 
 (defn run-file [ file ]
   (run-machine (new-machine) (parse-file file)))
