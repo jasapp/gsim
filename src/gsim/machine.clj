@@ -18,19 +18,15 @@
 
 (defn update-modal [ word machine ]
   (let [{new-type :type new-group :group} (modal-group word)]
-    (->> (assoc (new-type (:modals machine)) new-group (:arg word))
+    (->> (:arg word)
+	 (assoc (new-type (:modals machine)) new-group)
 	 (assoc (:modals machine) new-type)
 	 (assoc machine :modals))))
-
-(defn get-modal-group [ word ]
-  (if (:fn word)
-	(let [m (meta (:fn word))]
-	  (keyword (str/as-str (:key word) (:modal m) "-modal")))))
 
 (defn get-modal-map [ words ]
   (zipmap
    (map (fn [w] (if (:fn w)
-		  (get-modal-group w)
+		  (modal-group w)
 		  (keyword (gensym))))
 	words)
    words))
@@ -41,22 +37,12 @@
      (map b (concat (vals (:g-modals machine))
 		    (vals (:m-modals machine)))))))
 
-(defn update-machine-modals [ word machine ]
-  (let [modal-group (get-modal-group word)
-		modal-key (:key word) ]
-	(cond (= (:key word) :g)
-		  (assoc machine :g-modals (assoc (:g-modals machine) modal-group (:code word)))
-		  (= (:key word) :m)
-		  (assoc machine :m-modals (assoc (:m-modals machine) modal-group (:code word)))
-		  true
-		  (assoc machine :other-modals (assoc (:other-modals machine) modal-group (:code word))))))
-
 (defn word-eval [ word machine args ]
   "Take our representation of a block and turn it into
    a keyword map that our functions in gcode use."
   (let [keyword-args (zipmap (map :key args) (map :arg args))
 	new-machine ((:fn word) machine keyword-args) ]
-    (update-machine-modals new-machine word)))
+    (update-modal word new-machine)))
 
 (defn sort-block [ block ]
   "Order the block by precedence. The next code to be executed will be first."
