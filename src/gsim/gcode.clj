@@ -18,7 +18,7 @@
      ^{ :doc ~doc :modal ~modal :precedence ~precedence }
      ~name [ ~'m { :keys ~args } ~'e ]
      (if (and ~'e (:verbose ~'m))
-       (println ~doc))
+       (if (not (= "" ~doc)) (println ~doc) (println ~name)))
      ~@body))
 
 (def-gcode g0 1 20.0
@@ -120,8 +120,16 @@
   "Program stop"
   [ ] m)
 
-(def-gcode m3 7 100
-  ""
+(def-gcode m3 0 7
+  "Starting spindle clockwise"
+  [ ] m)
+
+(def-gcode m4 0 7.1
+  "Starting spindle couter-clockwise"
+  [ ] m)
+
+(def-gcode m5 0 7.2
+  "Stopping spindle"
   [ ] m)
 
 (def-gcode m6 6 6.0
