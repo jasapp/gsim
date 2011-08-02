@@ -38,8 +38,9 @@
 (defn modal-group [ word ]
   "Takes a *parsed* word and builds the map describing the word's mode."
   (if (:fn word)
+    (let [modal (-> word :fn meta :modal)]
     {:type (:key word)
-     :group (-> word :fn meta :modal str keyword)}))
+     :group (if modal (-> keyword str modal) 
 
 (defn add-cleaned-word [ word ]
   (assoc word :word (str (name (:key word)) (:arg word))))

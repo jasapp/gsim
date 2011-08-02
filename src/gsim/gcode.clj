@@ -13,243 +13,133 @@
    12 "coordinate system selection"
    13 "path control mode" })
 
-(defn gcode-execution-string [ code args ]
-  "Print a pretty looking string"
-  (.toUpperCase (name code)))
+(defmacro def-gcode [ name modal precedence doc args & body ]
+  `(defn 
+     ^{ :doc ~doc :modal ~modal :precedence ~precedence }
+     ~name [ ~'m { :keys ~args } ~'e ]
+     (if (and ~'e (:verbose ~'m))
+       (println ~doc))
+     ~@body))
 
-;; (def-code name modal args doc-string function)
-
-;; (def-code g00 1
-;;   "Rapid positioning"
-;;   [ ]
-;;   ;; draw a line here
-;;   nil)
-
-;; wrap functions like this?
-;; ((let [x 1 ] (fn [] x)))
-
-;; what about getting parameters from the line and pushing the values into a map, and then
-;; binding the map to values some how?
-;; (defn foo [bar {:keys [baz quux]}] 
-;;   (list bar baz quux))
-
-;; (foo 1 {:quux 3 :baz 2}) ; => (1 2 3)
-
-(defn
-  ^{:doc "Rapid positioning"
-	:modal 1
-	:precedence 20.0
-	}
-  g0 [ m { :keys [ a b c x y z ] } explicit ]
-  (if (and explicit (or a b c x y z))
-    (println "Rapid positioning:" a b c x y z))
+(def-gcode g0 1 20.0
+  "Rapid positioning" 
+  [ a b c x y z ]
   m)
 
-(defn
-  ^{:doc "Linear interpolation"
-	:modal 1
-	:precedence 20.1}
-  g1 [ m { :keys [ f x y z ] } explicit ]
-  (if (and (:verbose m) (or f x y z))
-	(println "Linear interpolation:" f x y z))
+(def-gcode g1 1 20.1 
+  "Linear interpolation" 
+  [ f x y z ]
   m)
 
-(defn
-  ^{:doc "Circular interpolation, clockwise"
-	:modal 1
-	:precedence 20.2}
-  g2 [ m { :keys [ ] } explicit]
-  (print "Circular interpolation\n")
+(def-gcode g2 1 20.2
+  "Circular interpolation, clockwise" 
+  [ ] m)
+
+(def-gcode g3 1 20.3
+  "Circular interpolation, counterclockwise"
+  [ ] m)
+
+(def-gcode g4 0 10.0
+  "Pause"
+  [ p ]
+  (Thread/sleep (* 1000 p))
+  (throw (Exception. "G4 requires a value for P"))
   m)
 
-(defn
-  ^{:doc "Circular interpolation, counterclockwise"
-	:modal 1
-	:precedence 20.3}
-  g3 [ m { } explicit ]
+(def-gcode g10 0 19.3
+  "Coordinate system origin setting"
+  [ l p x y z ]
   m)
 
-(defn
-  ^{:doc "Pause"
-	:precedence 10.0 }
-  g4 [ m { :keys [p] } explicit ]
-  (if p
-	(Thread/sleep (* 1000 p))
-	(throw (Exception. "G4 requires a value for P")))
+(def-gcode g17 2 11.1
+  "XY-plane selection"
+  [ ] m)
+
+(def-gcode g18 2 11.2
+  "XZ-plane selection"
+  [ ] m)
+
+(def-gcode g19 2 11.3
+  "YZ-plane selection"
+  [ ] m)
+
+(def-gcode g20 6 12.1
+  "Inch system selection"
+  [ ] m)
+
+(def-gcode g40 7 13.1
+  "Cutter radius compensation off"
+  [ ] m)
+
+(def-gcode g43 8 14.1
+  "Cutter length compensation on"
+  [ h ] m)
+
+(def-gcode g54 12 15.1
+  "Select coordinate system 1"
+  [ ] m)
+
+(def-gcode g61 13 99
+  "Setting exact path mode"
+  [ ] m)
+
+(def-gcode g80 1 20.5
+  "Cancel modal motion"
+  [ ] m)
+
+(def-gcode g82 1 20.7
+  "Drilling cycle"
+  [ x y z r ] 
   m)
 
-(defn
-  ^{:doc "Coordinate system origin setting"
-	:precedence 19.3}
-  g10 [ m { l :l p :p x :x y :y z :z } explicit ]
-  m)
+(def-gcode g90 3 17.1
+  "Set absolute distance mode"
+  [ ] m)
 
-(defn
-  ^{:doc "XY-plane selection"
-	:precedence 11.1
-	:modal 2}
-  g17
-  [ m { } explicit ]
-  m)
+(def-gcode g93 5 2.1
+  "Start inverse time mode"
+  [ ] m)
 
-(defn
-  ^{:doc "XZ-plane selection"
-    :precedence 11.2
-    :modal 2 }
-  g18
-  [ m { } explicit ] m)
+(def-gcode g94 5 2.2
+  "Start units per minute mode"
+  [ ] m)
 
-(defn
-  ^{:doc "YZ-plane selection"
-    :precedence 11.3
-    :modal 2 }
-  g19
-  [ m { } explicit ] m )
+(def-gcode g98 10 18.1
+  "Set canned cycle return level"
+  [ ] m)
 
-(defn
-  ^{:doc "Inch system selection"
-	:precedence 12.1
-	:modal 6 }
-  g20 [ m { } explicit ]
-  ;; is there an easy way to do this from inside the function?
-  (if (not (= (:g6-modal (:g-modals m)) :g20))
-    (println "Switching to the inch selection system."))
-  m
-   )
+(def-gcode g99 10 18.2
+  "Set canned cycle return level"
+  [ ] m)
 
-(defn
-  ^{:doc "Cutter radius compensation off"
-    :precedence 13.1
-    :modal 7 }
-  g40 [ m { } explicit ]
-  m)
+(def-gcode t1 0 5
+  "Select tool"
+  [ ] m)
 
-(defn
-  ^{:doc "Cutter length compensation on"
-	:precedence 14.1
-	:modal 8 }
-  g43 [ m { :keys [ h ] } explicit ]
-  m)
+(def-gcode m0 4 21.0
+  "Program stop"
+  [ ] m)
 
-(defn
-  ^{:doc "Select coordinate system 1"
-	:precedence 15.1
-	:modal 12 }
-  g54 [ m { } explicit ]
-  m)
+(def-gcode m3 7 100
+  ""
+  [ ] m)
 
-(defn
-  ^{:doc "Setting exact path mode"
-	:precedence 99
-	:modal 13 }
-  g61 [ m { } explicit ]
-  m)
+(def-gcode m6 6 6.0
+  "Tool change"
+  [ ] m)
 
-(defn
-  ^{:doc "Cancel modal motion"
-	:precedence 20.5
-	:modal 1}
-  g80 [ m { } explicit ]
-  m)
+(def-gcode m7 8 8.1
+  "Coolant..."
+  [ ] m)
 
-(defn
-  ^{:doc "Drilling cycle"
-	:precedence 20.7
-	:modal 1 }
-  g82 [ m { :keys [ x y r z ] } explicit ]
-  (if (and (:verbose m) (or x y r z))
-    (println "Drilling cycle:" x y r z))
-  m)
+(def-gcode m8 8 100
+  "Coolant..."
+  [ ] m)
 
-(defn
-  ^{:doc "Set absolute distance mode"
-    :precedence 17.1
-    :modal 3 }
-  g90 [ m { } explicit ]
-  m)
+(def-gcode m48 9 9.1
+  ""
+  [ ] m)
 
-(defn
-  ^{:doc "Start inverse time mode"
-	:precedence 2.1
-	:modal 5 }
-  g93 [ m { } explicit ]
-  m)
-
-(defn
-  ^{:doc "Start units per minute mode"
-	:precedence 2.2
-	:modal 5 }
-  g94 [ m { } explicit ]
-  m)
-
-(defn
-  ^{:doc "Set canned cycle return level"
-	:precedence 18.1
-	:modal 10 }
-  g98 [ m { } explicit ]
-  m)
-
-(defn
-  ^{:doc "Set canned cycle return level"
-	:precedence 18.2
-	:modal 10 }
-  g99 [ m { } explicit ]
-  m)
-
-(defn
-  ^{:doc "Select tool"
-	:precedence 5 }
-  t1 [ m { } explicit ]
-  (if (not (:t-modal (:other-modals m)))
-    (println "Select tool: 1"))
-  m)
-
-(defn
-  ^{:doc "Program stop"
-	:precedence 21.0
-	:modal 4 }
-  m0 [ m { } explicit ]
-  m )
-
-(defn
-  ^{:doc ""
-	:precedence 100
-	:modal 7 }
-  m3 [ m { } explicit ]
-  m)
-
-(defn
-  ^{:doc "Tool change"
-	:precedence 6.0
-	:modal 6 }
-  m6 [ m { :keys [ ] } explicit ]
-  m)
-
-(defn
-  ^{:doc "Coolant ..."
-	:precedence 8.1
-	:modal 8 }
-  m7 [ m { } explicit ]
-  m)
-
-(defn
-  ^{:doc "Coolant..."
-	:precedence 100
-	:modal 8 }
-  m8 [ m { } explicit ]
-  m)
-
-(defn
-  ^{:doc ""
-	:precedence 9.1
-	:modal 9 }
-  m48 [ m { } explicit ]
-  m)
-
-(defn
-  ^{:doc ""
-	:precedence 9.2
-	:modal 9 }
-  m49 [ m { } explicit ]
-  m)
-
+(def-gcode m49 9 9.2
+  ""
+  [ ] m)
