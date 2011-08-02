@@ -40,18 +40,16 @@
 	:modal 1
 	:precedence 20.0
 	}
-  g0 [ m { :keys [ a b c x y z ] } ]
-  (if (and (:verbose m) (or a b c x y z))
-	(println "Rapid positioning:" a b c x y z))
-  {:machine m
-   :message (str "Rapid positioning:" (apply str (interpose " " [ a b c x y z])))}
-  )
+  g0 [ m { :keys [ a b c x y z ] } explicit ]
+  (if (and explicit (or a b c x y z))
+    (println "Rapid positioning:" a b c x y z))
+  m)
 
 (defn
   ^{:doc "Linear interpolation"
 	:modal 1
 	:precedence 20.1}
-  g1 [ m { :keys [ f x y z ] } ]
+  g1 [ m { :keys [ f x y z ] } explicit ]
   (if (and (:verbose m) (or f x y z))
 	(println "Linear interpolation:" f x y z))
   m)
@@ -60,7 +58,7 @@
   ^{:doc "Circular interpolation, clockwise"
 	:modal 1
 	:precedence 20.2}
-  g2 [ m { :keys [ ] } ]
+  g2 [ m { :keys [ ] } explicit]
   (print "Circular interpolation\n")
   m)
 
@@ -68,13 +66,13 @@
   ^{:doc "Circular interpolation, counterclockwise"
 	:modal 1
 	:precedence 20.3}
-  g3 [ m { } ]
+  g3 [ m { } explicit ]
   m)
 
 (defn
   ^{:doc "Pause"
 	:precedence 10.0 }
-  g4 [ m { :keys [p] } ]
+  g4 [ m { :keys [p] } explicit ]
   (if p
 	(Thread/sleep (* 1000 p))
 	(throw (Exception. "G4 requires a value for P")))
@@ -83,7 +81,7 @@
 (defn
   ^{:doc "Coordinate system origin setting"
 	:precedence 19.3}
-  g10 [ m { l :l p :p x :x y :y z :z } ]
+  g10 [ m { l :l p :p x :x y :y z :z } explicit ]
   m)
 
 (defn
@@ -91,181 +89,167 @@
 	:precedence 11.1
 	:modal 2}
   g17
-  [ m { } ]
-  {:machine m
-   :message "XY-plane selection"})
+  [ m { } explicit ]
+  m)
 
 (defn
   ^{:doc "XZ-plane selection"
-	:precedence 11.2
-	:modal 2 }
+    :precedence 11.2
+    :modal 2 }
   g18
-  [ m { } ] m)
+  [ m { } explicit ] m)
 
 (defn
   ^{:doc "YZ-plane selection"
-	:precedence 11.3
-	:modal 2 }
+    :precedence 11.3
+    :modal 2 }
   g19
-  [ m { } ] m )
+  [ m { } explicit ] m )
 
 (defn
   ^{:doc "Inch system selection"
 	:precedence 12.1
 	:modal 6 }
-  g20 [ m { } ]
+  g20 [ m { } explicit ]
   ;; is there an easy way to do this from inside the function?
   (if (not (= (:g6-modal (:g-modals m)) :g20))
-	(println "Switching to the inch selection system."))
-  {:machine m
-   :message "Inch system selection"}
+    (println "Switching to the inch selection system."))
+  m
    )
 
 (defn
   ^{:doc "Cutter radius compensation off"
-	:precedence 13.1
-	:modal 7 }
-  g40 [ m { } ]
-  {:machine m
-   :message "Cutter radius compensation off"})
+    :precedence 13.1
+    :modal 7 }
+  g40 [ m { } explicit ]
+  m)
 
 (defn
   ^{:doc "Cutter length compensation on"
 	:precedence 14.1
 	:modal 8 }
-  g43 [ m { :keys [ h ] } ]
-  {:machine m
-   :message "Cutter length compensation on"})
+  g43 [ m { :keys [ h ] } explicit ]
+  m)
 
 (defn
   ^{:doc "Select coordinate system 1"
 	:precedence 15.1
 	:modal 12 }
-  g54 [ m { } ]
-  {:machine m
-   :message "Select coordinate system 1"})
+  g54 [ m { } explicit ]
+  m)
 
 (defn
   ^{:doc "Setting exact path mode"
 	:precedence 99
 	:modal 13 }
-  g61 [ m { } ]
+  g61 [ m { } explicit ]
   m)
 
 (defn
   ^{:doc "Cancel modal motion"
 	:precedence 20.5
 	:modal 1}
-  g80 [ m { } ]
-  {:machine m
-   :message "Cancel modal motion"})
+  g80 [ m { } explicit ]
+  m)
 
 (defn
   ^{:doc "Drilling cycle"
 	:precedence 20.7
 	:modal 1 }
-  g82 [ m { :keys [ x y r z ] } ]
+  g82 [ m { :keys [ x y r z ] } explicit ]
   (if (and (:verbose m) (or x y r z))
-	(println "Drilling cycle:" x y r z))
-  {:machine m
-   :message (str "Drilling cycle:" x y r z)})
+    (println "Drilling cycle:" x y r z))
+  m)
 
 (defn
   ^{:doc "Set absolute distance mode"
-	:precedence 17.1
-	:modal 3 }
-  g90 [ m { } ]
-  {:machine m
-   :message "Set absolute distance mode"})
+    :precedence 17.1
+    :modal 3 }
+  g90 [ m { } explicit ]
+  m)
 
 (defn
   ^{:doc "Start inverse time mode"
 	:precedence 2.1
 	:modal 5 }
-  g93 [ m { } ]
+  g93 [ m { } explicit ]
   m)
 
 (defn
   ^{:doc "Start units per minute mode"
 	:precedence 2.2
 	:modal 5 }
-  g94 [ m { } ]
+  g94 [ m { } explicit ]
   m)
 
 (defn
   ^{:doc "Set canned cycle return level"
 	:precedence 18.1
 	:modal 10 }
-  g98 [ m { } ]
-  {:machine m
-   :message "Set canned cycle return level"})
+  g98 [ m { } explicit ]
+  m)
 
 (defn
   ^{:doc "Set canned cycle return level"
 	:precedence 18.2
 	:modal 10 }
-  g99 [ m { } ]
-  {:machine m
-   :message "Set canned cycle return level"})
+  g99 [ m { } explicit ]
+  m)
 
 (defn
   ^{:doc "Select tool"
 	:precedence 5 }
-  t1 [ m { } ]
+  t1 [ m { } explicit ]
   (if (not (:t-modal (:other-modals m)))
-	(println "Select tool: 1"))
-  {:machine m
-   :message "Select tool: 1"})
+    (println "Select tool: 1"))
+  m)
 
 (defn
   ^{:doc "Program stop"
 	:precedence 21.0
 	:modal 4 }
-  m0 [ m { } ]
+  m0 [ m { } explicit ]
   m )
 
 (defn
   ^{:doc ""
 	:precedence 100
 	:modal 7 }
-  m3 [ m { } ]
-  {:machine m
-   :message "Something to do with tools."})
+  m3 [ m { } explicit ]
+  m)
 
 (defn
   ^{:doc "Tool change"
 	:precedence 6.0
 	:modal 6 }
-  m6 [ m { :keys [ ] } ]
-  {:machine m 
-   :message "Tool change"})
+  m6 [ m { :keys [ ] } explicit ]
+  m)
 
 (defn
   ^{:doc "Coolant ..."
 	:precedence 8.1
 	:modal 8 }
-  m7 [ m { } ]
+  m7 [ m { } explicit ]
   m)
 
 (defn
   ^{:doc "Coolant..."
 	:precedence 100
 	:modal 8 }
-  m8 [ m { } ]
-  {:machine m
-   :message "Coolant..."})
+  m8 [ m { } explicit ]
+  m)
 
 (defn
   ^{:doc ""
 	:precedence 9.1
 	:modal 9 }
-  m48 [ m { } ]
+  m48 [ m { } explicit ]
   m)
 
 (defn
   ^{:doc ""
 	:precedence 9.2
 	:modal 9 }
-  m49 [ m { } ]
+  m49 [ m { } explicit ]
   m)
 

@@ -63,7 +63,7 @@
   "Add precedence." 
   (if (:fn word)
     (->> word :fn meta :precedence (assoc word :precedence))
-    word))
+    (assoc word :precedence 10000.0)))
 
 (defn add-explicit [ word explicit ]
   "Mark a word as explicit."

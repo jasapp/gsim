@@ -27,7 +27,7 @@
   "Take our representation of a block and turn it into
    a keyword map that our functions in gcode use."
   (let [keyword-args (zipmap (map :key args) (map :arg args))
-	new-machine ((:fn word) machine keyword-args) ]
+	new-machine ((:fn word) machine keyword-args (:explicit word)) ]
     (update-modal word new-machine)))
 
 (defn sort-block [ block ]
@@ -42,30 +42,28 @@
 	{:used (filter used remaining-block)
 	 :not-used (remove used remaining-block)}))
 
-(defn merge-block [ machine block ]
-   ;; and special support for M7 and M8 support here, since they're in
-  ;; the same modal group and can both be enabled at the same time
-  { } )
+(defn machine-modal-block [ machine ]
+  (let [f (fn [k]
+	    (map (fn [x] (str (name k) x))
+		 (vals (k (:modals machine)))))]
+    (map (fn [w] (parse-word w false)) (concat (f :g) (f :m)))))
 
-(defn machine-eval-inside [ machine block responses ]
+(defn machine-eval-inside [ machine block ]
   (let [sorted-block (sort-block block)
 	next-code (first sorted-block)
 	args (split-args next-code (rest sorted-block)) ]
     (if (:fn next-code)
-      (let [{ new-machine :machine message :message code :code}
-	    (word-eval machine next-code (:used args))]
-	(if (< 0 (count (:not-used args)))
-	  (recur new-machine (:not-used args)
-		 (if (and (explicit? next-code) (or message code))
-		   (conj responses {:message message :code code})
-		   responses))
-	  {:machine new-machine :responses responses}))
-      {:machine machine :responses responses})))
+      (let [ new-machine (word-eval next-code machine (:used args)) ]
+	(recur new-machine (:not-used args)))
+      {:machine machine :remaining-args (:not-used args)})))
 
-;; should this recurse until the block is gone?
 (defn machine-eval [ machine block ]
-  (let [sorted-block (sort-block (merge-block machine block))]
-    (machine-eval-inside machine sorted-block [])))
+  (let [ { after-explicit :machine args :remaining-args }
+	 (machine-eval-inside machine block)
+	 { after-implicit :machine leftovers :remaining-args}
+	 (machine-eval-inside after-explicit
+			      (concat args (machine-modal-block after-explicit)))]
+    after-implicit))
 
 (defn run-machine [ machine blocks ]
   (if (not (empty? blocks))
