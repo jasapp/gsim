@@ -1,5 +1,2 @@
-pom.xml
-*~
-*jar
-lib
-classes
+out/
+cljs-devmode-example.js
