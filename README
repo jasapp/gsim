@@ -1,6 +1,5 @@
 # gsim
 
-This is a web based cnc simulator. It runs ngc. It's meant to ease the pain of the horrible development
-process that is writing ngc.  
+This is a web based cnc simulator. It runs ngc. It's meant to ease the pain of the horrible development process that is writing ngc.  
 
 Copyright (C) 2010 Jeff Sapp
