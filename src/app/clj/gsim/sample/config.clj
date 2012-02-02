@@ -24,7 +24,6 @@
           :reload-clj ["/gsim/host_page"
                        "/gsim/reload"
                        "/gsim/templates"
-                       "/gsim/sample/api"
                        "/gsim/sample/config"
                        "/gsim/sample/dev_server"]
           :prod-transform production-transform})

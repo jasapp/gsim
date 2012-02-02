@@ -79,7 +79,7 @@
             :else response))))
 
 (def ^:private app (-> app-routes
-                       (reload/watch-cljs config)
+		       (reload/watch-cljs config)
                        (wrap-file "public")
                        rewrite-design-uris
                        wrap-file-info
@@ -88,7 +88,7 @@
                        wrap-params
                        set-active-menu
                        wrap-stacktrace
-                       (reload/reload-clj (:reload-clj config))))
+		       (reload/reload-clj (:reload-clj config))))
 
 (defn run-server
   "Start the development server on port 8080."

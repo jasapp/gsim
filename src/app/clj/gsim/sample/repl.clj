@@ -7,13 +7,13 @@
             [gsim.sample.dev-server :as dev]
             [clojure.java.browse :as browse]))
 
-;; (defn go
-;;   "Start a browser-connected REPL and launch a browser to talk to it."
-;;   []
-;;   (dev/run-server)
-;;   (future (Thread/sleep 3000)
-;;           (browse/browse-url "http://localhost:8080/development"))
-;;   (tools/cljs-repl))
+(defn go
+  "Start a browser-connected REPL and launch a browser to talk to it."
+  []
+  (dev/run-server)
+  (future (Thread/sleep 3000)
+          (browse/browse-url "http://localhost:8080/development"))
+  (tools/cljs-repl))
 
 ;; (defn dev-server
 ;;   "Start the development server and open the host application in the
