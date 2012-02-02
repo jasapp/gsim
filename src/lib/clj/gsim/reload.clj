@@ -1,4 +1,4 @@
-(ns one.reload
+(ns gsim.reload
   "Contains functions which implement Clojure and ClojureScript code
   reloading.
 
@@ -8,7 +8,7 @@
 
   Recompilation only happens on page reloads."
   (:use [cljs.closure :only (build)]
-        [one.config])
+        [gsim.config])
   (:require [clojure.java.io :as io]))
 
 (defonce ^:private

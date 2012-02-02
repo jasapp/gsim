@@ -1,6 +1,6 @@
 (ns script.serve
   "Provides a -main function which will start the production server."
-  (:require [one.sample.prod-server :as prod]))
+  (:require [gsim.sample.prod-server :as prod]))
 
 (defn -main
   "Start the production server which serves the content from

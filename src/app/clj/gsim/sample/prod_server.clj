@@ -6,8 +6,10 @@
         [ring.middleware.file-info :only (wrap-file-info)]
         [ring.middleware.params :only (wrap-params)]
         [ring.util.response :only (file-response)]
-        [compojure.core :only (defroutes ANY)]
-        [gsim.sample.api :only (remote-routes)]))
+        [compojure.core :only (defroutes ANY)]))
+
+;; now there is no backend API?
+
 
 (def ^:private root "out/public")
 
@@ -16,7 +18,6 @@
 (.mkdirs (java.io.File. "out/public"))
 
 (defroutes app-routes
-  remote-routes
   (-> (ANY "*" request (file-response "404.html" {:root root}))
       (wrap-file root)
       wrap-file-info))

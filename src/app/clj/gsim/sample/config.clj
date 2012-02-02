@@ -14,7 +14,7 @@
           :js "public/javascripts"
           :dev-js-file-name "main.js"
           :prod-js-file-name "mainp.js"
-          :dev-js ["goog.require('one.sample.core');"
+          :dev-js ["goog.require('gsim.sample.core');"
                    "goog.require('gsim.sample.model');"
                    "goog.require('gsim.sample.controller');"
                    "goog.require('gsim.sample.history');"

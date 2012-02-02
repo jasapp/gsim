@@ -2,8 +2,8 @@
   "Contains a -main function which builds the production artifacts for
   the project."
   (:require [clojure.java.io :as io]
-            [one.tools :as tools]
-            [one.sample.config :as config]))
+            [gsim.tools :as tools]
+            [gsim.sample.config :as config]))
 
 (defn -main
   "Compile ClojureScript sources and output them as well as all static

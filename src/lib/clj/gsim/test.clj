@@ -1,4 +1,4 @@
-(ns one.test
+(ns gsim.test
   "Support for evaluating ClojureScript code from Clojure tests."
   (:refer-clojure :exclude [load-file])
   (:use [cljs.compiler :only (namespaces)]
@@ -52,7 +52,7 @@
 
 (defmacro cljs-wait-for
   "Expands to a call to `cljs-wait-for*` using `*eval-env*` as the
-  evaluation environment and a timeout of roughly one minute."
+  evaluation environment and a timeout of roughly gsim minute."
   [pred ns form]
   `(cljs-wait-for* *eval-env* ~pred (quote ~ns) (quote ~form) 60000))
 

@@ -13,7 +13,6 @@
         [cljs.repl.browser :only (repl-env)]
         [gsim.templates :only (load-html apply-templates render)]
         [gsim.host-page :only (application-host)]
-        [gsim.sample.api :only (remote-routes)]
         [gsim.sample.config])
   (:require [net.cgrand.enlive-html :as html]
             [gsim.reload :as reload])
@@ -28,7 +27,6 @@
    :body (application-host config (environment (:uri request)))})
 
 (defroutes app-routes
-  remote-routes
   (GET "/development" request (make-host-page request))
   (GET "/production" request (make-host-page request) )
   (GET "/design*" {{file :*} :route-params}
