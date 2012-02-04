@@ -22,6 +22,7 @@
   (if (= uri "/development") :development :production))
 
 (defn- make-host-page [request]
+  (println request)
   {:status 200
    :headers {"Content-Type" "text/html; charset=utf-8"}
    :body (application-host config (environment (:uri request)))})
@@ -79,16 +80,17 @@
             :else response))))
 
 (def ^:private app (-> app-routes
-		       (reload/watch-cljs config)
-                       (wrap-file "public")
-                       rewrite-design-uris
-                       wrap-file-info
-                       apply-templates
-                       js-encoding
-                       wrap-params
-                       set-active-menu
-                       wrap-stacktrace
-		       (reload/reload-clj (:reload-clj config))))
+;;		       (reload/watch-cljs config)
+;;                       (wrap-file "public")
+;;                       rewrite-design-uris
+;;                       wrap-file-info
+;;                       apply-templates
+;;                       js-encoding
+;;                       wrap-params
+;;                       set-active-menu
+;;                       wrap-stacktrace
+		       ;;		       (reload/reload-clj (:reload-clj config))
+		       ))
 
 (defn run-server
   "Start the development server on port 8080."
