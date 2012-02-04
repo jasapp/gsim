@@ -15,22 +15,22 @@
           (browse/browse-url "http://localhost:8080/development"))
   (tools/cljs-repl))
 
-;; (defn dev-server
-;;   "Start the development server and open the host application in the
-;;   default browser."
-;;   []
-;;   (dev/run-server)
-;;   (future (Thread/sleep 3000)
-;;           (browse/browse-url "http://localhost:8080")))
+(defn dev-server
+  "Start the development server and open the host application in the
+  default browser."
+  []
+  (dev/run-server)
+  (future (Thread/sleep 3000)
+          (browse/browse-url "http://localhost:8080")))
 
-;; ;; This is a convenience function so that people can start a CLJS REPL
-;; ;; without having to type in (tools/cljs-repl)
-;; (defn cljs-repl
-;;   "Start a ClojureScript REPL."
-;;   []
-;;   (tools/cljs-repl))
+;; This is a convenience function so that people can start a CLJS REPL
+;; without having to type in (tools/cljs-repl)
+(defn cljs-repl
+  "Start a ClojureScript REPL."
+  []
+  (tools/cljs-repl))
 
-;; (println)
-;; (println "Type (go) to launch the development server and setup a browser-connected REPL.")
-;; (println "Type (dev-server) to launch only the development server.")
-;; (println)
+(println)
+(println "Type (go) to launch the development server and setup a browser-connected REPL.")
+(println "Type (dev-server) to launch only the development server.")
+(println)
