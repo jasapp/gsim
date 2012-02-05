@@ -88,7 +88,6 @@
                        js-encoding
                        wrap-params
                        set-active-menu
-                       wrap-stacktrace
 		       (reload/reload-clj (:reload-clj config))))
 
 (defn run-server
