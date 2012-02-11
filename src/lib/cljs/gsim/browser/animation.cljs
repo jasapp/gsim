@@ -1,6 +1,6 @@
 (ns ^{:doc "Provides support for basic animations. Allows effects to be
   represented as Clojure data."}
-  one.browser.animation
+  gsim.browser.animation
   (:use [gsim.color :only (color bg-color rgb IColorSource)]
         [gsim.core :only (start dispose get-style)])
   (:require [goog.style :as style]
