@@ -8,7 +8,6 @@
                  [com.google.javascript/closure-compiler "r1592"]
                  [org.clojure/google-closure-library "0.0-790"]]
   :dev-dependencies [[jline "0.9.94"]
-		     [swank-clojure "1.4.0"]
                      [marginalia "0.7.0-SNAPSHOT"]
                      [lein-marginalia "0.7.0-SNAPSHOT"]]
   :git-dependencies [["https://github.com/clojure/clojurescript.git"
