@@ -43,7 +43,6 @@
 	      (str "Both leading and trailing zeros: " num))
       (-> multipliers system number-format))))
 
-
 ;; Is this right?
 ;; (parse-dimensional-number 1 :imperial) -> .0001
 ;; This is what the book says, but not how I remember the HAAS working
