@@ -17,12 +17,10 @@
 ;;
 ;; take any kind of string and split it into words
 ;;
-(defn- tokenize [line-str]
+(defn- tokenize-block [line-str]
   (let [[gcode-str comment] (split-comment line-str)
 	tokens (remove s/blank? (s/split gcode-str #"(\D[+-]*\d*\.?\d*)"))]
-    (if comment
-      (concat tokens [comment])
-      tokens)))
+    [tokens comment]))
 
 (defn- tokenize-word [word-str]
   [(keyword (first word-str))
@@ -47,15 +45,13 @@
      :word w
      :arg (n/parse-number arg)}))
 
-;;
-;; read a file and 
-;;
-;;
-(defn parse-file [file]
-  nil)
+(defn parse-block [block-str]
+  (let [[words comment] (tokenize-block block-str)
+	parsed (map parse-word words)]
+    (if comment
+      (concat parsed [{:comment comment}])
+      parsed)))
 
-(defn parse [str]
-  nil)
-
-(defn- parse-block [block-str]
-  nil)
+(defn parse [gcode-str]
+  (let [lines (s/split gcode-str #"\r|\n|\r\n")]
+    (map parse-block lines)))
