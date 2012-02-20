@@ -20,6 +20,6 @@ goog.addDependency("../clojure/string.js", ['clojure.string'], ['cljs.core', 'go
 goog.addDependency("../clojure/browser/repl.js", ['clojure.browser.repl'], ['cljs.core', 'clojure.browser.net', 'clojure.browser.event']);
 goog.addDependency("../gsim/sample/controller.js", ['gsim.sample.controller'], ['clojure.browser.event', 'cljs.core', 'gsim.dispatch', 'cljs.reader', 'goog.uri.utils', 'gsim.browser.remote', 'gsim.sample.model']);
 goog.addDependency("../gsim/sample/core.js", ['gsim.sample.core'], ['cljs.core', 'gsim.dispatch', 'gsim.sample.view', 'clojure.browser.repl', 'goog.uri.utils']);
-goog.addDependency("../gsim/sample/parse.js", ['gsim.sample.parse'], ['cljs.core', 'gsim.sample.number', 'clojure.string']);
+goog.addDependency("../gsim/sample/parse.js", ['gsim.sample.parse'], ['cljs.core', 'goog.string', 'gsim.sample.number', 'clojure.string']);
 goog.addDependency("../gsim/sample/history.js", ['gsim.sample.history'], ['cljs.core', 'gsim.browser.history', 'gsim.dispatch']);
 goog.addDependency("../gsim/sample/logging.js", ['gsim.sample.logging'], ['cljs.core', 'gsim.dispatch', 'gsim.logging']);
