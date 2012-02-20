@@ -32,16 +32,14 @@
   "Take a number and a system, and return the appropriate multiplier."
   [num system]
   (assert (keyword? system))
-  (if (decimal? num)
-    1
-    (let [multipliers {:metric {:full .001 :no-leading .001 :no-trailing .01}
-		       :imperial {:full .0001 :no-leading .0001 :no-trailing .01}}
-	  number-format (cond (full-format? num) :full
-			      (no-leading? num) :no-leading
-			      (no-trailing? num) :no-trailing)]
-      (assert (keyword? number-format)
-	      (str "Both leading and trailing zeros: " num))
-      (-> multipliers system number-format))))
+  (let [multipliers {:metric {:full .001 :no-leading .001 :no-trailing .01}
+		     :imperial {:full .0001 :no-leading .0001 :no-trailing .01}}
+	number-format (cond (full-format? num) :full
+			    (no-leading? num) :no-leading
+			    (no-trailing? num) :no-trailing)]
+    (assert (keyword? number-format)
+	    (str "Both leading and trailing zeros: " num))
+    (-> multipliers system number-format)))
 
 ;; Is this right?
 ;; (parse-dimensional-number 1 :imperial) -> .0001
@@ -50,11 +48,13 @@
 (defn- parse-dimensional-number
   "Parse a number, taking format into account."
   [num system]
-  (let [n (js/parseInt num 10)
-        multiplier (format-multiplier num system)]
-    (assert (and (not (js/isNaN n)) multiplier)
-            (str "Not a number: " n))
-    (* n multiplier)))
+  (if (decimal? num)
+    (js/parseFloat num)
+    (let [n (js/parseInt num 10)
+	  multiplier (format-multiplier num system)]
+      (assert (and (not (js/isNaN n)) multiplier)
+	      (str "Not a number: " n))
+      (* n multiplier))))
 
 (defn parse-metric
   "Parse a metric number."

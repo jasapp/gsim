@@ -45,13 +45,14 @@
      :word w
      :arg (n/parse-number arg)}))
 
-(defn parse-block [block-str]
+(defn- parse-block [block-str]
   (let [[words comment] (tokenize-block block-str)
 	parsed (map parse-word words)]
-    (if comment
-      (concat parsed [{:comment comment}])
-      parsed)))
+    [parsed comment]))
 
 (defn parse [gcode-str]
   (let [lines (s/split gcode-str #"\r|\n|\r\n")]
     (map parse-block lines)))
+
+
+
