@@ -23,13 +23,13 @@
     [tokens comment]))
 
 (defn- tokenize-word [word-str]
-  [(keyword (first word-str))
+  [(keyword (s/lower-case (first word-str)))
    (gstr/removeAt word-str 0 1)])
 
 (defmulti parse-word
   (fn [x]
     (let [allowed-decimal #{:a :b :c :e :f :i :j :k :q :r :u :w :x :y :z}]
-      (if (contains? allowed-decimal (keyword (first x)))
+      (if (contains? allowed-decimal (keyword (s/lower-case (first x))))
 	:decimal))))
 
 (defmethod parse-word :decimal [w]
@@ -40,10 +40,11 @@
      :imperial-arg (n/parse-imperial arg)}))
 
 (defmethod parse-word :default [w]
-  (let [[address arg] (tokenize-word w)]
+  (let [[address arg] (tokenize-word w)
+	parsed-arg (n/parse-number arg)]
     {:address address
-     :word w
-     :arg (n/parse-number arg)}))
+     :word (keyword (str address parsed-arg))
+     :arg parsed-arg}))
 
 (defn- parse-block [block-str]
   (let [[words comment] (tokenize-block block-str)
@@ -53,6 +54,3 @@
 (defn parse [gcode-str]
   (let [lines (s/split gcode-str #"\r|\n|\r\n")]
     (map parse-block lines)))
-
-
-
