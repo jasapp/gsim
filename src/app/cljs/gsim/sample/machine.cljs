@@ -71,3 +71,14 @@
 (defn- block-eval [machine block]
   (let [[words comment] (p/parse-block block)]
     (block-eval-inside machine (map g/decorate words))))
+
+(defn- machine-eval-inside [machine blocks]
+  (if (empty? blocks)
+    machine
+    (recur (block-eval machine (first blocks)) (rest blocks))))
+
+(defn machine-eval
+  ([gcode-str] (machine-eval (new-machine) gcode-str))
+  ([machine gcode-str]
+     (let [blocks (p/parse gcode-str)]
+       (machine-eval-inside machine blocks))))
