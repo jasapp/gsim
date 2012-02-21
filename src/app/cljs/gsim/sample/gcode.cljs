@@ -34,6 +34,7 @@
 (defn- g0
   [m {:keys [x y z]} e]
   (println "G0" x y z)
+  (js/alert "G0 called")
   (update-modal m :g :1 0))
 (add-code! :g0 1 20.0 "Rapid positioning" [:x :y :z] g0)
 

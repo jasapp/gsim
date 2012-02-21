@@ -3,6 +3,11 @@
 	    [gsim.sample.gcode :as g]))
 
 (def b1 "N100 G1 X1.0 Z1.0 F0.0123")
+(def b2
+  "N1 G0 x6.0 z5.0
+   N2 G1 x6.2 z5.0 f0.012
+   N3 G2 x7.0 z6.0 r1.0")
+
 
 (def default-modals
   {:g { :1 0 :2 17 :3 90 :5 93 :6 20 :7 40 :8 43 :10 98 :12 54 :13 61 }
@@ -65,17 +70,24 @@
   (let [[next-words left-overs] (split-block block)]
     (if (not (empty? next-words))
       (recur (word-eval machine (first next-words) (rest next-words)) left-overs)
-      (let [modal-words (modal-blocks machine)]
-	(modal-eval machine (concat modal-words left-overs))))))
+      (if left-overs
+	(let [modal-words (modal-blocks machine)]
+	  (modal-eval machine (concat modal-words left-overs)))
+	machine))))
 
 (defn- block-eval [machine block]
-  (let [[words comment] (p/parse-block block)]
+  (let [[words comment] block]
     (block-eval-inside machine (map g/decorate words))))
 
 (defn- machine-eval-inside [machine blocks]
   (if (empty? blocks)
     machine
     (recur (block-eval machine (first blocks)) (rest blocks))))
+
+(defn line-eval
+  ([gcode-str] (line-eval (new-machine) gcode-str))
+  ([machine gcode-str]
+     (block-eval machine (p/parse-block gcode-str))))
 
 (defn machine-eval
   ([gcode-str] (machine-eval (new-machine) gcode-str))
