@@ -19,6 +19,8 @@
                    "goog.require('gsim.sample.controller');"
                    "goog.require('gsim.sample.number');"
                    "goog.require('gsim.sample.parse');"
+                   "goog.require('gsim.sample.draw');"
+                   "goog.require('gsim.sample.machine');"		   
                    "goog.require('gsim.sample.history');"
                    "goog.require('gsim.sample.logging');"
                    "gsim.sample.core.start();gsim.sample.core.repl();"]

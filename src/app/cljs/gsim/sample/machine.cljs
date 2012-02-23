@@ -1,4 +1,5 @@
 (ns gsim.sample.machine
+  (:use [gsim.sample.draw :only [reset]])
   (:require [gsim.sample.parse :as p]
 	    [gsim.sample.gcode :as g]))
 
@@ -70,7 +71,7 @@
   (let [[next-words left-overs] (split-block block)]
     (if (not (empty? next-words))
       (recur (word-eval machine (first next-words) (rest next-words)) left-overs)
-      (if left-overs
+      (if (not (empty? left-overs))
 	(let [modal-words (modal-blocks machine)]
 	  (modal-eval machine (concat modal-words left-overs)))
 	machine))))

@@ -1,4 +1,5 @@
 (ns gsim.sample.gcode
+  (:use [gsim.sample.draw :only [line line-x line-y]])
   (:use-macros [gsim.sample.gcode :only [def-gcode]]))
 
 (defn- modal-value [machine modal-type modal-group]
@@ -34,13 +35,15 @@
 (defn- g0
   [m {:keys [x y z]} e]
   (println "G0" x y z)
-  (js/alert "G0 called")
+  (line-x x)
+  (line-y z)
   (update-modal m :g :1 0))
 (add-code! :g0 1 20.0 "Rapid positioning" [:x :y :z] g0)
 
 (defn- g1
   [m {:keys [f x y z]} e]
   (println "G1" x y z f)
+  (line x z)
   (update-modal m :g :1 1))
 (add-code! :g1 1 20.1 "Linear interpolation" [:f :x :y :z] g1)
 

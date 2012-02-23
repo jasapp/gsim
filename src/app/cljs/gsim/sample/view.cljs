@@ -1,6 +1,6 @@
 (ns ^{:doc "Render the views for the application."}
   gsim.sample.view
-  (:use [domina :only (set-html! set-styles! styles by-id set-style!
+  (:use [domina :only (set-html! set-styles! styles by-id set-style! destroy-children!
                        by-class value set-value! set-text! nodes single-node)]
         [domina.xpath :only (xpath)]
         [gsim.browser.animation :only (play)])
@@ -111,13 +111,22 @@
   and renders a view based on the value of the `:state` key."
   :state)
 
+(defn initialize-views
+  [display-html]
+  (let [content (xpath "//div[@id='content']")]
+    (destroy-children! content)
+    (set-html! content display-html)))
+
 (defmethod render :init [_]
-  (fx/initialize-views (:form snippets) (:greeting snippets))
-  (add-input-event-listeners "name-input")
-  (event/listen (by-id "greet-button")
-                "click"
-                #(dispatch/fire :greeting
-                                {:name (value (by-id "name-input"))})))
+  (initialize-views (:display snippets)))
+
+;; (defmethod render :init [_]
+;;   (fx/initialize-views (:display snippets) (:greeting snippets)))
+;;  (add-input-event-listeners "name-input")
+;;  (event/listen (by-id "greet-button")
+;;                "click"
+;;                #(dispatch/fire :greeting
+;;                                {:name (value (by-id "name-input"))})))
 
 (defmethod render :form [{:keys [state error name]}]
   (fx/show-form)
