@@ -26,10 +26,10 @@
 
 (defn line [x y]
   (let [[last-x last-y] @last-point]
-    (.beginPath ctx)
+    (. ctx -beginPath)
     (.moveTo ctx last-x last-y)
     (.lineTo ctx x y)
-    (.stroke ctx)
+    (. ctx -stroke)
     (new-xy x y)))
 
 (defn line-x [x]
@@ -39,6 +39,33 @@
 (defn line-y [y]
   (let [[last-x last-y] @last-point]
     (line last-x y)))
+
+(defn arc [x2 y2 r]
+  (let [[x1 x2] @last-point]
+    nil))
+    
+  
+;; //points (x1,y1) and (x2,y2)
+;; //radius r
+;; var mx = (x1+x2)/2;
+;; var my = (y1+y2)/2;
+
+;; var leg1x = mx-x1;
+;; var leg1y = my-y1;
+;; var leg1 = Math.sqrt(leg1x*leg1x + leg1y*leg1y);
+
+;; if(leg1 > Math.abs(r))
+;; 	return; //no solution
+
+;; var leg2 = Math.sqrt(r*r - leg1*leg1);
+;; var leg2x = leg1y*leg2/leg1;
+;; var leg2y = -leg1x*leg2/leg1;
+
+;; var c1x = mx+leg2x;
+;; var c1y = my+leg2y;
+
+;; var c2x = mx-leg2x;
+;; var c2y = my-leg2y;
 
 (def canvas (by-id :tutorial))
 (def ctx (context canvas))
