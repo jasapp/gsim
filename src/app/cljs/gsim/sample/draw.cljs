@@ -43,7 +43,25 @@
 (defn arc [x2 y2 r]
   (let [[x1 x2] @last-point]
     nil))
-    
+
+
+(defn test []
+  (let [scene (js/THREE.Scene.)
+	camera (js/THREE.PerspectiveCamera. 75 (/ 800 300) 1 10000)
+	renderer (js/THREE.WebGLRenderer.)
+	cube-geo (js/THREE.CubeGeometry. 5 5 5)
+	material (js/THREE.MeshLambertMaterial. { :color 0xFF0000})
+	cube (js/THREE.Mesh. cube-geo material)
+	light (js/THREE.PointLight. 0xFFFF00)]
+    (.set (. light -position) 10 0 10)
+    (.setSize renderer 800 600)
+    (.appendChild document.body (. renderer -domElement))
+    (.set (. camera -position) -15 10 10)
+    (.lookAt camera (. scene -position))
+    (.add scene camera)
+    (.add scene cube)
+    (.add scene light)
+    (.render renderer scene camera)))
   
 ;; //points (x1,y1) and (x2,y2)
 ;; //radius r
@@ -69,3 +87,14 @@
 
 (def canvas (by-id :tutorial))
 (def ctx (context canvas))
+
+
+
+
+
+
+
+
+
+
+

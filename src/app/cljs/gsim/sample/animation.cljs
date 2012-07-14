@@ -3,6 +3,7 @@
   gsim.sample.animation
   (:use [gsim.core :only (start)]
         [gsim.browser.animation :only (bind parallel serial play play-animation)]
+	[gsim.sample.draw :only ()]
         [domina :only (by-id set-html! set-styles! destroy-children! append! single-node)]
         [domina.xpath :only (xpath)])
   (:require [goog.dom.forms :as gforms]
@@ -22,15 +23,15 @@
   to reset the UI."
   [form-html greeting-html]
   (let [content (xpath "//div[@id='content']")]
-    (destroy-children! content)
-    (set-html! content form-html)
-    (append! content greeting-html)
-    ;; Required for IE8 to work correctly
-    (style/setOpacity (single-node (xpath label)) 1)
-    (set-styles! (xpath cloud) {:opacity "0" :display "none" :margin-top "-500px"})
-    (set-styles! (by-id "greet-button") {:opacity "0.2" :disabled true})
-    (play form form-in {:after #(.focus (by-id "name-input") ())})
-  ))
+;;     (destroy-children! content)
+;;     (set-html! content form-html)
+;;     (append! content greeting-html)
+;;     ;; Required for IE8 to work correctly
+;;     (style/setOpacity (single-node (xpath label)) 1)
+;;     (set-styles! (xpath cloud) {:opacity "0" :display "none" :margin-top "-500px"})
+;;     (set-styles! (by-id "greet-button") {:opacity "0.2" :disabled true})
+;;     (play form form-in {:after #(.focus (by-id "name-input") ())})
+    ))
 
 (comment ;; Try it
 
