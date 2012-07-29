@@ -45,7 +45,7 @@
       {"unit" ["phantomjs"
                "phantom/unit-test.js"
                "resources/private/html/unit-test.html"]}
-    :crossovers [example.crossover]
+    :crossovers [gsim.crossover]
     :crossover-jar true
     :builds {
       ; This build has the lowest level of optimizations, so it is
