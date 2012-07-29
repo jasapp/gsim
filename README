@@ -1,4 +1,18 @@
 # gsim
-This is a web based cnc simulator. It runs ngc. It's meant to ease the pain of the horrible development process that is writing ngc.  
+
+Stuff to do next:
+1. Move everything to lein-cljsbuild
+2. Do the page layout in view.clj or whatever
+3. Finish the line drawing functions
+4. Hook up evaluation stuff to codemirror 
+
+Stuff to think about:
+- Testing stuff. Soon. 
+- Storing files
+- User accounts
+- Uploading new files
+- Managing files
+- Maybe using git?
+- Real time evaluation for code
 
 Copyright (C) 2010 Jeff Sapp
