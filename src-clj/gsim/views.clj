@@ -14,13 +14,15 @@
 (defn draw-page []
   (html5
    [:head
-    [:title "fyyff!"]]
-   [:body
+    [:title "code!"]
+    [:link {:rel "stylesheet" :href "/css/codemirror.css"}]
     (include-js "/js/codemirror.js")
-    [:link {:rel "stylesheet" :href "/css/xq-dark.css"}]
     (include-js "/js/clojure.js")
-    (include-js "/js/draw-init.js")
-    (include-js "/js/Three.js")]))
+    (include-js "/js/Three.js")]
+   [:body
+    [:form
+     [:textarea {:name "code" :id "code"}]]
+    (include-js "/js/draw-init.js")]))
 
 (defn index-page []
   (html5

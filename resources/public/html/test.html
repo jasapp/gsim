@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Draw!</title>
+
+    <link rel="stylesheet" href="/css/codemirror.css">
+    <script src="/js/codemirror.js"></script>
+    <script src="/js/clojure.js"></script>
+
+    <style type="text/css">
+      .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
+      .activeline {background: #e8f2ff !important;}
+    </style>
+  </head>
+
+  <body>
+
+    <form>
+      <textarea name ="code" id="code">
+      </textarea>
+    </form>
+
+  <script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    lineNumbers: true,
+    lineWrapping: true,
+    onCursorActivity: function() {
+    editor.setLineClass(hlLine, null, null);
+    hlLine = editor.setLineClass(editor.getCursor().line, null, "activeline");
+    }
+    });
+    var hlLine = editor.setLineClass(0, "activeline");
+  </script>
+
+  </body>
+</html>
+
+

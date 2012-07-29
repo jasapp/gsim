@@ -15,6 +15,12 @@ Stuff to think about:
 - Maybe using git?
 - Real time evaluation for code
 
+Codemirror specific stuff: 
+- Tab completion?
+- Show remaining possible arguments for existing commands 
+- Highlight bad code
+- line evaluation
+
 Done:
 1. Move everything to lein-cljsbuild
 
