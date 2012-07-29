@@ -1,7 +1,6 @@
 # gsim
 
 Stuff to do next:
-1. Move everything to lein-cljsbuild
 2. Do the page layout in view.clj or whatever
 3. Finish the line drawing functions
 4. Hook up evaluation stuff to codemirror 
@@ -14,5 +13,8 @@ Stuff to think about:
 - Managing files
 - Maybe using git?
 - Real time evaluation for code
+
+Done:
+1. Move everything to lein-cljsbuild
 
 Copyright (C) 2010 Jeff Sapp
