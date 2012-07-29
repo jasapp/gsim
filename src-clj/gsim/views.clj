@@ -11,6 +11,17 @@
     (include-js path)
     (javascript-tag init)))
 
+(defn draw-page []
+  (html5
+   [:head
+    [:title "fyyff!"]]
+   [:body
+    (include-js "/js/codemirror.js")
+    [:link {:rel "stylesheet" :href "/css/xq-dark.css"}]
+    (include-js "/js/clojure.js")
+    (include-js "/js/draw-init.js")
+    (include-js "/js/Three.js")]))
+
 (defn index-page []
   (html5
     [:head

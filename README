@@ -4,6 +4,7 @@ Stuff to do next:
 2. Do the page layout in view.clj or whatever
 3. Finish the line drawing functions
 4. Hook up evaluation stuff to codemirror 
+5. Codemirror mode for ngc
 
 Stuff to think about:
 - Testing stuff. Soon. 
