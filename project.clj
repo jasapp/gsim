@@ -1,26 +1,74 @@
-(defproject gsim "1.0.0-SNAPSHOT"
-  :description "A web based gcode simulator"
+(defproject gsim "0.1.0"
+  :description "An NGC web simulator"
+  :source-path "src-clj"
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [ring "1.0.0-RC1"]
-                 [compojure "0.6.4"]
-                 [enlive "1.0.0"]
-                 [org.mozilla/rhino "1.7R3"]
-                 [com.google.javascript/closure-compiler "r1592"]
-                 [org.clojure/google-closure-library "0.0-790"]]
-  :dev-dependencies [[jline "0.9.94"]
-                     [marginalia "0.7.0-SNAPSHOT"]
-                     [lein-marginalia "0.7.0-SNAPSHOT"]]
-  :git-dependencies [["https://github.com/clojure/clojurescript.git"
-                      "5c8e1d4ece4f660fdd5b62dc5861c8dc76b7b27c"]
-                     ["https://github.com/levand/domina.git"
- 		      "a328080ca4a754e808454f589caae90fac951d10"]]
-  :repl-init gsim.sample.repl
-  :source-path "src/app/clj"
-  :extra-classpath-dirs [".lein-git-deps/clojurescript/src/clj"
-                         ".lein-git-deps/clojurescript/src/cljs"
-                         ".lein-git-deps/domina/src/cljs"
-                         "src/app/cljs"
-                         "src/app/cljs-macros"
-                         "src/lib/clj"
-                         "src/lib/cljs"
-                         "templates"])
+                 [compojure "1.0.4"]
+                 [hiccup "1.0.0"]]
+  :dev-dependencies [[lein-ring "0.7.0"]
+                     [jline "0.9.94"]]
+  :plugins [[lein-cljsbuild "0.2.4"]]
+  ; Enable the lein hooks for: clean, compile, test, and jar.
+  :hooks [leiningen.cljsbuild]
+  :cljsbuild {
+    :repl-listen-port 9000
+    :repl-launch-commands
+      ; Launch command for connecting the page of choice to the REPL.
+      ; Only works if the page at URL automatically connects to the REPL,
+      ; like http://localhost:3000/repl-demo does.
+      ;     $ lein trampoline cljsbuild repl-launch firefox <URL>
+      {"chrome" ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+                  :stdout ".repl-chrome-out"
+                  :stderr ".repl-chrome-err"]
+      ; Launch command for interacting with your ClojureScript at a REPL,
+      ; without browsing to the app (a static HTML file is used).
+      ;     $ lein trampoline cljsbuild repl-launch firefox-naked
+       "firefox-naked" ["firefox"
+                        "resources/private/html/naked.html"
+                        :stdout ".repl-firefox-naked-out"
+                        :stderr ".repl-firefox-naked-err"]
+      ; This is similar to "firefox" except it uses PhantomJS.
+      ;     $ lein trampoline cljsbuild repl-launch phantom <URL>
+       "phantom" ["phantomjs"
+                  "phantom/repl.js"
+                  :stdout ".repl-phantom-out"
+                  :stderr ".repl-phantom-err"]
+      ; This is similar to "firefox-naked" except it uses PhantomJS.
+      ;     $ lein trampoline cljsbuild repl-launch phantom-naked
+       "phantom-naked" ["phantomjs"
+                        "phantom/repl.js"
+                        "resources/private/html/naked.html"
+                        :stdout ".repl-phantom-naked-out"
+                        :stderr ".repl-phantom-naked-err"]}
+    :test-commands
+      ; Test command for running the unit tests in "test-cljs" (see below).
+      ;     $ lein cljsbuild test
+      {"unit" ["phantomjs"
+               "phantom/unit-test.js"
+               "resources/private/html/unit-test.html"]}
+    :crossovers [example.crossover]
+    :crossover-jar true
+    :builds {
+      ; This build has the lowest level of optimizations, so it is
+      ; useful when debugging the app.
+      :dev
+      {:source-path "src-cljs"
+       :jar true
+       :compiler {:output-to "resources/public/js/main-debug.js"
+                  :optimizations :whitespace
+                  :pretty-print true}}
+      ; This build has the highest level of optimizations, so it is
+      ; efficient when running the app in production.
+      :prod
+      {:source-path "src-cljs"
+       :compiler {:output-to "resources/public/js/main.js"
+                  :optimizations :advanced
+                  :pretty-print false}}
+      ; This build is for the ClojureScript unit tests that will
+      ; be run via PhantomJS.  See the phantom/unit-test.js file
+      ; for details on how it's run.
+      :test
+      {:source-path "test-cljs"
+       :compiler {:output-to "resources/private/js/unit-test.js"
+                  :optimizations :whitespace
+                  :pretty-print true}}}}
+  :ring {:handler gsim.routes/app})
