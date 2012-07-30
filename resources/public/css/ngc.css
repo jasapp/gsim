@@ -25,6 +25,8 @@ html, body, img { height: 95%; }
 	left: 0;
 	border: 1px solid black; }
 
+.code { height: 100% } 
+
 #editor { position: absolute;
 	  top: .5em;
 	  right: .5em;
@@ -36,10 +38,10 @@ html, body, img { height: 95%; }
 
 #canvas { position: absolute;
 	  border: 1px solid black;
+	  right: 24em;
 	  top: .5em;
 	  left: .5em;
 	  bottom: .5em;
-	  width: 65em; 
 	  background: #e8f2ff; }
 
 #console { position: absolute;
