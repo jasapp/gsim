@@ -16,16 +16,12 @@
 
 .activeline { background: #e8f2ff !important; } 
 
-html, body, img { height: 95%; }
-
 #main { position: absolute;
 	top: 0;
 	bottom: 0;
 	right: 0;
 	left: 0;
 	border: 1px solid black; }
-
-.code { height: 100% } 
 
 #editor { position: absolute;
 	  top: .5em;
@@ -34,7 +30,11 @@ html, body, img { height: 95%; }
 	  width: 23em;
 	  border-bottom: 1px solid black; 
 	  border-left: 1px solid black; 
-	  border-top: 1px solid black; }
+	  border-top: 1px solid black; 
+	}
+
+.CodeMirror { height: 100% }
+.CodeMirror-scroll { height: 100%; }
 
 #canvas { position: absolute;
 	  border: 1px solid black;
