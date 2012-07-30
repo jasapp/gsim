@@ -13,3 +13,39 @@
 .cm-s-ngc span.cm-tag        { color: #9effff; }
 .cm-s-ngc span.cm-variable   { color: #50fe50; }
 .cm-s-ngc span.cm-variable-2 { color: #ee00ee; }
+
+.activeline { background: #e8f2ff !important; } 
+
+html, body, img { height: 95%; }
+
+#main { position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	border: 1px solid black; }
+
+#editor { position: absolute;
+	  top: .5em;
+	  right: .5em;
+	  bottom: .5em;
+	  width: 23em;
+	  border-bottom: 1px solid black; 
+	  border-left: 1px solid black; 
+	  border-top: 1px solid black; }
+
+#canvas { position: absolute;
+	  border: 1px solid black;
+	  top: .5em;
+	  left: .5em;
+	  bottom: .5em;
+	  width: 65em; 
+	  background: #e8f2ff; }
+
+#console { position: absolute;
+	   bottom: .5em;
+	   left: .5em;
+	   right: .5em;
+	   border: 1px solid black; 
+	   height: 5em; }
+

@@ -3,7 +3,7 @@
     [hiccup
       [page :refer [html5]]
       [element :refer [javascript-tag]]
-      [page :refer [include-js]]]))
+      [page :refer [include-js include-css]]]))
 
 (defn- run-clojurescript [path init]
   (list
@@ -15,18 +15,19 @@
   (html5
    [:head
     [:title "code!"]
-    [:link {:rel "stylesheet" :href "/css/codemirror.css"}]
-    [:style {:type "text/css"}
-     ".CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}"
-     ".activeline {background: #e8f2ff !important;}"]
+    (include-css "/css/codemirror.css")
+    (include-css "/css/ngc.css")
     (include-js "/js/codemirror.js")
     (include-js "/js/ngc.js")
     (include-js "/js/Three.js")]
    [:body
-    [:form
-     [:textarea {:name "code" :id "code"}
-      "O1234\nN100\nG0 X1.0 Z1.0 Y1.0\nM3"]]
-    (include-js "/js/draw-init.js")]))
+    [:div {:id "main"}
+     [:div {:id "canvas"}
+      [:div {:id "console"}]]
+     [:div {:id "editor"}
+      [:textarea {:name "code" :id "code"}
+       "O1234\nN100\nG0 X1.0 Z1.0 Y1.0\nM3"]]
+     (include-js "/js/draw-init.js")]]))
 
 (defn index-page []
   (html5
