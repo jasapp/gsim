@@ -7,3 +7,4 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     }});
 
 var hlLine = editor.setLineClass(0, "activeline");
+editor.focus();

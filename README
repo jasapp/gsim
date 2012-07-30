@@ -1,10 +1,10 @@
 # gsim
 
 Stuff to do next:
-2. Do the page layout in view.clj or whatever
+1. Put a big title bar at the top for navigating back to other pages
+2. Put some kind of step forward, play, step backward, reset thing at the top of the text area
 3. Finish the line drawing functions
 4. Hook up evaluation stuff to codemirror 
-5. Codemirror mode for ngc
 
 Stuff to think about:
 - Testing stuff. Soon. 
@@ -23,5 +23,7 @@ Codemirror specific stuff:
 
 Done:
 1. Move everything to lein-cljsbuild
+2. Do the page layout in view.clj or whatever
+5. Codemirror mode for ngc
 
 Copyright (C) 2010 Jeff Sapp
