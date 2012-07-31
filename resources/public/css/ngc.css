@@ -45,9 +45,14 @@
 	  background: #e8f2ff; }
 
 #console { position: absolute;
+	   background: #FFFFFF;
+	   overflow: auto;
+	   border: 1px solid black;
 	   bottom: .5em;
 	   left: .5em;
 	   right: .5em;
-	   border: 1px solid black; 
 	   height: 5em; }
 
+#console p { margin: 0; 
+	     line-height: 1em;
+	     font-family: monospace; }

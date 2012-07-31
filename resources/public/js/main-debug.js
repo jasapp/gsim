@@ -497,6 +497,15 @@ goog.base = function(me, opt_methodName, var_args) {
 goog.scope = function(fn) {
   fn.call(goog.global)
 };
+goog.provide("goog.debug.Error");
+goog.debug.Error = function(opt_msg) {
+  this.stack = (new Error).stack || "";
+  if(opt_msg) {
+    this.message = String(opt_msg)
+  }
+};
+goog.inherits(goog.debug.Error, Error);
+goog.debug.Error.prototype.name = "CustomError";
 goog.provide("goog.string");
 goog.provide("goog.string.Unicode");
 goog.string.Unicode = {NBSP:"\u00a0"};
@@ -924,15 +933,6 @@ goog.string.toSelectorCaseCache_ = {};
 goog.string.toSelectorCase = function(str) {
   return goog.string.toSelectorCaseCache_[str] || (goog.string.toSelectorCaseCache_[str] = String(str).replace(/([A-Z])/g, "-$1").toLowerCase())
 };
-goog.provide("goog.debug.Error");
-goog.debug.Error = function(opt_msg) {
-  this.stack = (new Error).stack || "";
-  if(opt_msg) {
-    this.message = String(opt_msg)
-  }
-};
-goog.inherits(goog.debug.Error, Error);
-goog.debug.Error.prototype.name = "CustomError";
 goog.provide("goog.asserts");
 goog.provide("goog.asserts.AssertionError");
 goog.require("goog.debug.Error");
@@ -21286,6 +21286,129 @@ clojure.browser.event.has_listener = function has_listener(obj, opt_type, opt_ca
 clojure.browser.event.remove_all = function remove_all(opt_obj, opt_type, opt_capt) {
   return null
 };
+goog.provide("goog.json");
+goog.provide("goog.json.Serializer");
+goog.json.isValid_ = function(s) {
+  if(/^\s*$/.test(s)) {
+    return false
+  }
+  var backslashesRe = /\\["\\\/bfnrtu]/g;
+  var simpleValuesRe = /"[^"\\\n\r\u2028\u2029\x00-\x08\x10-\x1f\x80-\x9f]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
+  var openBracketsRe = /(?:^|:|,)(?:[\s\u2028\u2029]*\[)+/g;
+  var remainderRe = /^[\],:{}\s\u2028\u2029]*$/;
+  return remainderRe.test(s.replace(backslashesRe, "@").replace(simpleValuesRe, "]").replace(openBracketsRe, ""))
+};
+goog.json.parse = function(s) {
+  var o = String(s);
+  if(goog.json.isValid_(o)) {
+    try {
+      return eval("(" + o + ")")
+    }catch(ex) {
+    }
+  }
+  throw Error("Invalid JSON string: " + o);
+};
+goog.json.unsafeParse = function(s) {
+  return eval("(" + s + ")")
+};
+goog.json.Replacer;
+goog.json.serialize = function(object, opt_replacer) {
+  return(new goog.json.Serializer(opt_replacer)).serialize(object)
+};
+goog.json.Serializer = function(opt_replacer) {
+  this.replacer_ = opt_replacer
+};
+goog.json.Serializer.prototype.serialize = function(object) {
+  var sb = [];
+  this.serialize_(object, sb);
+  return sb.join("")
+};
+goog.json.Serializer.prototype.serialize_ = function(object, sb) {
+  switch(typeof object) {
+    case "string":
+      this.serializeString_(object, sb);
+      break;
+    case "number":
+      this.serializeNumber_(object, sb);
+      break;
+    case "boolean":
+      sb.push(object);
+      break;
+    case "undefined":
+      sb.push("null");
+      break;
+    case "object":
+      if(object == null) {
+        sb.push("null");
+        break
+      }
+      if(goog.isArray(object)) {
+        this.serializeArray_(object, sb);
+        break
+      }
+      this.serializeObject_(object, sb);
+      break;
+    case "function":
+      break;
+    default:
+      throw Error("Unknown type: " + typeof object);
+  }
+};
+goog.json.Serializer.charToJsonCharCache_ = {'"':'\\"', "\\":"\\\\", "/":"\\/", "\u0008":"\\b", "\u000c":"\\f", "\n":"\\n", "\r":"\\r", "\t":"\\t", "\x0B":"\\u000b"};
+goog.json.Serializer.charsToReplace_ = /\uffff/.test("\uffff") ? /[\\\"\x00-\x1f\x7f-\uffff]/g : /[\\\"\x00-\x1f\x7f-\xff]/g;
+goog.json.Serializer.prototype.serializeString_ = function(s, sb) {
+  sb.push('"', s.replace(goog.json.Serializer.charsToReplace_, function(c) {
+    if(c in goog.json.Serializer.charToJsonCharCache_) {
+      return goog.json.Serializer.charToJsonCharCache_[c]
+    }
+    var cc = c.charCodeAt(0);
+    var rv = "\\u";
+    if(cc < 16) {
+      rv += "000"
+    }else {
+      if(cc < 256) {
+        rv += "00"
+      }else {
+        if(cc < 4096) {
+          rv += "0"
+        }
+      }
+    }
+    return goog.json.Serializer.charToJsonCharCache_[c] = rv + cc.toString(16)
+  }), '"')
+};
+goog.json.Serializer.prototype.serializeNumber_ = function(n, sb) {
+  sb.push(isFinite(n) && !isNaN(n) ? n : "null")
+};
+goog.json.Serializer.prototype.serializeArray_ = function(arr, sb) {
+  var l = arr.length;
+  sb.push("[");
+  var sep = "";
+  for(var i = 0;i < l;i++) {
+    sb.push(sep);
+    var value = arr[i];
+    this.serialize_(this.replacer_ ? this.replacer_.call(arr, String(i), value) : value, sb);
+    sep = ","
+  }
+  sb.push("]")
+};
+goog.json.Serializer.prototype.serializeObject_ = function(obj, sb) {
+  sb.push("{");
+  var sep = "";
+  for(var key in obj) {
+    if(Object.prototype.hasOwnProperty.call(obj, key)) {
+      var value = obj[key];
+      if(typeof value != "function") {
+        sb.push(sep);
+        this.serializeString_(key, sb);
+        sb.push(":");
+        this.serialize_(this.replacer_ ? this.replacer_.call(obj, key, value) : value, sb);
+        sep = ","
+      }
+    }
+  }
+  sb.push("}")
+};
 goog.provide("goog.structs");
 goog.require("goog.array");
 goog.require("goog.object");
@@ -24032,129 +24155,6 @@ goog.dom.DomHelper.prototype.getNodeTextOffset = goog.dom.getNodeTextOffset;
 goog.dom.DomHelper.prototype.getAncestorByTagNameAndClass = goog.dom.getAncestorByTagNameAndClass;
 goog.dom.DomHelper.prototype.getAncestorByClass = goog.dom.getAncestorByClass;
 goog.dom.DomHelper.prototype.getAncestor = goog.dom.getAncestor;
-goog.provide("goog.json");
-goog.provide("goog.json.Serializer");
-goog.json.isValid_ = function(s) {
-  if(/^\s*$/.test(s)) {
-    return false
-  }
-  var backslashesRe = /\\["\\\/bfnrtu]/g;
-  var simpleValuesRe = /"[^"\\\n\r\u2028\u2029\x00-\x08\x10-\x1f\x80-\x9f]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
-  var openBracketsRe = /(?:^|:|,)(?:[\s\u2028\u2029]*\[)+/g;
-  var remainderRe = /^[\],:{}\s\u2028\u2029]*$/;
-  return remainderRe.test(s.replace(backslashesRe, "@").replace(simpleValuesRe, "]").replace(openBracketsRe, ""))
-};
-goog.json.parse = function(s) {
-  var o = String(s);
-  if(goog.json.isValid_(o)) {
-    try {
-      return eval("(" + o + ")")
-    }catch(ex) {
-    }
-  }
-  throw Error("Invalid JSON string: " + o);
-};
-goog.json.unsafeParse = function(s) {
-  return eval("(" + s + ")")
-};
-goog.json.Replacer;
-goog.json.serialize = function(object, opt_replacer) {
-  return(new goog.json.Serializer(opt_replacer)).serialize(object)
-};
-goog.json.Serializer = function(opt_replacer) {
-  this.replacer_ = opt_replacer
-};
-goog.json.Serializer.prototype.serialize = function(object) {
-  var sb = [];
-  this.serialize_(object, sb);
-  return sb.join("")
-};
-goog.json.Serializer.prototype.serialize_ = function(object, sb) {
-  switch(typeof object) {
-    case "string":
-      this.serializeString_(object, sb);
-      break;
-    case "number":
-      this.serializeNumber_(object, sb);
-      break;
-    case "boolean":
-      sb.push(object);
-      break;
-    case "undefined":
-      sb.push("null");
-      break;
-    case "object":
-      if(object == null) {
-        sb.push("null");
-        break
-      }
-      if(goog.isArray(object)) {
-        this.serializeArray_(object, sb);
-        break
-      }
-      this.serializeObject_(object, sb);
-      break;
-    case "function":
-      break;
-    default:
-      throw Error("Unknown type: " + typeof object);
-  }
-};
-goog.json.Serializer.charToJsonCharCache_ = {'"':'\\"', "\\":"\\\\", "/":"\\/", "\u0008":"\\b", "\u000c":"\\f", "\n":"\\n", "\r":"\\r", "\t":"\\t", "\x0B":"\\u000b"};
-goog.json.Serializer.charsToReplace_ = /\uffff/.test("\uffff") ? /[\\\"\x00-\x1f\x7f-\uffff]/g : /[\\\"\x00-\x1f\x7f-\xff]/g;
-goog.json.Serializer.prototype.serializeString_ = function(s, sb) {
-  sb.push('"', s.replace(goog.json.Serializer.charsToReplace_, function(c) {
-    if(c in goog.json.Serializer.charToJsonCharCache_) {
-      return goog.json.Serializer.charToJsonCharCache_[c]
-    }
-    var cc = c.charCodeAt(0);
-    var rv = "\\u";
-    if(cc < 16) {
-      rv += "000"
-    }else {
-      if(cc < 256) {
-        rv += "00"
-      }else {
-        if(cc < 4096) {
-          rv += "0"
-        }
-      }
-    }
-    return goog.json.Serializer.charToJsonCharCache_[c] = rv + cc.toString(16)
-  }), '"')
-};
-goog.json.Serializer.prototype.serializeNumber_ = function(n, sb) {
-  sb.push(isFinite(n) && !isNaN(n) ? n : "null")
-};
-goog.json.Serializer.prototype.serializeArray_ = function(arr, sb) {
-  var l = arr.length;
-  sb.push("[");
-  var sep = "";
-  for(var i = 0;i < l;i++) {
-    sb.push(sep);
-    var value = arr[i];
-    this.serialize_(this.replacer_ ? this.replacer_.call(arr, String(i), value) : value, sb);
-    sep = ","
-  }
-  sb.push("]")
-};
-goog.json.Serializer.prototype.serializeObject_ = function(obj, sb) {
-  sb.push("{");
-  var sep = "";
-  for(var key in obj) {
-    if(Object.prototype.hasOwnProperty.call(obj, key)) {
-      var value = obj[key];
-      if(typeof value != "function") {
-        sb.push(sep);
-        this.serializeString_(key, sb);
-        sb.push(":");
-        this.serialize_(this.replacer_ ? this.replacer_.call(obj, key, value) : value, sb);
-        sep = ","
-      }
-    }
-  }
-  sb.push("}")
-};
 goog.provide("goog.structs.Collection");
 goog.structs.Collection = function() {
 };
@@ -27445,3 +27445,415 @@ gsim.repl.connect = function connect() {
   return clojure.browser.repl.connect.call(null, "http://localhost:9000/repl")
 };
 goog.exportSymbol("gsim.repl.connect", gsim.repl.connect);
+goog.provide("clojure.string");
+goog.require("cljs.core");
+goog.require("goog.string.StringBuffer");
+goog.require("goog.string");
+clojure.string.seq_reverse = function seq_reverse(coll) {
+  return cljs.core.reduce.call(null, cljs.core.conj, cljs.core.List.EMPTY, coll)
+};
+clojure.string.reverse = function reverse(s) {
+  return s.split("").reverse().join("")
+};
+clojure.string.replace = function replace(s, match, replacement) {
+  if(cljs.core.string_QMARK_.call(null, match)) {
+    return s.replace(new RegExp(goog.string.regExpEscape(match), "g"), replacement)
+  }else {
+    if(cljs.core.truth_(match.hasOwnProperty("source"))) {
+      return s.replace(new RegExp(match.source, "g"), replacement)
+    }else {
+      if("\ufdd0'else") {
+        throw[cljs.core.str("Invalid match arg: "), cljs.core.str(match)].join("");
+      }else {
+        return null
+      }
+    }
+  }
+};
+clojure.string.replace_first = function replace_first(s, match, replacement) {
+  return s.replace(match, replacement)
+};
+clojure.string.join = function() {
+  var join = null;
+  var join__1 = function(coll) {
+    return cljs.core.apply.call(null, cljs.core.str, coll)
+  };
+  var join__2 = function(separator, coll) {
+    return cljs.core.apply.call(null, cljs.core.str, cljs.core.interpose.call(null, separator, coll))
+  };
+  join = function(separator, coll) {
+    switch(arguments.length) {
+      case 1:
+        return join__1.call(this, separator);
+      case 2:
+        return join__2.call(this, separator, coll)
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  join.cljs$lang$arity$1 = join__1;
+  join.cljs$lang$arity$2 = join__2;
+  return join
+}();
+clojure.string.upper_case = function upper_case(s) {
+  return s.toUpperCase()
+};
+clojure.string.lower_case = function lower_case(s) {
+  return s.toLowerCase()
+};
+clojure.string.capitalize = function capitalize(s) {
+  if(cljs.core.count.call(null, s) < 2) {
+    return clojure.string.upper_case.call(null, s)
+  }else {
+    return[cljs.core.str(clojure.string.upper_case.call(null, cljs.core.subs.call(null, s, 0, 1))), cljs.core.str(clojure.string.lower_case.call(null, cljs.core.subs.call(null, s, 1)))].join("")
+  }
+};
+clojure.string.split = function() {
+  var split = null;
+  var split__2 = function(s, re) {
+    return cljs.core.vec.call(null, [cljs.core.str(s)].join("").split(re))
+  };
+  var split__3 = function(s, re, limit) {
+    if(limit < 1) {
+      return cljs.core.vec.call(null, [cljs.core.str(s)].join("").split(re))
+    }else {
+      var s__6420 = s;
+      var limit__6421 = limit;
+      var parts__6422 = cljs.core.PersistentVector.EMPTY;
+      while(true) {
+        if(cljs.core._EQ_.call(null, limit__6421, 1)) {
+          return cljs.core.conj.call(null, parts__6422, s__6420)
+        }else {
+          var temp__3971__auto____6423 = cljs.core.re_find.call(null, re, s__6420);
+          if(cljs.core.truth_(temp__3971__auto____6423)) {
+            var m__6424 = temp__3971__auto____6423;
+            var index__6425 = s__6420.indexOf(m__6424);
+            var G__6426 = s__6420.substring(index__6425 + cljs.core.count.call(null, m__6424));
+            var G__6427 = limit__6421 - 1;
+            var G__6428 = cljs.core.conj.call(null, parts__6422, s__6420.substring(0, index__6425));
+            s__6420 = G__6426;
+            limit__6421 = G__6427;
+            parts__6422 = G__6428;
+            continue
+          }else {
+            return cljs.core.conj.call(null, parts__6422, s__6420)
+          }
+        }
+        break
+      }
+    }
+  };
+  split = function(s, re, limit) {
+    switch(arguments.length) {
+      case 2:
+        return split__2.call(this, s, re);
+      case 3:
+        return split__3.call(this, s, re, limit)
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  split.cljs$lang$arity$2 = split__2;
+  split.cljs$lang$arity$3 = split__3;
+  return split
+}();
+clojure.string.split_lines = function split_lines(s) {
+  return clojure.string.split.call(null, s, /\n|\r\n/)
+};
+clojure.string.trim = function trim(s) {
+  return goog.string.trim(s)
+};
+clojure.string.triml = function triml(s) {
+  return goog.string.trimLeft(s)
+};
+clojure.string.trimr = function trimr(s) {
+  return goog.string.trimRight(s)
+};
+clojure.string.trim_newline = function trim_newline(s) {
+  var index__6432 = s.length;
+  while(true) {
+    if(index__6432 === 0) {
+      return""
+    }else {
+      var ch__6433 = cljs.core._lookup.call(null, s, index__6432 - 1, null);
+      if(function() {
+        var or__3824__auto____6434 = cljs.core._EQ_.call(null, ch__6433, "\n");
+        if(or__3824__auto____6434) {
+          return or__3824__auto____6434
+        }else {
+          return cljs.core._EQ_.call(null, ch__6433, "\r")
+        }
+      }()) {
+        var G__6435 = index__6432 - 1;
+        index__6432 = G__6435;
+        continue
+      }else {
+        return s.substring(0, index__6432)
+      }
+    }
+    break
+  }
+};
+clojure.string.blank_QMARK_ = function blank_QMARK_(s) {
+  var s__6439 = [cljs.core.str(s)].join("");
+  if(cljs.core.truth_(function() {
+    var or__3824__auto____6440 = cljs.core.not.call(null, s__6439);
+    if(or__3824__auto____6440) {
+      return or__3824__auto____6440
+    }else {
+      var or__3824__auto____6441 = cljs.core._EQ_.call(null, "", s__6439);
+      if(or__3824__auto____6441) {
+        return or__3824__auto____6441
+      }else {
+        return cljs.core.re_matches.call(null, /\s+/, s__6439)
+      }
+    }
+  }())) {
+    return true
+  }else {
+    return false
+  }
+};
+clojure.string.escape = function escape(s, cmap) {
+  var buffer__6448 = new goog.string.StringBuffer;
+  var length__6449 = s.length;
+  var index__6450 = 0;
+  while(true) {
+    if(cljs.core._EQ_.call(null, length__6449, index__6450)) {
+      return buffer__6448.toString()
+    }else {
+      var ch__6451 = s.charAt(index__6450);
+      var temp__3971__auto____6452 = cljs.core._lookup.call(null, cmap, ch__6451, null);
+      if(cljs.core.truth_(temp__3971__auto____6452)) {
+        var replacement__6453 = temp__3971__auto____6452;
+        buffer__6448.append([cljs.core.str(replacement__6453)].join(""))
+      }else {
+        buffer__6448.append(ch__6451)
+      }
+      var G__6454 = index__6450 + 1;
+      index__6450 = G__6454;
+      continue
+    }
+    break
+  }
+};
+goog.provide("crate.core");
+goog.require("cljs.core");
+goog.require("clojure.string");
+goog.require("goog.dom");
+crate.core.xmlns = cljs.core.ObjMap.fromObject(["\ufdd0'xhtml", "\ufdd0'svg"], {"\ufdd0'xhtml":"http://www.w3.org/1999/xhtml", "\ufdd0'svg":"http://www.w3.org/2000/svg"});
+crate.core.elem_id = cljs.core.atom.call(null, 0);
+crate.core.group_id = cljs.core.atom.call(null, 0);
+crate.core.dom_attr = function() {
+  var dom_attr = null;
+  var dom_attr__2 = function(elem, attrs) {
+    if(cljs.core.truth_(elem)) {
+      if(!cljs.core.map_QMARK_.call(null, attrs)) {
+        return elem.getAttribute(cljs.core.name.call(null, attrs))
+      }else {
+        var G__6306__6307 = cljs.core.seq.call(null, attrs);
+        if(G__6306__6307) {
+          var G__6309__6311 = cljs.core.first.call(null, G__6306__6307);
+          var vec__6310__6312 = G__6309__6311;
+          var k__6313 = cljs.core.nth.call(null, vec__6310__6312, 0, null);
+          var v__6314 = cljs.core.nth.call(null, vec__6310__6312, 1, null);
+          var G__6306__6315 = G__6306__6307;
+          var G__6309__6316 = G__6309__6311;
+          var G__6306__6317 = G__6306__6315;
+          while(true) {
+            var vec__6318__6319 = G__6309__6316;
+            var k__6320 = cljs.core.nth.call(null, vec__6318__6319, 0, null);
+            var v__6321 = cljs.core.nth.call(null, vec__6318__6319, 1, null);
+            var G__6306__6322 = G__6306__6317;
+            dom_attr.call(null, elem, k__6320, v__6321);
+            var temp__3974__auto____6323 = cljs.core.next.call(null, G__6306__6322);
+            if(temp__3974__auto____6323) {
+              var G__6306__6324 = temp__3974__auto____6323;
+              var G__6325 = cljs.core.first.call(null, G__6306__6324);
+              var G__6326 = G__6306__6324;
+              G__6309__6316 = G__6325;
+              G__6306__6317 = G__6326;
+              continue
+            }else {
+            }
+            break
+          }
+        }else {
+        }
+        return elem
+      }
+    }else {
+      return null
+    }
+  };
+  var dom_attr__3 = function(elem, k, v) {
+    elem.setAttribute(cljs.core.name.call(null, k), v);
+    return elem
+  };
+  dom_attr = function(elem, k, v) {
+    switch(arguments.length) {
+      case 2:
+        return dom_attr__2.call(this, elem, k);
+      case 3:
+        return dom_attr__3.call(this, elem, k, v)
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  dom_attr.cljs$lang$arity$2 = dom_attr__2;
+  dom_attr.cljs$lang$arity$3 = dom_attr__3;
+  return dom_attr
+}();
+crate.core.as_content = function as_content(parent, content) {
+  var G__6334__6335 = cljs.core.seq.call(null, content);
+  if(G__6334__6335) {
+    var c__6336 = cljs.core.first.call(null, G__6334__6335);
+    var G__6334__6337 = G__6334__6335;
+    while(true) {
+      var child__6338 = c__6336 == null ? null : cljs.core.map_QMARK_.call(null, c__6336) ? function() {
+        throw"Maps cannot be used as content";
+      }() : cljs.core.string_QMARK_.call(null, c__6336) ? goog.dom.createTextNode(c__6336) : cljs.core.vector_QMARK_.call(null, c__6336) ? crate.core.elem_factory.call(null, c__6336) : cljs.core.seq_QMARK_.call(null, c__6336) ? as_content.call(null, parent, c__6336) : cljs.core.truth_(c__6336.nodeName) ? c__6336 : null;
+      if(cljs.core.truth_(child__6338)) {
+        goog.dom.appendChild(parent, child__6338)
+      }else {
+      }
+      var temp__3974__auto____6339 = cljs.core.next.call(null, G__6334__6337);
+      if(temp__3974__auto____6339) {
+        var G__6334__6340 = temp__3974__auto____6339;
+        var G__6341 = cljs.core.first.call(null, G__6334__6340);
+        var G__6342 = G__6334__6340;
+        c__6336 = G__6341;
+        G__6334__6337 = G__6342;
+        continue
+      }else {
+        return null
+      }
+      break
+    }
+  }else {
+    return null
+  }
+};
+crate.core.re_tag = /([^\s\.#]+)(?:#([^\s\.#]+))?(?:\.([^\s#]+))?/;
+crate.core.normalize_element = function normalize_element(p__6344) {
+  var vec__6370__6371 = p__6344;
+  var tag__6372 = cljs.core.nth.call(null, vec__6370__6371, 0, null);
+  var content__6373 = cljs.core.nthnext.call(null, vec__6370__6371, 1);
+  if(!function() {
+    var or__3824__auto____6374 = cljs.core.keyword_QMARK_.call(null, tag__6372);
+    if(or__3824__auto____6374) {
+      return or__3824__auto____6374
+    }else {
+      var or__3824__auto____6375 = cljs.core.symbol_QMARK_.call(null, tag__6372);
+      if(or__3824__auto____6375) {
+        return or__3824__auto____6375
+      }else {
+        return cljs.core.string_QMARK_.call(null, tag__6372)
+      }
+    }
+  }()) {
+    throw[cljs.core.str(tag__6372), cljs.core.str(" is not a valid tag name.")].join("");
+  }else {
+  }
+  var vec__6376__6378 = cljs.core.re_matches.call(null, crate.core.re_tag, cljs.core.name.call(null, tag__6372));
+  var ___6379 = cljs.core.nth.call(null, vec__6376__6378, 0, null);
+  var tag__6380 = cljs.core.nth.call(null, vec__6376__6378, 1, null);
+  var id__6381 = cljs.core.nth.call(null, vec__6376__6378, 2, null);
+  var class__6382 = cljs.core.nth.call(null, vec__6376__6378, 3, null);
+  var vec__6377__6389 = function() {
+    var vec__6383__6384 = clojure.string.split.call(null, tag__6380, /:/);
+    var nsp__6385 = cljs.core.nth.call(null, vec__6383__6384, 0, null);
+    var t__6386 = cljs.core.nth.call(null, vec__6383__6384, 1, null);
+    var ns_xmlns__6387 = crate.core.xmlns.call(null, cljs.core.keyword.call(null, nsp__6385));
+    if(cljs.core.truth_(t__6386)) {
+      return cljs.core.PersistentVector.fromArray([function() {
+        var or__3824__auto____6388 = ns_xmlns__6387;
+        if(cljs.core.truth_(or__3824__auto____6388)) {
+          return or__3824__auto____6388
+        }else {
+          return nsp__6385
+        }
+      }(), t__6386], true)
+    }else {
+      return cljs.core.PersistentVector.fromArray([(new cljs.core.Keyword("\ufdd0'xhtml")).call(null, crate.core.xmlns), nsp__6385], true)
+    }
+  }();
+  var nsp__6390 = cljs.core.nth.call(null, vec__6377__6389, 0, null);
+  var tag__6391 = cljs.core.nth.call(null, vec__6377__6389, 1, null);
+  var tag_attrs__6393 = cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, cljs.core.filter.call(null, function(p1__6343_SHARP_) {
+    return!(cljs.core.second.call(null, p1__6343_SHARP_) == null)
+  }, cljs.core.ObjMap.fromObject(["\ufdd0'id", "\ufdd0'class"], {"\ufdd0'id":function() {
+    var or__3824__auto____6392 = id__6381;
+    if(cljs.core.truth_(or__3824__auto____6392)) {
+      return or__3824__auto____6392
+    }else {
+      return null
+    }
+  }(), "\ufdd0'class":cljs.core.truth_(class__6382) ? clojure.string.replace.call(null, class__6382, /\./, " ") : null})));
+  var map_attrs__6394 = cljs.core.first.call(null, content__6373);
+  if(cljs.core.map_QMARK_.call(null, map_attrs__6394)) {
+    return cljs.core.PersistentVector.fromArray([nsp__6390, tag__6391, cljs.core.merge.call(null, tag_attrs__6393, map_attrs__6394), cljs.core.next.call(null, content__6373)], true)
+  }else {
+    return cljs.core.PersistentVector.fromArray([nsp__6390, tag__6391, tag_attrs__6393, content__6373], true)
+  }
+};
+crate.core.parse_content = function parse_content(elem, content) {
+  var attrs__6396 = cljs.core.first.call(null, content);
+  if(cljs.core.map_QMARK_.call(null, attrs__6396)) {
+    crate.core.dom_attr.call(null, elem, attrs__6396);
+    return cljs.core.rest.call(null, content)
+  }else {
+    return content
+  }
+};
+crate.core.create_elem = function create_elem(nsp, tag) {
+  return document.createElementNS(nsp, tag)
+};
+crate.core.elem_factory = function elem_factory(tag_def) {
+  var vec__6404__6405 = crate.core.normalize_element.call(null, tag_def);
+  var nsp__6406 = cljs.core.nth.call(null, vec__6404__6405, 0, null);
+  var tag__6407 = cljs.core.nth.call(null, vec__6404__6405, 1, null);
+  var attrs__6408 = cljs.core.nth.call(null, vec__6404__6405, 2, null);
+  var content__6409 = cljs.core.nth.call(null, vec__6404__6405, 3, null);
+  var elem__6410 = crate.core.create_elem.call(null, nsp__6406, tag__6407);
+  crate.core.dom_attr.call(null, elem__6410, cljs.core.merge.call(null, attrs__6408, cljs.core.ObjMap.fromObject(["\ufdd0'crateId"], {"\ufdd0'crateId":cljs.core.swap_BANG_.call(null, crate.core.elem_id, cljs.core.inc)})));
+  crate.core.as_content.call(null, elem__6410, content__6409);
+  return elem__6410
+};
+crate.core.html = function() {
+  var html__delegate = function(tags) {
+    var res__6412 = cljs.core.map.call(null, crate.core.elem_factory, tags);
+    if(cljs.core.truth_(cljs.core.second.call(null, res__6412))) {
+      return res__6412
+    }else {
+      return cljs.core.first.call(null, res__6412)
+    }
+  };
+  var html = function(var_args) {
+    var tags = null;
+    if(goog.isDef(var_args)) {
+      tags = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
+    }
+    return html__delegate.call(this, tags)
+  };
+  html.cljs$lang$maxFixedArity = 0;
+  html.cljs$lang$applyTo = function(arglist__6413) {
+    var tags = cljs.core.seq(arglist__6413);
+    return html__delegate(tags)
+  };
+  html.cljs$lang$arity$variadic = html__delegate;
+  return html
+}();
+goog.provide("gsim.console");
+goog.require("cljs.core");
+goog.require("crate.core");
+goog.require("crate.core");
+gsim.console.gsim_console = function gsim_console() {
+  return goog.dom.getElement("console")
+};
+gsim.console.scroll_to_bottom = function scroll_to_bottom() {
+  var c__6284 = gsim.console.gsim_console.call(null);
+  return c__6284.scrollTop = c__6284.scrollHeight
+};
+gsim.console.message = function message(m) {
+  var p__6286 = crate.core.html.call(null, cljs.core.PersistentVector.fromArray(["\ufdd0'p", m], true));
+  gsim.console.gsim_console.call(null).appendChild(p__6286);
+  return gsim.console.scroll_to_bottom.call(null)
+};

@@ -3,6 +3,7 @@
   :source-path "src-clj"
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [compojure "1.0.4"]
+                 [crate "0.1.0-SNAPSHOT"]
                  [hiccup "1.0.0"]]
   :dev-dependencies [[lein-ring "0.7.0"]
                      [jline "0.9.94"]]
