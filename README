@@ -33,8 +33,9 @@ Bigger ideas to think about:
 Codemirror specific stuff: 
 - Tab completion?
 - Show remaining possible arguments for existing commands 
+- automatically calculating radius values for g2/3? Tab or autocomplete menu through 4 options?
 - Highlight bad code (default style is RED and everything else is normal?)
-- line evaluation
+- real time line evaluation
 
 Done:
 1. Move everything to lein-cljsbuild

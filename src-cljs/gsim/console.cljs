@@ -42,3 +42,5 @@
     (.appendChild (gsim-console) p)
     (scroll-to-bottom)
     c))
+
+

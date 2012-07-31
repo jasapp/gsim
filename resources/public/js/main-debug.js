@@ -27841,14 +27841,6 @@ crate.core.html = function() {
   html.cljs$lang$arity$variadic = html__delegate;
   return html
 }();
-goog.provide("gsim.editor");
-goog.require("cljs.core");
-gsim.editor.on_cursor_activity = function on_cursor_activity() {
-  return null
-};
-gsim.editor.var$;
-gsim.editor.editor;
-cljs.core._EQ_;
 goog.provide("gsim.console");
 goog.require("cljs.core");
 goog.require("crate.core");
@@ -27881,4 +27873,52 @@ gsim.console.message = function message(m) {
   gsim.console.gsim_console.call(null).appendChild(p__6290);
   gsim.console.scroll_to_bottom.call(null);
   return c__6291
+};
+goog.provide("gsim.draw");
+goog.require("cljs.core");
+goog.require("gsim.console");
+goog.require("gsim.console");
+gsim.draw.hl_line = null;
+gsim.draw.editor = null;
+gsim.draw.code_element = function code_element() {
+  return goog.dom.getElement("code")
+};
+gsim.draw.cursor_line = function cursor_line() {
+  return gsim.draw.editor.getCursor().line
+};
+gsim.draw.get_line = function get_line(num) {
+  return gsim.draw.editor.getLine(num)
+};
+gsim.draw.set_line_class = function() {
+  var set_line_class = null;
+  var set_line_class__1 = function(line) {
+    return set_line_class.call(null, line, null)
+  };
+  var set_line_class__2 = function(line, class$) {
+    return gsim.draw.editor.setLineClass(line, class$)
+  };
+  set_line_class = function(line, class$) {
+    switch(arguments.length) {
+      case 1:
+        return set_line_class__1.call(this, line);
+      case 2:
+        return set_line_class__2.call(this, line, class$)
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  set_line_class.cljs$lang$arity$1 = set_line_class__1;
+  set_line_class.cljs$lang$arity$2 = set_line_class__2;
+  return set_line_class
+}();
+gsim.draw.on_cursor_activity = function on_cursor_activity() {
+  var line_number__6295 = gsim.draw.cursor_line.call(null);
+  var line__6296 = gsim.draw.get_line.call(null, line_number__6295);
+  gsim.draw.set_line_class.call(null, gsim.draw.hl_line);
+  gsim.draw.hl_line = gsim.draw.set_line_class.call(null, line_number__6295, "activeline");
+  return gsim.console.message.call(null, line__6296)
+};
+gsim.draw.init = function init() {
+  gsim.draw.editor = CodeMirror.fromTextArea(gsim.draw.code_element.call(null), {"lineNumbers":true, "lineWrapping":true, "onCursorActivity":gsim.draw.on_cursor_activity});
+  gsim.draw.editor.focus();
+  return gsim.draw.hl_line = gsim.draw.set_line_class.call(null, 0, "activeline")
 };

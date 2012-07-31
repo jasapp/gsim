@@ -28,7 +28,10 @@
      [:div {:id "editor"}
       [:textarea {:name "code" :id "code"}
        gcode-demo-2]]
-     (include-js "/js/draw-init.js")
+     (run-clojurescript
+      "/js/main-debug.js"
+      "gsim.draw.init()")
+;;     (include-js "/js/draw-init.js")
      (run-clojurescript
       "/js/main-debug.js"
       "gsim.repl.connect()")]]))
