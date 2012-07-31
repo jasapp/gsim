@@ -7,7 +7,6 @@ Stuff to do next:
 4. Hook up evaluation stuff to codemirror 
 5. Sending messages back to the server about errors
 6. Sending file saves back to the server
-7. Writing messages to our little console thing
 8. Better ngc mode, and custom css for error words
 
 Stuff to think about:
@@ -41,5 +40,6 @@ Done:
 1. Move everything to lein-cljsbuild
 2. Do the page layout in view.clj or whatever
 5. Codemirror mode for ngc
+7. Writing messages to our little console thing
 
 Copyright (C) 2010 Jeff Sapp

@@ -1,2 +1,7 @@
 out/
 cljs-devmode-example.js
+lib/
+.lein*
+.repl*
+\#*\#
+.\#*
