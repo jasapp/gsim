@@ -30,8 +30,7 @@
        gcode-demo-2]]
      (run-clojurescript
       "/js/main-debug.js"
-      "gsim.draw.init()")
-;;     (include-js "/js/draw-init.js")
+      "gsim.editor.init('code')")
      (run-clojurescript
       "/js/main-debug.js"
       "gsim.repl.connect()")]]))

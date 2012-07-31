@@ -1,11 +1,8 @@
-(ns gsim.draw
+(ns gsim.editor
   (:use [gsim.console :only [message]]))
 
 (def hl-line nil)
 (def editor nil)
-
-(defn code-element []
-  (.getElement goog.dom "code"))
 
 (defn cursor-line []
   (-> editor .getCursor .-line))
@@ -19,6 +16,10 @@
   ([line class]
      (.setLineClass editor line class)))
 
+(defn focus []
+  "Focus the editor."
+  (.focus editor))
+
 (defn on-cursor-activity []
   (let [line-number (cursor-line)
 	line (get-line line-number)]
@@ -26,12 +27,12 @@
     (set! hl-line (set-line-class line-number "activeline"))
     (message line)))
 
-(defn init []
+(defn init [element-name]
   (set! editor
 	(js/CodeMirror.fromTextArea
-	 (code-element)
+	 (.getElement goog.dom element-name)
 	 (js-obj "lineNumbers" true
 		 "lineWrapping" true
 		 "onCursorActivity" on-cursor-activity)))
-  (.focus editor)
+  (focus)
   (set! hl-line (set-line-class 0 "activeline")))
