@@ -27,7 +27,7 @@
 	  top: .5em;
 	  right: .5em;
 	  bottom: .5em;
-	  width: 23em;
+	  width: 27em;
 	  border-bottom: 1px solid black; 
 	  border-left: 1px solid black; 
 	  border-top: 1px solid black; 
@@ -38,7 +38,7 @@
 
 #canvas { position: absolute;
 	  border: 1px solid black;
-	  right: 24em;
+	  right: 28em;
 	  top: .5em;
 	  left: .5em;
 	  bottom: .5em;

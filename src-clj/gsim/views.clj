@@ -1,9 +1,10 @@
 (ns gsim.views
+  (:use [gsim.demo :only [gcode-demo-1 gcode-demo-2]])
   (:require
-    [hiccup
-     [page :refer [html5]]
-     [element :refer [javascript-tag]]
-     [page :refer [include-js include-css]]]))
+   [hiccup
+    [page :refer [html5]]
+    [element :refer [javascript-tag]]
+    [page :refer [include-js include-css]]]))
 
 (defn- run-clojurescript [path init]
   (list
@@ -26,7 +27,7 @@
       [:div {:id "console"}]]
      [:div {:id "editor"}
       [:textarea {:name "code" :id "code"}
-       "O1234\nN100\nG0 X1.0 Z1.0 Y1.0\nM3"]]
+       gcode-demo-2]]
      (include-js "/js/draw-init.js")
      (run-clojurescript
       "/js/main-debug.js"

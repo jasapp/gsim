@@ -27841,6 +27841,14 @@ crate.core.html = function() {
   html.cljs$lang$arity$variadic = html__delegate;
   return html
 }();
+goog.provide("gsim.editor");
+goog.require("cljs.core");
+gsim.editor.on_cursor_activity = function on_cursor_activity() {
+  return null
+};
+gsim.editor.var$;
+gsim.editor.editor;
+cljs.core._EQ_;
 goog.provide("gsim.console");
 goog.require("cljs.core");
 goog.require("crate.core");
@@ -27848,12 +27856,29 @@ goog.require("crate.core");
 gsim.console.gsim_console = function gsim_console() {
   return goog.dom.getElement("console")
 };
+gsim.console.clear = function clear() {
+  return goog.dom.removeChildren(gsim.console.gsim_console.call(null))
+};
+gsim.console.remove_first = function remove_first() {
+  var first_child__6284 = goog.dom.getFirstElementChild(gsim.console.gsim_console.call(null));
+  return goog.dom.removeNode(first_child__6284)
+};
+gsim.console.message_count = function message_count() {
+  return gsim.console.gsim_console.call(null).childNodes.length
+};
 gsim.console.scroll_to_bottom = function scroll_to_bottom() {
-  var c__6284 = gsim.console.gsim_console.call(null);
-  return c__6284.scrollTop = c__6284.scrollHeight
+  var c__6286 = gsim.console.gsim_console.call(null);
+  return c__6286.scrollTop = c__6286.scrollHeight
 };
 gsim.console.message = function message(m) {
-  var p__6286 = crate.core.html.call(null, cljs.core.PersistentVector.fromArray(["\ufdd0'p", m], true));
-  gsim.console.gsim_console.call(null).appendChild(p__6286);
-  return gsim.console.scroll_to_bottom.call(null)
+  var p__6290 = crate.core.html.call(null, cljs.core.PersistentVector.fromArray(["\ufdd0'p", m], true));
+  var c__6291 = gsim.console.message_count.call(null);
+  var message_limit__6292 = 100;
+  if(message_limit__6292 < c__6291) {
+    gsim.console.remove_first.call(null)
+  }else {
+  }
+  gsim.console.gsim_console.call(null).appendChild(p__6290);
+  gsim.console.scroll_to_bottom.call(null);
+  return c__6291
 };
