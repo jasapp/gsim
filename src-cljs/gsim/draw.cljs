@@ -15,38 +15,53 @@
     (.add scene c)
     (set! camera c)))
 
-;; there must be a better way to clear the scene?
-(defn clear-scene []
-  (doseq [o (-> scene .-children)]
-    (if o
-      (.remove scene o))))
-
 (defn render []
   (.render renderer scene camera))
 
-(defn geometry [& points]
+(defn default-options []
+  {"color" 0x000000 "linewidth" 1})
+
+(defn make-geometry [& points]
   (let [g (js/THREE.Geometry.)]
-    (doseq [[x y z] points]
+    (doseq [{x :x y :y z :z} points]
       (.push (. g -vertices) (js/THREE.Vector3. x y z)))
     g))
 
-(defn rand-vector [x y z]
-  (vector (rand-int x) (rand-int y) (rand-int z)))
+(defn make-line-material [& args]
+  (js/THREE.LineBasicMaterial.
+   (apply js-obj
+	  (mapcat identity (into [] (merge (default-options)
+					   (apply hash-map args)))))))
 
-(defn rand-line [points x y z]
-  (let [g (apply geometry (take points (repeatedly #(rand-vector x y z))))
-	m (js/THREE.LineBasicMaterial. (js-obj "color" 0xff00ff "linewidth" 2))]
-    (js/THREE.Line. g m)))
+(defn line [p1 p2 & options]
+  (let [geometry (make-geometry p1 p2)
+	line-material (apply make-line-material options)]
+    (.add scene (js/THREE.Line. geometry line-material))))
 
-(defn add-line []
-  (.add scene (rand-line 2 5 5 5)))
+(defn cw-curve [x y z r options]
+  )
 
-(defn drop-last-line []
-  (let [last-line (last (. scene -children))]
-    (.remove scene last-line)))
+(defn ccw-curve [x y z r options]
+  )
 
-(defn sample [change]
-  (if (pos? change)
-    (doseq [_ (range 0 change)] (add-line))
-    (doseq [_ (range change 0)] (drop-last-line)))
-  (.render renderer scene camera))
+;; there must be a better way to clear the scene?
+(defn clear []
+  (doseq [o (reverse (drop 1 (-> scene .-children)))]
+    (if o
+      (.remove scene o)))
+  (render))
+
+(defn drop-lines [num]
+  (doseq [_ (range 0 num)]
+    (let [last-line (last (. scene -children))]
+      (.remove scene last-line)))
+  (render))
+
+(defn drop-line []
+  (drop-lines 1))
+
+;; (defn sample [change]
+;;   (if (pos? change)
+;;     (doseq [_ (range 0 change)] (add-line))
+;;     (doseq [_ (range change 0)] (drop-last-line)))
+;;   (.render renderer scene camera))

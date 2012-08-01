@@ -32,8 +32,11 @@
     (set-line-class hl-line)
     (set! hl-line (set-line-class line-number "activeline"))
     (if (not (zero? line-difference))
-      (do (handle-lines line-difference)
-	  (message (format "Line change: %s" line-difference))))))
+      (message line))))
+      ;; (do
+      ;; (message (format "Line change: %s" line-difference)))))
+      ;; (sample line-difference))
+
 
 (defn init [element-name]
   (set! editor
