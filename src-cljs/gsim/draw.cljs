@@ -1,4 +1,4 @@
-(ns gsim.three)
+(ns gsim.draw)
 
 (def renderer (js/THREE.WebGLRenderer. (js-obj "antialias" true)))
 (def scene (js/THREE.Scene.))
@@ -15,6 +15,15 @@
     (.add scene c)
     (set! camera c)))
 
+;; there must be a better way to clear the scene?
+(defn clear-scene []
+  (doseq [o (-> scene .-children)]
+    (if o
+      (.remove scene o))))
+
+(defn render []
+  (.render renderer scene camera))
+
 (defn geometry [& points]
   (let [g (js/THREE.Geometry.)]
     (doseq [[x y z] points]
@@ -30,6 +39,14 @@
     (js/THREE.Line. g m)))
 
 (defn add-line []
-  (.add scene (rand-line 10 10 10 10))
-  (.render renderer scene camera))
+  (.add scene (rand-line 2 5 5 5)))
 
+(defn drop-last-line []
+  (let [last-line (last (. scene -children))]
+    (.remove scene last-line)))
+
+(defn sample [change]
+  (if (pos? change)
+    (doseq [_ (range 0 change)] (add-line))
+    (doseq [_ (range change 0)] (drop-last-line)))
+  (.render renderer scene camera))

@@ -33,7 +33,7 @@
       "gsim.editor.init('code')")
      (run-clojurescript
       "/js/main-debug.js"
-      "gsim.three.init('canvas')")
+      "gsim.draw.init('canvas')")
      (run-clojurescript
       "/js/main-debug.js"
       "gsim.repl.connect()")]]))

@@ -20192,43 +20192,73 @@ gsim.three.renderer = new THREE.WebGLRenderer({"antialias":true});
 gsim.three.scene = new THREE.Scene;
 gsim.three.camera = null;
 gsim.three.init = function init(element_name) {
-  var canvas__6128 = goog.dom.getElement(element_name);
-  var ratio__6129 = canvas__6128.offsetWidth / canvas__6128.offsetHeight;
-  var c__6130 = new THREE.PerspectiveCamera(35, ratio__6129, 0.1, 1E4);
-  gsim.three.renderer.setSize(canvas__6128.offsetWidth, canvas__6128.offsetHeight);
-  canvas__6128.appendChild(gsim.three.renderer.domElement);
-  c__6130.position.set(-15, 10, 10);
-  c__6130.lookAt(gsim.three.scene.position);
-  gsim.three.scene.add(c__6130);
-  return gsim.three.camera = c__6130
+  var canvas__6396 = goog.dom.getElement(element_name);
+  var ratio__6397 = canvas__6396.offsetWidth / canvas__6396.offsetHeight;
+  var c__6398 = new THREE.PerspectiveCamera(35, ratio__6397, 0.1, 1E4);
+  gsim.three.renderer.setSize(canvas__6396.offsetWidth, canvas__6396.offsetHeight);
+  canvas__6396.appendChild(gsim.three.renderer.domElement);
+  c__6398.position.set(-15, 10, 10);
+  c__6398.lookAt(gsim.three.scene.position);
+  gsim.three.scene.add(c__6398);
+  return gsim.three.camera = c__6398
+};
+gsim.three.clear_scene = function clear_scene() {
+  var G__6405__6406 = cljs.core.seq.call(null, gsim.three.scene.children);
+  if(G__6405__6406) {
+    var o__6407 = cljs.core.first.call(null, G__6405__6406);
+    var G__6405__6408 = G__6405__6406;
+    while(true) {
+      if(cljs.core.truth_(o__6407)) {
+        gsim.three.scene.remove(o__6407)
+      }else {
+      }
+      var temp__3974__auto____6409 = cljs.core.next.call(null, G__6405__6408);
+      if(temp__3974__auto____6409) {
+        var G__6405__6410 = temp__3974__auto____6409;
+        var G__6411 = cljs.core.first.call(null, G__6405__6410);
+        var G__6412 = G__6405__6410;
+        o__6407 = G__6411;
+        G__6405__6408 = G__6412;
+        continue
+      }else {
+        return null
+      }
+      break
+    }
+  }else {
+    return null
+  }
+};
+gsim.three.render = function render() {
+  return gsim.three.renderer.render(gsim.three.scene, gsim.three.camera)
 };
 gsim.three.geometry = function() {
   var geometry__delegate = function(points) {
-    var g__6153 = new THREE.Geometry;
-    var G__6154__6155 = cljs.core.seq.call(null, points);
-    if(G__6154__6155) {
-      var G__6157__6159 = cljs.core.first.call(null, G__6154__6155);
-      var vec__6158__6160 = G__6157__6159;
-      var x__6161 = cljs.core.nth.call(null, vec__6158__6160, 0, null);
-      var y__6162 = cljs.core.nth.call(null, vec__6158__6160, 1, null);
-      var z__6163 = cljs.core.nth.call(null, vec__6158__6160, 2, null);
-      var G__6154__6164 = G__6154__6155;
-      var G__6157__6165 = G__6157__6159;
-      var G__6154__6166 = G__6154__6164;
+    var g__6435 = new THREE.Geometry;
+    var G__6436__6437 = cljs.core.seq.call(null, points);
+    if(G__6436__6437) {
+      var G__6439__6441 = cljs.core.first.call(null, G__6436__6437);
+      var vec__6440__6442 = G__6439__6441;
+      var x__6443 = cljs.core.nth.call(null, vec__6440__6442, 0, null);
+      var y__6444 = cljs.core.nth.call(null, vec__6440__6442, 1, null);
+      var z__6445 = cljs.core.nth.call(null, vec__6440__6442, 2, null);
+      var G__6436__6446 = G__6436__6437;
+      var G__6439__6447 = G__6439__6441;
+      var G__6436__6448 = G__6436__6446;
       while(true) {
-        var vec__6167__6168 = G__6157__6165;
-        var x__6169 = cljs.core.nth.call(null, vec__6167__6168, 0, null);
-        var y__6170 = cljs.core.nth.call(null, vec__6167__6168, 1, null);
-        var z__6171 = cljs.core.nth.call(null, vec__6167__6168, 2, null);
-        var G__6154__6172 = G__6154__6166;
-        g__6153.vertices.push(new THREE.Vector3(x__6169, y__6170, z__6171));
-        var temp__3974__auto____6173 = cljs.core.next.call(null, G__6154__6172);
-        if(temp__3974__auto____6173) {
-          var G__6154__6174 = temp__3974__auto____6173;
-          var G__6175 = cljs.core.first.call(null, G__6154__6174);
-          var G__6176 = G__6154__6174;
-          G__6157__6165 = G__6175;
-          G__6154__6166 = G__6176;
+        var vec__6449__6450 = G__6439__6447;
+        var x__6451 = cljs.core.nth.call(null, vec__6449__6450, 0, null);
+        var y__6452 = cljs.core.nth.call(null, vec__6449__6450, 1, null);
+        var z__6453 = cljs.core.nth.call(null, vec__6449__6450, 2, null);
+        var G__6436__6454 = G__6436__6448;
+        g__6435.vertices.push(new THREE.Vector3(x__6451, y__6452, z__6453));
+        var temp__3974__auto____6455 = cljs.core.next.call(null, G__6436__6454);
+        if(temp__3974__auto____6455) {
+          var G__6436__6456 = temp__3974__auto____6455;
+          var G__6457 = cljs.core.first.call(null, G__6436__6456);
+          var G__6458 = G__6436__6456;
+          G__6439__6447 = G__6457;
+          G__6436__6448 = G__6458;
           continue
         }else {
         }
@@ -20236,7 +20266,7 @@ gsim.three.geometry = function() {
       }
     }else {
     }
-    return g__6153
+    return g__6435
   };
   var geometry = function(var_args) {
     var points = null;
@@ -20246,8 +20276,8 @@ gsim.three.geometry = function() {
     return geometry__delegate.call(this, points)
   };
   geometry.cljs$lang$maxFixedArity = 0;
-  geometry.cljs$lang$applyTo = function(arglist__6177) {
-    var points = cljs.core.seq(arglist__6177);
+  geometry.cljs$lang$applyTo = function(arglist__6459) {
+    var points = cljs.core.seq(arglist__6459);
     return geometry__delegate(points)
   };
   geometry.cljs$lang$arity$variadic = geometry__delegate;
@@ -20257,14 +20287,63 @@ gsim.three.rand_vector = function rand_vector(x, y, z) {
   return cljs.core.vector.call(null, cljs.core.rand_int.call(null, x), cljs.core.rand_int.call(null, y), cljs.core.rand_int.call(null, z))
 };
 gsim.three.rand_line = function rand_line(points, x, y, z) {
-  var g__6180 = cljs.core.apply.call(null, gsim.three.geometry, cljs.core.take.call(null, points, cljs.core.repeatedly.call(null, function() {
+  var g__6462 = cljs.core.apply.call(null, gsim.three.geometry, cljs.core.take.call(null, points, cljs.core.repeatedly.call(null, function() {
     return gsim.three.rand_vector.call(null, x, y, z)
   })));
-  var m__6181 = new THREE.LineBasicMaterial({"color":16711935, "linewidth":2});
-  return new THREE.Line(g__6180, m__6181)
+  var m__6463 = new THREE.LineBasicMaterial({"color":16711935, "linewidth":2});
+  return new THREE.Line(g__6462, m__6463)
 };
 gsim.three.add_line = function add_line() {
-  gsim.three.scene.add(gsim.three.rand_line.call(null, 10, 10, 10, 10));
+  return gsim.three.scene.add(gsim.three.rand_line.call(null, 2, 5, 5, 5))
+};
+gsim.three.drop_last_line = function drop_last_line() {
+  var last_line__6465 = cljs.core.last.call(null, gsim.three.scene.children);
+  return gsim.three.scene.remove(last_line__6465)
+};
+gsim.three.handle_lines = function handle_lines(change) {
+  if(change > 0) {
+    var G__6478__6479 = cljs.core.seq.call(null, cljs.core.range.call(null, 0, change));
+    if(G__6478__6479) {
+      var ___6480 = cljs.core.first.call(null, G__6478__6479);
+      var G__6478__6481 = G__6478__6479;
+      while(true) {
+        gsim.three.add_line.call(null);
+        var temp__3974__auto____6482 = cljs.core.next.call(null, G__6478__6481);
+        if(temp__3974__auto____6482) {
+          var G__6478__6483 = temp__3974__auto____6482;
+          var G__6490 = cljs.core.first.call(null, G__6478__6483);
+          var G__6491 = G__6478__6483;
+          ___6480 = G__6490;
+          G__6478__6481 = G__6491;
+          continue
+        }else {
+        }
+        break
+      }
+    }else {
+    }
+  }else {
+    var G__6484__6485 = cljs.core.seq.call(null, cljs.core.range.call(null, change, 0));
+    if(G__6484__6485) {
+      var ___6486 = cljs.core.first.call(null, G__6484__6485);
+      var G__6484__6487 = G__6484__6485;
+      while(true) {
+        gsim.three.drop_last_line.call(null);
+        var temp__3974__auto____6488 = cljs.core.next.call(null, G__6484__6487);
+        if(temp__3974__auto____6488) {
+          var G__6484__6489 = temp__3974__auto____6488;
+          var G__6492 = cljs.core.first.call(null, G__6484__6489);
+          var G__6493 = G__6484__6489;
+          ___6486 = G__6492;
+          G__6484__6487 = G__6493;
+          continue
+        }else {
+        }
+        break
+      }
+    }else {
+    }
+  }
   return gsim.three.renderer.render(gsim.three.scene, gsim.three.camera)
 };
 goog.provide("goog.disposable.IDisposable");
@@ -26237,11 +26316,16 @@ gsim.console.message = function message(m) {
 goog.provide("gsim.editor");
 goog.require("cljs.core");
 goog.require("gsim.console");
+goog.require("gsim.three");
+goog.require("gsim.three");
 goog.require("gsim.console");
 gsim.editor.hl_line = null;
 gsim.editor.editor = null;
-gsim.editor.cursor_line = function cursor_line() {
+gsim.editor.cursor_line_number = function cursor_line_number() {
   return gsim.editor.editor.getCursor().line
+};
+gsim.editor.hl_line_number = function hl_line_number() {
+  return gsim.editor.editor.lineInfo(gsim.editor.hl_line).line
 };
 gsim.editor.get_line = function get_line(num) {
   return gsim.editor.editor.getLine(num)
@@ -26271,11 +26355,18 @@ gsim.editor.focus = function focus() {
   return gsim.editor.editor.focus()
 };
 gsim.editor.on_cursor_activity = function on_cursor_activity() {
-  var line_number__6295 = gsim.editor.cursor_line.call(null);
-  var line__6296 = gsim.editor.get_line.call(null, line_number__6295);
+  var line_number__6389 = gsim.editor.cursor_line_number.call(null);
+  var previous_line_number__6390 = gsim.editor.hl_line_number.call(null);
+  var line__6391 = gsim.editor.get_line.call(null, line_number__6389);
+  var line_difference__6392 = line_number__6389 - previous_line_number__6390;
   gsim.editor.set_line_class.call(null, gsim.editor.hl_line);
-  gsim.editor.hl_line = gsim.editor.set_line_class.call(null, line_number__6295, "activeline");
-  return gsim.console.message.call(null, line__6296)
+  gsim.editor.hl_line = gsim.editor.set_line_class.call(null, line_number__6389, "activeline");
+  if(!(line_difference__6392 === 0)) {
+    gsim.three.handle_lines.call(null, line_difference__6392);
+    return gsim.console.message.call(null, cljs.core.format.call(null, "Line change: %s", line_difference__6392))
+  }else {
+    return null
+  }
 };
 gsim.editor.init = function init(element_name) {
   gsim.editor.editor = CodeMirror.fromTextArea(goog.dom.getElement(element_name), {"lineNumbers":true, "lineWrapping":true, "onCursorActivity":gsim.editor.on_cursor_activity});

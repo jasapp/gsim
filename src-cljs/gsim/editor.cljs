@@ -1,11 +1,15 @@
 (ns gsim.editor
-  (:use [gsim.console :only [message]]))
+  (:use [gsim.console :only [message]]
+	[gsim.draw :only [sample]]))
 
 (def hl-line nil)
 (def editor nil)
 
-(defn cursor-line []
+(defn cursor-line-number []
   (-> editor .getCursor .-line))
+
+(defn hl-line-number []
+  (->> hl-line (.lineInfo editor) .-line))
 
 (defn get-line [num]
   (.getLine editor num))
@@ -21,11 +25,15 @@
   (.focus editor))
 
 (defn on-cursor-activity []
-  (let [line-number (cursor-line)
-	line (get-line line-number)]
+  (let [line-number (cursor-line-number)
+	previous-line-number (hl-line-number)
+	line (get-line line-number)
+	line-difference (- line-number previous-line-number)]
     (set-line-class hl-line)
     (set! hl-line (set-line-class line-number "activeline"))
-    (message line)))
+    (if (not (zero? line-difference))
+      (do (handle-lines line-difference)
+	  (message (format "Line change: %s" line-difference))))))
 
 (defn init [element-name]
   (set! editor

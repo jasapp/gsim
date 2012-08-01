@@ -31,6 +31,7 @@ Bigger ideas to think about:
 - storing files 
 
 Codemirror specific stuff: 
+- if you delete the current line, you lose the highlighter
 - Tab completion?
 - Show remaining possible arguments for existing commands 
 - automatically calculating radius values for g2/3? Tab or autocomplete menu through 4 options?
