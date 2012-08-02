@@ -29,19 +29,21 @@
 
 (defn make-line-material [& args]
   (js/THREE.LineBasicMaterial.
-   (apply js-obj
-	  (mapcat identity (into [] (merge (default-options)
-					   (apply hash-map args)))))))
+   (apply js-obj (mapcat identity
+			 (into [] (merge (default-options)
+					 (apply hash-map args)))))))
 
+;; should this return a function to highlight the line on mouseOver?
+;; (later of course)
 (defn line [p1 p2 & options]
   (let [geometry (make-geometry p1 p2)
 	line-material (apply make-line-material options)]
     (.add scene (js/THREE.Line. geometry line-material))))
 
-(defn cw-curve [x y z r options]
+(defn cw-curve [p1 p2 r & options]
   )
 
-(defn ccw-curve [x y z r options]
+(defn ccw-curve [p1 p2 r & options]
   )
 
 ;; there must be a better way to clear the scene?
