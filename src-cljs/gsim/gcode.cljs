@@ -49,10 +49,9 @@
 
 ;; this should only take ONE new coord at a time
 (defn- g0-inside [m args]
-  (let [next-location (merge (location m) args)
-	color {"color" 0xff0000}]
+  (let [next-location (merge (location m) args)]
     (if (not (empty? args))
-      (do (line (location m) next-location color)
+      (do (line (location m) next-location "color" 0xff0000)
 	  (update-location m next-location))
       m)))
 

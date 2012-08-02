@@ -9,6 +9,8 @@
    N2 G1 x6.2 z5.0 f0.012
    N3 G2 x7.0 z6.0 r1.0")
 
+(def current-machine (atom nil))
+
 (def default-modals
   {:g { :1 0 :2 17 :3 90 :5 93 :6 20 :7 40 :8 43 :10 98 :12 54 :13 61 }
    :m { :4 0 :6 6 :7 3 :8 7 :9 48 }})
@@ -94,8 +96,15 @@
   ([machine gcode-str]
      (block-eval machine (p/parse-block gcode-str))))
 
-(defn machine-eval
-  ([gcode-str] (machine-eval (new-machine) gcode-str))
-  ([machine gcode-str]
-     (let [blocks (p/parse gcode-str)]
-       (machine-eval-inside machine blocks))))
+(defn update-machine [m]
+  (compare-and-set! current-machine @current-machine m))
+
+(defn startup-machine []
+  (if (nil? @current-machine)
+    (compare-and-set! current-machine @current-machine (new-machine))))
+
+(defn machine-eval [gcode-str]
+  (startup-machine)
+  (let [blocks (p/parse gcode-str)
+	machine (or @current-machine (new-machine))]
+    (update-machine (machine-eval-inside machine blocks))))
