@@ -1,5 +1,6 @@
 (ns gsim.editor
   (:use [gsim.console :only [message]]
+	[gsim.machine :only [machine-eval]]
 	[gsim.draw :only [sample]]))
 
 (def hl-line nil)
@@ -32,7 +33,8 @@
     (set-line-class hl-line)
     (set! hl-line (set-line-class line-number "activeline"))
     (if (not (zero? line-difference))
-      (message line))))
+      (machine-eval line))))
+;; (message line))))
       ;; (do
       ;; (message (format "Line change: %s" line-difference)))))
       ;; (sample line-difference))

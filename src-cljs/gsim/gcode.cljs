@@ -1,5 +1,6 @@
 (ns gsim.gcode
-  (:use [gsim.draw :only [line]]))
+  (:use [gsim.draw :only [line]]
+	[gsim.console :only [message]]))
 ;;   (:use-macros [gsim.gcode :only [def-gcode]]))
 
 (defn- modal-value [machine modal-type modal-group]
@@ -34,7 +35,7 @@
 
 (defn- g0
   [m {:keys [x y z]} e]
-  (println "G0" x y z)
+  (message (str "G0" x y z))
 ;;  (line-x x)
 ;;  (line-y z)
   (update-modal m :g :1 0))
@@ -42,20 +43,20 @@
 
 (defn- g1
   [m {:keys [f x y z]} e]
-  (println "G1" x y z f)
+  (message (str "G1" x y z f))
   (line x y z)
   (update-modal m :g :1 1))
 (add-code! :g1 1 20.1 "Linear interpolation" [:f :x :y :z] g1)
 
 (defn g2
   [m {:keys [ f x y z r ]} e]
-  (println "G2" x y z f r)
+  (message (str "G2" x y z f r))
   (update-modal m :g :1 2))
 (add-code! :g2 1 20.2 "Circular interpolation, clockwise" [:f :x :y :z :r] g2)
 
 (defn g3
   [m {:keys  [ f x y z r ]} e]
-  (println "G3" x y z f r)
+  (message (str "G3" x y z f r))
   (update-modal m :g :1 3))
 (add-code! :g3 1 20.2 "Circular interpolation, clockwise" [:f :x :y :z :r] g3)
 
