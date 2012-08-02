@@ -28,7 +28,8 @@
     (filter #(-> % :details :fn) (map g/decorate blocks))))
 
 (defn- new-machine [ ]
-  {:registers { }
+  {:location {:x 0 :y 0 :z 0}
+   :registers { }
    :modals default-modals})
 
 (defn- next-word [block]

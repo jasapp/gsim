@@ -10,7 +10,15 @@
   (let [current (-> machine :modals modal-type)]
     (assoc machine :modals
 	   (merge (:modals machine)
-            {modal-type (assoc current modal-group value)}))))
+		  {modal-type (assoc current modal-group value)}))))
+
+(defn- location [machine]
+  (:location machine))
+
+(defn- update-location [machine location-map]
+  (assoc machine :location
+	 (merge (location machine)
+		location-map)))
 
 (def codes (atom {}))
 
@@ -33,17 +41,40 @@
 (defn sort-block [block]
   (reverse (sort-by #(-> % :details :precedence) block)))
 
+;; this should only take ONE new coord at a time
+(defn- g0-inside [m args]
+  (let [next-location (merge (location m) args)
+	color {"color" 0xff0000}]
+    (if (not (empty? args))
+      (do (gsim.draw/line (location m) next-location color)
+	  (update-location m next-location)))))
+
+;; looks at x,y,z
 (defn- g0
-  [m {:keys [x y z]} e]
-  (message (str "G0" x y z))
-;;  (line-x x)
-;;  (line-y z)
-  (update-modal m :g :1 0))
+  [m args e]
+  (let [location-map 
+	color {"color" 0xff0000}
+	rapid-message (format "Rapid to: %s,%s,%s"
+			      (:x location-map)
+			      (:y location-map)
+			      (:z location-map))]
+    (gsim.console/message rapid-message)
+    (-> m
+	(g0-inside {
+    (gsim.draw/line (location m) (:x location-map)
+		    color)
+    
+    (-> m
+	(update-location location-map)
+	(update-modal :g :1 0))))
 (add-code! :g0 1 20.0 "Rapid positioning" [:x :y :z] g0)
 
 (defn- g1
   [m {:keys [f x y z]} e]
+  
   (message (str "G1" x y z f))
+  
+  
   (line x y z)
   (update-modal m :g :1 1))
 (add-code! :g1 1 20.1 "Linear interpolation" [:f :x :y :z] g1)
