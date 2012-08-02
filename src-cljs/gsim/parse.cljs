@@ -43,7 +43,7 @@
   (let [[address arg] (tokenize-word w)
 	parsed-arg (n/parse-number arg)]
     {:address address
-     :word (keyword (str address parsed-arg))
+     :word (keyword (str (name address) parsed-arg))
      :arg parsed-arg}))
 
 (defn- parse-block [block-str]
