@@ -33,12 +33,22 @@
 			 (into [] (merge (default-options)
 					 (apply hash-map args)))))))
 
+;; used for the current location
+(defn sphere [p]
+  (let [geometry (js/THREE.SphereGeometry. 0.05 16 16)
+	material (js/THREE.MeshBasicMaterial. (js-obj "color" 0xff0000))
+	s (js/THREE.Mesh. geometry material)]
+    (.set (.-position s) (:x p) (:y p) (:z p))
+    (.add scene s)
+    (render)))
+
 ;; should this return a function to highlight the line on mouseOver?
 ;; (later of course)
 (defn line [p1 p2 & options]
   (let [geometry (make-geometry p1 p2)
 	line-material (apply make-line-material options)]
-    (.add scene (js/THREE.Line. geometry line-material))))
+    (.add scene (js/THREE.Line. geometry line-material))
+    (render))) ;; just render everything now, maybe later we should only render selectively
 
 (defn cw-curve [p1 p2 r & options]
   )
@@ -53,14 +63,14 @@
       (.remove scene o)))
   (render))
 
-(defn drop-lines [num]
+(defn drop-obj [num]
   (doseq [_ (range 0 num)]
     (let [last-line (last (. scene -children))]
       (.remove scene last-line)))
   (render))
 
-(defn drop-line []
-  (drop-lines 1))
+(defn drop-one []
+  (drop-obj 1))
 
 ;; (defn sample [change]
 ;;   (if (pos? change)

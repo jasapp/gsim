@@ -1,5 +1,5 @@
 (ns gsim.gcode
-  (:use [gsim.draw :only [line]]
+  (:use [gsim.draw :only [line drop-one sphere]]
 	[gsim.console :only [message]]))
 ;;   (:use-macros [gsim.gcode :only [def-gcode]]))
 
@@ -41,40 +41,38 @@
 (defn sort-block [block]
   (reverse (sort-by #(-> % :details :precedence) block)))
 
+(defn- location-str [m]
+  (format "%s,%s,%s" (:x m) (:y m) (:z m)))
+
+(defn- merge-locations [& locs]
+  (apply merge-with #(or %2 %1) locs))
+
 ;; this should only take ONE new coord at a time
 (defn- g0-inside [m args]
   (let [next-location (merge (location m) args)
 	color {"color" 0xff0000}]
     (if (not (empty? args))
-      (do (gsim.draw/line (location m) next-location color)
-	  (update-location m next-location)))))
+      (do (line (location m) next-location color)
+	  (update-location m next-location))
+      m)))
 
 ;; looks at x,y,z
 (defn- g0
   [m args e]
-  (let [location-map 
-	color {"color" 0xff0000}
-	rapid-message (format "Rapid to: %s,%s,%s"
-			      (:x location-map)
-			      (:y location-map)
-			      (:z location-map))]
-    (gsim.console/message rapid-message)
-    (-> m
-	(g0-inside {
-    (gsim.draw/line (location m) (:x location-map)
-		    color)
-    
-    (-> m
-	(update-location location-map)
-	(update-modal :g :1 0))))
+  (message (format "Rapid to: %s" (location-str (merge-locations (location m) args))))
+  (drop-one)
+  (let [new-m (-> m
+		  (g0-inside (select-keys args [:x]))
+		  (g0-inside (select-keys args [:y]))
+		  (g0-inside (select-keys args [:z]))	
+		  (update-modal :g :1 0))]
+    (sphere (:location new-m))
+    new-m))
 (add-code! :g0 1 20.0 "Rapid positioning" [:x :y :z] g0)
 
 (defn- g1
   [m {:keys [f x y z]} e]
-  
   (message (str "G1" x y z f))
-  
-  
   (line x y z)
   (update-modal m :g :1 1))
 (add-code! :g1 1 20.1 "Linear interpolation" [:f :x :y :z] g1)
