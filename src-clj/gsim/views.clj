@@ -1,5 +1,5 @@
 (ns gsim.views
-  (:use [gsim.demo :only [gcode-demo-1 gcode-demo-2]])
+  (:use [gsim.demo :only [gcode-demo-1 gcode-demo-3]])
   (:require
    [hiccup
     [page :refer [html5]]
@@ -27,7 +27,7 @@
       [:div {:id "console"}]]
      [:div {:id "editor"}
       [:textarea {:name "code" :id "code"}
-       gcode-demo-2]]
+       gcode-demo-3]]
      (run-clojurescript
       "/js/main-debug.js"
       "gsim.editor.init('code')")

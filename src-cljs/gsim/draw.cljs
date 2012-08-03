@@ -4,17 +4,6 @@
 (def scene (js/THREE.Scene.))
 (def camera nil)
 
-(defn init [element-name]
-  (let [canvas (.getElement goog.dom element-name)
-	ratio (/ (.-offsetWidth canvas) (.-offsetHeight canvas))
-	c (js/THREE.PerspectiveCamera. 35 ratio 0.1 10000)]
-    (.setSize renderer (.-offsetWidth canvas) (.-offsetHeight canvas))
-    (.appendChild canvas (. renderer -domElement))
-    (.set (. c -position) -15 10 10)
-    (.lookAt c (. scene -position))
-    (.add scene c)
-    (set! camera c)))
-
 (defn render []
   (.render renderer scene camera))
 
@@ -35,7 +24,7 @@
 
 ;; used for the current location
 (defn sphere [p]
-  (let [geometry (js/THREE.SphereGeometry. 0.04 16 16)
+  (let [geometry (js/THREE.SphereGeometry. 0.02 16 16)
 	material (js/THREE.MeshBasicMaterial. (js-obj "color" 0x000000))
 	s (js/THREE.Mesh. geometry material)]
     (.set (.-position s) (:x p) (:y p) (:z p))
@@ -77,3 +66,16 @@
 ;;     (doseq [_ (range 0 change)] (add-line))
 ;;     (doseq [_ (range change 0)] (drop-last-line)))
 ;;   (.render renderer scene camera))
+
+(defn init [element-name]
+  (let [canvas (.getElement goog.dom element-name)
+	ratio (/ (.-offsetWidth canvas) (.-offsetHeight canvas))
+	c (js/THREE.PerspectiveCamera. 35 ratio 0.1 10000)]
+    (.setSize renderer (.-offsetWidth canvas) (.-offsetHeight canvas))
+    (.appendChild canvas (. renderer -domElement))
+    (.set (. c -position) -10 5 5)
+    (.lookAt c (. scene -position))
+    (.add scene c)
+    (set! camera c)
+    (sphere {:x 0 :y 0 :z 0})))
+

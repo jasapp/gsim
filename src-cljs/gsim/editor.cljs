@@ -31,9 +31,11 @@
 	line-difference (- line-number previous-line-number)]
     (set-line-class hl-line)
     (set! hl-line (set-line-class line-number "activeline"))
+    (if (pos? line-difference)
+      (machine-eval line))))
     ;; we're not handling multiline jumps yet
-    (cond (pos? line-difference) (machine-eval line) 
-	  (neg? line-difference) (step-back line-difference))))
+;;    (cond 
+;;	  (neg? line-difference) (step-back line-difference))))
 
 (defn init [element-name]
   (set! editor
