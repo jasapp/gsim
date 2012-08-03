@@ -1,7 +1,6 @@
 (ns gsim.editor
   (:use [gsim.console :only [message]]
-	[gsim.machine :only [machine-eval]]
-	[gsim.draw :only [sample]]))
+	[gsim.machine :only [machine-eval step-back]]))
 
 (def hl-line nil)
 (def editor nil)
@@ -32,13 +31,9 @@
 	line-difference (- line-number previous-line-number)]
     (set-line-class hl-line)
     (set! hl-line (set-line-class line-number "activeline"))
-    (if (not (zero? line-difference))
-      (machine-eval line))))
-;; (message line))))
-      ;; (do
-      ;; (message (format "Line change: %s" line-difference)))))
-      ;; (sample line-difference))
-
+    ;; we're not handling multiline jumps yet
+    (cond (pos? line-difference) (machine-eval line) 
+	  (neg? line-difference) (step-back line-difference))))
 
 (defn init [element-name]
   (set! editor

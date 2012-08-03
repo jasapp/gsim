@@ -1,5 +1,5 @@
 (ns gsim.machine
-  (:use [gsim.draw :only [clear]])
+  (:use [gsim.draw :only [clear drop-obj]])
   (:require [gsim.parse :as p]
 	    [gsim.gcode :as g]))
 
@@ -9,7 +9,7 @@
    N2 G1 x6.2 z5.0 f0.012
    N3 G2 x7.0 z6.0 r1.0")
 
-(def current-machine (atom nil))
+(def machines (atom nil))
 
 (def default-modals
   {:g { :1 0 :2 17 :3 90 :5 93 :6 20 :7 40 :8 43 :10 98 :12 54 :13 61 }
@@ -96,15 +96,28 @@
   ([machine gcode-str]
      (block-eval machine (p/parse-block gcode-str))))
 
-(defn update-machine [m]
-  (compare-and-set! current-machine @current-machine m))
+(defn current-machine []
+  (peek @machines))
+
+(defn drop-machine []
+  (swap! machines pop))
+
+(defn add-machine [m]
+  (swap! machines conj m))
 
 (defn startup-machine []
-  (if (nil? @current-machine)
-    (compare-and-set! current-machine @current-machine (new-machine))))
+  (if (empty? @machines)
+    (add-machine (new-machine))))
 
 (defn machine-eval [gcode-str]
   (startup-machine)
-  (let [blocks (p/parse gcode-str)
-	machine (or @current-machine (new-machine))]
-    (update-machine (machine-eval-inside machine blocks))))
+  (let [blocks (p/parse gcode-str)]
+    (add-machine (machine-eval-inside (current-machine) blocks))))
+
+;; terribly broken. 
+(defn step-back
+  ([] (step-back 1))
+  ([steps]
+     (doseq [_ (range 0 steps)]
+       (drop-machine)
+       (drop-obj 2))))

@@ -58,15 +58,18 @@
 ;; looks at x,y,z
 (defn- g0
   [m args e]
-  (message (format "Rapid to: %s" (location-str (merge-locations (location m) args))))
-  (drop-one)
-  (let [new-m (-> m
-		  (g0-inside (select-keys args [:x]))
-		  (g0-inside (select-keys args [:y]))
-		  (g0-inside (select-keys args [:z]))	
-		  (update-modal :g :1 0))]
-    (sphere (:location new-m))
-    new-m))
+  (if (not (empty? args))
+    (do
+      (drop-one) ;; drop the last current location ball
+      (let [new-m (-> m
+		      (g0-inside (select-keys args [:x]))
+		      (g0-inside (select-keys args [:y]))
+		      (g0-inside (select-keys args [:z]))	
+		      (update-modal :g :1 0))]
+	(message (format "Rapid to: %s" (location-str (merge-locations (location m) args))))
+	(sphere (:location new-m))
+	new-m))
+      m))
 (add-code! :g0 1 20.0 "Rapid positioning" [:x :y :z] g0)
 
 (defn- g1

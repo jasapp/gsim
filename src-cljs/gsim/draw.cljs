@@ -35,7 +35,7 @@
 
 ;; used for the current location
 (defn sphere [p]
-  (let [geometry (js/THREE.SphereGeometry. 0.05 16 16)
+  (let [geometry (js/THREE.SphereGeometry. 0.04 16 16)
 	material (js/THREE.MeshBasicMaterial. (js-obj "color" 0x000000))
 	s (js/THREE.Mesh. geometry material)]
     (.set (.-position s) (:x p) (:y p) (:z p))
