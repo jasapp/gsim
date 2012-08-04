@@ -120,4 +120,4 @@
   ([steps]
      (doseq [_ (range 0 steps)]
        (drop-machine)
-       (drop-obj 2))))
+       (drop-line))))

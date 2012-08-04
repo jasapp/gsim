@@ -1,5 +1,5 @@
 (ns gsim.gcode
-  (:use [gsim.draw :only [line drop-one sphere]]
+  (:use [gsim.draw :only [line current-location]]
 	[gsim.console :only [message]]))
 ;;   (:use-macros [gsim.gcode :only [def-gcode]]))
 
@@ -60,14 +60,13 @@
   [m args e]
   (if (not (empty? args))
     (do
-      (drop-one) ;; drop the last current location ball
       (let [new-m (-> m
 		      (g0-inside (select-keys args [:x]))
 		      (g0-inside (select-keys args [:y]))
 		      (g0-inside (select-keys args [:z]))	
 		      (update-modal :g :1 0))]
 	(message (format "Rapid to: %s" (location-str (merge-locations (location m) args))))
-	(sphere (:location new-m))
+	(current-location (:location new-m))
 	new-m))
       m))
 (add-code! :g0 1 20.0 "Rapid positioning" [:x :y :z] g0)

@@ -28,6 +28,17 @@
 	material (js/THREE.MeshBasicMaterial. (js-obj "color" 0x000000))
 	s (js/THREE.Mesh. geometry material)]
     (.set (.-position s) (:x p) (:y p) (:z p))
+    s))
+
+(defn remove-current-location []
+  (doseq [child (.-children scene)]
+    (if (.-location child)
+      (.remove scene child))))
+
+(defn current-location [p]
+  (remove-current-location)
+  (let [s (sphere p)]
+    (set! (.-location s) true)
     (.add scene s)
     (render)))
 
@@ -35,8 +46,10 @@
 ;; (later of course)
 (defn line [p1 p2 & options]
   (let [geometry (make-geometry p1 p2)
-	line-material (apply make-line-material options)]
-    (.add scene (js/THREE.Line. geometry line-material))
+	line-material (apply make-line-material options)
+	l (js/THREE.Line. geometry line-material)]
+    (set! (.-line l) true)
+    (.add scene l)
     (render))) ;; just render everything now, maybe later we should only render selectively
 
 (defn cw-curve [p1 p2 r & options]
@@ -52,14 +65,15 @@
       (.remove scene o)))
   (render))
 
-(defn drop-obj [num]
-  (doseq [_ (range 0 num)]
-    (let [last-line (last (. scene -children))]
-      (.remove scene last-line)))
-  (render))
+(defn line-count []
+  (count (filter #(.-line %) (.-children scene))))
 
-(defn drop-one []
-  (drop-obj 1))
+(defn drop-line
+  ([] (drop-line 1))
+  ([num]
+     (doseq [o (take num (filter #(and % (.-line %)) (reverse (.-children scene))))]
+       (.remove scene o))
+     (render)))
 
 ;; (defn sample [change]
 ;;   (if (pos? change)
@@ -77,5 +91,5 @@
     (.lookAt c (. scene -position))
     (.add scene c)
     (set! camera c)
-    (sphere {:x 0 :y 0 :z 0})))
+    (current-location {:x 0 :y 0 :z 0})))
 
