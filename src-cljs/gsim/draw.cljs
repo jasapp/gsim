@@ -4,6 +4,12 @@
 (def scene (js/THREE.Scene.))
 (def camera nil)
 
+(defn three-vector [x y z]
+  (js/THREE.Vector3. x y z))
+
+(defn from-three [o]
+  {:x (.-x o) :y (.-y o) :z (.-z o)})
+
 (defn render []
   (.render renderer scene camera))
 
@@ -13,7 +19,7 @@
 (defn make-geometry [& points]
   (let [g (js/THREE.Geometry.)]
     (doseq [{x :x y :y z :z} points]
-      (.push (. g -vertices) (js/THREE.Vector3. x y z)))
+      (.push (. g -vertices) (three-vector x y z)))
     g))
 
 (defn make-line-material [& args]
@@ -21,6 +27,50 @@
    (apply js-obj (mapcat identity
 			 (into [] (merge (default-options)
 					 (apply hash-map args)))))))
+
+;; this is going to be different for lathes / mills
+;; With a mill, and change in Z will produce a helical motion
+;; with a lathe changes on Y will be ignored and curves will only be along a plane
+;; determine the number of points by the length of the curve maybe?
+(defn arc-geometry [x y z r cw]
+  (let [radians (* (/ js/Math.PI 180) 90)
+	a (js/THREE.ArcCurve. x y r 0 radians cw)
+	g (js/THREE.Geometry.)]
+    (doseq [p (.getPoints a 8)]
+      (.push (. g -vertices) (three-vector (.-x p) (.-y p) z)))
+    g))
+
+(defn sq [x]
+  (js/Math.pow x 2))
+
+(defn sqrt [x]
+  (js/Math.sqrt x))
+
+;; not sure if we want to do this in clojure or to use Three.js's vector distance stuff
+(defn distance [p1 p2]
+  (sqrt (+ (sq (- (:x p2) (:x p1)))
+	   (sq (- (:y p2) (:y p1))))))
+
+;; http://paulbourke.net/geometry/2circle/
+(defn find-circles [p1 p2 r]
+  (let [dist (distance p1 p2)
+	{x1 :x y1 :y} p1
+	{x2 :x y2 :y} p2
+	[x3 y3] [(/ (+ x1 x2) 2) (/ (+ y1 y2 ) 2)]
+	[x4 y4] [(/ (* (sqrt (- (sq r) (sq (/ dist 2)))) (- y1 y2)) dist)
+		 (/ (* (sqrt (- (sq r) (sq (/ dist 2)))) (- x2 x1)) dist)]]
+    (cond (> dist (* r 2)) []
+	  (= dist (* r 2)) [[(+ x3 x4) (+ y3 y4)]]
+	  (< dist (* r 2)) [[(+ x3 x4) (+ y3 y4)]
+			    [(- x3 x4) (- y3 y4)]])))
+
+(defn arc [x y z r cw & options]
+  (let [geometry (arc-geometry x y x r cw)
+	line-material (apply make-line-material options)
+	l (js/THREE.Line. geometry line-material)]
+    (set! (.-line l) true)
+    (.add scene l)
+    (render))) ;; just render everything now, maybe later we should only render selectively
 
 ;; used for the current location
 (defn sphere [p]
