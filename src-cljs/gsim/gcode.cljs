@@ -60,23 +60,28 @@
 (defn- g0
   [m args e]
   (if (not (empty? args))
-    (do
-      (let [new-m (-> m
-		      (g0-inside (select-keys args [:x]))
-		      (g0-inside (select-keys args [:y]))
-		      (g0-inside (select-keys args [:z]))	
-		      (update-modal :g :1 0))]
-	(message (format "Rapid to: %s" (location-str (merge-locations (location m) args))))
-	(current-location (:location new-m))
-	new-m))
-      m))
+    (let [new-m (-> m
+		    (g0-inside (select-keys args [:x]))
+		    (g0-inside (select-keys args [:y]))
+		    (g0-inside (select-keys args [:z]))	
+		    (update-modal :g :1 0))]
+      (message (format "Rapid to: %s" (location-str (merge-locations (location m) args))))
+      (current-location (:location new-m))
+      new-m)
+    m))
 (add-code! :g0 1 20.0 "Rapid positioning" [:x :y :z] g0)
 
 (defn- g1
-  [m {:keys [f x y z]} e]
-  (message (str "G1" x y z f))
-  (line x y z)
-  (update-modal m :g :1 1))
+  [m args e]
+  (if (not (empty? args))
+    (let [new-m (-> m
+		    (update-location (merge (location m) args))
+		    (update-modal :g :1 1))]
+      (line (location m) (location new-m) "color" 0x00ff00)
+      (message (format "Linear interpolation to: %s" (location-str (location new-m))))
+      (current-location (:location new-m))
+      new-m)
+    m))
 (add-code! :g1 1 20.1 "Linear interpolation" [:f :x :y :z] g1)
 
 (defn g2
