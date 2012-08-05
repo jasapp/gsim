@@ -28718,8 +28718,13 @@ gsim.editor.cursor_line_number = function cursor_line_number() {
 gsim.editor.hl_line_number = function hl_line_number() {
   return gsim.editor.editor.lineInfo(gsim.editor.hl_line).line
 };
-gsim.editor.get_line = function get_line(num) {
-  return gsim.editor.editor.getLine(num)
+gsim.editor.get_line = function get_line(line_number) {
+  return gsim.editor.editor.getLine(line_number)
+};
+gsim.editor.get_lines = function get_lines(line_number, c) {
+  return cljs.core.map.call(null, function(p1__6625_SHARP_) {
+    return gsim.editor.get_line.call(null, p1__6625_SHARP_)
+  }, cljs.core.range.call(null, line_number, line_number + c))
 };
 gsim.editor.set_line_class = function() {
   var set_line_class = null;
@@ -28748,15 +28753,14 @@ gsim.editor.focus = function focus() {
 gsim.editor.on_cursor_activity = function on_cursor_activity() {
   var line_number__6629 = gsim.editor.cursor_line_number.call(null);
   var previous_line_number__6630 = gsim.editor.hl_line_number.call(null);
-  var line__6631 = gsim.editor.get_line.call(null, line_number__6629);
-  var line_difference__6632 = line_number__6629 - previous_line_number__6630;
+  var line_difference__6631 = line_number__6629 - previous_line_number__6630;
   gsim.editor.set_line_class.call(null, gsim.editor.hl_line);
   gsim.editor.hl_line = gsim.editor.set_line_class.call(null, line_number__6629, "activeline");
-  if(line_difference__6632 > 0) {
-    return gsim.machine.machine_eval.call(null, line__6631)
+  if(line_difference__6631 > 0) {
+    return cljs.core.apply.call(null, gsim.machine.machine_eval, gsim.editor.get_lines.call(null, previous_line_number__6630, line_difference__6631))
   }else {
-    if(line_difference__6632 < 0) {
-      return gsim.machine.step_back.call(null, -1 * line_difference__6632)
+    if(line_difference__6631 < 0) {
+      return gsim.machine.step_back.call(null, -1 * line_difference__6631)
     }else {
       return null
     }

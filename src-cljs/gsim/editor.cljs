@@ -11,8 +11,11 @@
 (defn hl-line-number []
   (->> hl-line (.lineInfo editor) .-line))
 
-(defn get-line [num]
-  (.getLine editor num))
+(defn get-line [line-number]
+  (.getLine editor line-number))
+
+(defn get-lines [line-number c]
+  (map #(get-line %) (range line-number (+ line-number c))))
 
 (defn set-line-class
   "Set the class of a line. The line arg can be a number or a linehandle."
@@ -27,11 +30,11 @@
 (defn on-cursor-activity []
   (let [line-number (cursor-line-number)
 	previous-line-number (hl-line-number)
-	line (get-line line-number)
 	line-difference (- line-number previous-line-number)]
     (set-line-class hl-line)
     (set! hl-line (set-line-class line-number "activeline"))
-    (cond (pos? line-difference) (machine-eval line)
+    (cond (pos? line-difference) (apply machine-eval
+					(get-lines previous-line-number line-difference))
 	  (neg? line-difference) (step-back (* -1 line-difference)))))
 
 (defn init [element-name]
