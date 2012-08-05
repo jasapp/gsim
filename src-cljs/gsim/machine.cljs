@@ -1,5 +1,5 @@
 (ns gsim.machine
-  (:use [gsim.draw :only [clear drop-obj]])
+  (:use [gsim.draw :only [clear drop-line current-location]])
   (:require [gsim.parse :as p]
 	    [gsim.gcode :as g]))
 
@@ -109,15 +109,19 @@
   (if (empty? @machines)
     (add-machine (new-machine))))
 
-(defn machine-eval [gcode-str]
+(defn machine-eval [& gcode-lines]
   (startup-machine)
-  (let [blocks (p/parse gcode-str)]
-    (add-machine (machine-eval-inside (current-machine) blocks))))
+  (doseq [gcode-line gcode-lines]
+    ;; we should probably check to see if the line parsed correctly before trying
+    ;; to evaluate it. :-/
+    (let [blocks (p/parse gcode-line)]
+      (add-machine (machine-eval-inside (current-machine) blocks)))))
 
-;; terribly broken. 
+;; Uck. Not digging this :location reference. This needs to be cleaned up soon. 
 (defn step-back
   ([] (step-back 1))
   ([steps]
      (doseq [_ (range 0 steps)]
-       (drop-machine)
-       (drop-line))))
+       (drop-machine))
+     (drop-line steps)
+     (current-location (:location (current-machine)))))

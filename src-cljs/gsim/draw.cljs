@@ -92,4 +92,3 @@
     (.add scene c)
     (set! camera c)
     (current-location {:x 0 :y 0 :z 0})))
-

@@ -12,6 +12,7 @@
 	   (merge (:modals machine)
 		  {modal-type (assoc current modal-group value)}))))
 
+;; I don't like this location business in gcode
 (defn- location [machine]
   (:location machine))
 

@@ -32,7 +32,7 @@
     (set-line-class hl-line)
     (set! hl-line (set-line-class line-number "activeline"))
     (cond (pos? line-difference) (machine-eval line)
-	  (neg? line-difference) (step-back line-difference))))
+	  (neg? line-difference) (step-back (* -1 line-difference)))))
 
 (defn init [element-name]
   (set! editor
