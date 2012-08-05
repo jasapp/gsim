@@ -27738,29 +27738,29 @@ gsim.number.decimal_QMARK_ = function decimal_QMARK_(num) {
   return goog.string.contains([cljs.core.str(num)].join(""), ".")
 };
 gsim.number.full_format_QMARK_ = function full_format_QMARK_(num) {
-  var and__3822__auto____6468 = cljs.core.not.call(null, gsim.number.decimal_QMARK_.call(null, num));
-  if(and__3822__auto____6468) {
+  var and__3822__auto____6126 = cljs.core.not.call(null, gsim.number.decimal_QMARK_.call(null, num));
+  if(and__3822__auto____6126) {
     return cljs.core._EQ_.call(null, gsim.number.number_length, cljs.core.count.call(null, [cljs.core.str(num)].join("")))
   }else {
-    return and__3822__auto____6468
+    return and__3822__auto____6126
   }
 };
 gsim.number.no_leading_QMARK_ = function no_leading_QMARK_(num) {
-  var num_str__6471 = [cljs.core.str(num)].join("");
-  var and__3822__auto____6472 = cljs.core.count.call(null, num_str__6471) < gsim.number.number_length;
-  if(and__3822__auto____6472) {
-    return cljs.core.not.call(null, cljs.core.re_find.call(null, /^0/, num_str__6471))
+  var num_str__6129 = [cljs.core.str(num)].join("");
+  var and__3822__auto____6130 = cljs.core.count.call(null, num_str__6129) < gsim.number.number_length;
+  if(and__3822__auto____6130) {
+    return cljs.core.not.call(null, cljs.core.re_find.call(null, /^0/, num_str__6129))
   }else {
-    return and__3822__auto____6472
+    return and__3822__auto____6130
   }
 };
 gsim.number.no_trailing_QMARK_ = function no_trailing_QMARK_(num) {
-  var num_str__6475 = [cljs.core.str(num)].join("");
-  var and__3822__auto____6476 = cljs.core.count.call(null, num_str__6475) < gsim.number.number_length;
-  if(and__3822__auto____6476) {
-    return cljs.core.not.call(null, cljs.core.re_find.call(null, /0$/, num_str__6475))
+  var num_str__6133 = [cljs.core.str(num)].join("");
+  var and__3822__auto____6134 = cljs.core.count.call(null, num_str__6133) < gsim.number.number_length;
+  if(and__3822__auto____6134) {
+    return cljs.core.not.call(null, cljs.core.re_find.call(null, /0$/, num_str__6133))
   }else {
-    return and__3822__auto____6476
+    return and__3822__auto____6134
   }
 };
 gsim.number.format_multiplier = function format_multiplier(num, system) {
@@ -27768,33 +27768,40 @@ gsim.number.format_multiplier = function format_multiplier(num, system) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'keyword?", "\ufdd1'system"), cljs.core.hash_map("\ufdd0'line", 34))))].join(""));
   }
-  var multipliers__6479 = cljs.core.ObjMap.fromObject(["\ufdd0'metric", "\ufdd0'imperial"], {"\ufdd0'metric":cljs.core.ObjMap.fromObject(["\ufdd0'full", "\ufdd0'no-leading", "\ufdd0'no-trailing"], {"\ufdd0'full":0.0010, "\ufdd0'no-leading":0.0010, "\ufdd0'no-trailing":0.01}), "\ufdd0'imperial":cljs.core.ObjMap.fromObject(["\ufdd0'full", "\ufdd0'no-leading", "\ufdd0'no-trailing"], {"\ufdd0'full":1.0E-4, "\ufdd0'no-leading":1.0E-4, "\ufdd0'no-trailing":0.01})});
-  var number_format__6480 = cljs.core.truth_(gsim.number.full_format_QMARK_.call(null, num)) ? "\ufdd0'full" : cljs.core.truth_(gsim.number.no_leading_QMARK_.call(null, num)) ? "\ufdd0'no-leading" : cljs.core.truth_(gsim.number.no_trailing_QMARK_.call(null, num)) ? "\ufdd0'no-trailing" : null;
-  if(cljs.core.keyword_QMARK_.call(null, number_format__6480)) {
+  var multipliers__6137 = cljs.core.ObjMap.fromObject(["\ufdd0'metric", "\ufdd0'imperial"], {"\ufdd0'metric":cljs.core.ObjMap.fromObject(["\ufdd0'full", "\ufdd0'no-leading", "\ufdd0'no-trailing"], {"\ufdd0'full":0.0010, "\ufdd0'no-leading":0.0010, "\ufdd0'no-trailing":0.01}), "\ufdd0'imperial":cljs.core.ObjMap.fromObject(["\ufdd0'full", "\ufdd0'no-leading", "\ufdd0'no-trailing"], {"\ufdd0'full":1.0E-4, "\ufdd0'no-leading":1.0E-4, "\ufdd0'no-trailing":0.01})});
+  var number_format__6138 = cljs.core.truth_(gsim.number.full_format_QMARK_.call(null, num)) ? "\ufdd0'full" : cljs.core.truth_(gsim.number.no_leading_QMARK_.call(null, num)) ? "\ufdd0'no-leading" : cljs.core.truth_(gsim.number.no_trailing_QMARK_.call(null, num)) ? "\ufdd0'no-trailing" : null;
+  if(cljs.core.keyword_QMARK_.call(null, number_format__6138)) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str([cljs.core.str("Both leading and trailing zeros: "), cljs.core.str(num)].join("")), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'keyword?", "\ufdd1'number-format"), cljs.core.hash_map("\ufdd0'line", 40))))].join(""));
   }
-  return number_format__6480.call(null, system.call(null, multipliers__6479))
+  return number_format__6138.call(null, system.call(null, multipliers__6137))
 };
 gsim.number.parse_dimensional_number = function parse_dimensional_number(num, system) {
-  if(cljs.core.truth_(gsim.number.decimal_QMARK_.call(null, num))) {
+  if(cljs.core.truth_(function() {
+    var or__3824__auto____6143 = cljs.core._EQ_.call(null, "0", num);
+    if(or__3824__auto____6143) {
+      return or__3824__auto____6143
+    }else {
+      return gsim.number.decimal_QMARK_.call(null, num)
+    }
+  }())) {
     return parseFloat(num)
   }else {
-    var n__6484 = parseInt(num, 10);
-    var multiplier__6485 = gsim.number.format_multiplier.call(null, num, system);
+    var n__6144 = parseInt(num, 10);
+    var multiplier__6145 = gsim.number.format_multiplier.call(null, num, system);
     if(cljs.core.truth_(function() {
-      var and__3822__auto____6486 = cljs.core.not.call(null, isNaN(n__6484));
-      if(and__3822__auto____6486) {
-        return multiplier__6485
+      var and__3822__auto____6146 = cljs.core.not.call(null, isNaN(n__6144));
+      if(and__3822__auto____6146) {
+        return multiplier__6145
       }else {
-        return and__3822__auto____6486
+        return and__3822__auto____6146
       }
     }())) {
     }else {
-      throw new Error([cljs.core.str("Assert failed: "), cljs.core.str([cljs.core.str("Not a number: "), cljs.core.str(n__6484)].join("")), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'and", cljs.core.with_meta(cljs.core.list("\ufdd1'not", cljs.core.with_meta(cljs.core.list("\ufdd1'js/isNaN", "\ufdd1'n"), cljs.core.hash_map("\ufdd0'line", 55))), cljs.core.hash_map("\ufdd0'line", 55)), "\ufdd1'multiplier"), cljs.core.hash_map("\ufdd0'line", 
+      throw new Error([cljs.core.str("Assert failed: "), cljs.core.str([cljs.core.str("Not a number: "), cljs.core.str(n__6144)].join("")), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'and", cljs.core.with_meta(cljs.core.list("\ufdd1'not", cljs.core.with_meta(cljs.core.list("\ufdd1'js/isNaN", "\ufdd1'n"), cljs.core.hash_map("\ufdd0'line", 55))), cljs.core.hash_map("\ufdd0'line", 55)), "\ufdd1'multiplier"), cljs.core.hash_map("\ufdd0'line", 
       55))))].join(""));
     }
-    return n__6484 * multiplier__6485
+    return n__6144 * multiplier__6145
   }
 };
 gsim.number.parse_metric = function parse_metric(num) {
@@ -27804,8 +27811,8 @@ gsim.number.parse_imperial = function parse_imperial(num) {
   return gsim.number.parse_dimensional_number.call(null, num, "\ufdd0'imperial")
 };
 gsim.number.parse_number = function parse_number(num) {
-  var n__6488 = parseInt(num, 10);
-  if(cljs.core.not.call(null, isNaN(n__6488))) {
+  var n__6148 = parseInt(num, 10);
+  if(cljs.core.not.call(null, isNaN(n__6148))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str([cljs.core.str("Error parsing: "), cljs.core.str(num)].join("")), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'not", cljs.core.with_meta(cljs.core.list("\ufdd1'js/isNaN", "\ufdd1'n"), cljs.core.hash_map("\ufdd0'line", 73))), cljs.core.hash_map("\ufdd0'line", 73))))].join(""));
   }
@@ -27813,7 +27820,7 @@ gsim.number.parse_number = function parse_number(num) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str([cljs.core.str("This number shouldn't have a decimal:"), cljs.core.str(num)].join("")), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'not", cljs.core.with_meta(cljs.core.list("\ufdd1'decimal?", "\ufdd1'num"), cljs.core.hash_map("\ufdd0'line", 75))), cljs.core.hash_map("\ufdd0'line", 75))))].join(""));
   }
-  return n__6488
+  return n__6148
 };
 goog.provide("clojure.string");
 goog.require("cljs.core");

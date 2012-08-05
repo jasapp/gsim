@@ -48,7 +48,7 @@
 (defn- parse-dimensional-number
   "Parse a number, taking format into account."
   [num system]
-  (if (decimal? num)
+  (if (or (= "0" num) (decimal? num))
     (js/parseFloat num)
     (let [n (js/parseInt num 10)
 	  multiplier (format-multiplier num system)]
