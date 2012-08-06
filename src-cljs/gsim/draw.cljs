@@ -28,18 +28,6 @@
 			 (into [] (merge (default-options)
 					 (apply hash-map args)))))))
 
-;; this is going to be different for lathes / mills
-;; With a mill, and change in Z will produce a helical motion
-;; with a lathe changes on Y will be ignored and curves will only be along a plane
-;; determine the number of points by the length of the curve maybe?
-(defn arc-geometry [x y z r cw]
-  (let [radians (* (/ js/Math.PI 180) 90)
-	a (js/THREE.ArcCurve. x y r 0 radians cw)
-	g (js/THREE.Geometry.)]
-    (doseq [p (.getPoints a 8)]
-      (.push (. g -vertices) (three-vector (.-x p) (.-y p) z)))
-    g))
-
 (defn sq [x]
   (js/Math.pow x 2))
 
@@ -64,8 +52,29 @@
 	  (< dist (* r 2)) [[(+ x3 x4) (+ y3 y4)]
 			    [(- x3 x4) (- y3 y4)]])))
 
-(defn arc [x y z r cw & options]
-  (let [geometry (arc-geometry x y x r cw)
+;; maybe we should leave everything in radians?
+(defn find-angle [p1 p2 r]
+  (let [dist (/ (distance p1 p2) 2)
+	angle (* (/ 180 js/Math.PI)
+		 (* (js/Math.sin (/ r (/ dist 2))) 2))]
+    (min angle (- 360 angle))))
+
+;; this is going to be different for lathes / mills
+;; With a mill, and change in Z will produce a helical motion
+;; with a lathe changes on Y will be ignored and curves will only be along a plane
+;; determine the number of points by the length of the curve maybe?
+(defn arc-geometry [x y z angle r cw]
+  (let [radians (* (/ js/Math.PI 180) angle)
+	a (js/THREE.ArcCurve. x y r 0 radians cw)
+	g (js/THREE.Geometry.)]
+    (doseq [p (.getPoints a 8)]
+      (.push (. g -vertices) (three-vector (.-x p) (.-y p) z)))
+    g))
+	
+(defn arc [p1 p2 r cw & options]
+  (let [{x1 :x y1 :y} p1 {x2 :x y2 :y} p2
+	angle (find-angle p1 p2 r)
+	geometry (arc-geometry x1 y1 0 angle r cw)
 	line-material (apply make-line-material options)
 	l (js/THREE.Line. geometry line-material)]
     (set! (.-line l) true)
