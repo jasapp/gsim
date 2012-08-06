@@ -1,5 +1,10 @@
 # gsim
 
+# how to start this:
+lein ring server-headless 3000
+lein cljsbuild auto [dev|prod]
+/usr/local/bin/cljs-repl 
+
 Stuff to do next:
 1. Put a big title bar at the top for navigating back to other pages
 2. Put some kind of step forward, play, step backward, reset thing at the top of the text area
