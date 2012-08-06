@@ -28,6 +28,7 @@ Stuff to think about:
  * On run (switching to read-only)?
 
 Bigger ideas to think about:
+- support newer gcodes on older machines by compiling them into supported gcodes. (!)
 - Cam software
 - Awesome editor
 - Objects, and actually simulating cuts
