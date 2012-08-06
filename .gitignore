@@ -1,5 +1,7 @@
 out/
+.crossover-cljs
 cljs-devmode-example.js
+resources/public/js/main-debug.js
 lib/
 .lein*
 .repl*
