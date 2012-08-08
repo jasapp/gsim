@@ -92,7 +92,7 @@
 		    (update-modal :g :1 2))]
       (arc (location m) (location new-m) (:r args) true)
       (message (format "Clockwise circular interpolation: %s" (location-str (location new-m))))
-      (current-location (:location new-m))
+;;      (current-location (:location new-m))
       new-m)
     m))
 (add-code! :g2 1 20.2 "Circular interpolation, clockwise" [:f :x :y :z :r] g2)

@@ -34,7 +34,7 @@ M30")
 
 (def gcode-demo-3
   "T1010 G96 S200
-g0 x1.0
+g2 x1.0 y1.0 r1.5
 z1.0
 x0.0
 z0.0
