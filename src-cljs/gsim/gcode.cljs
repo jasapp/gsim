@@ -1,5 +1,5 @@
 (ns gsim.gcode
-  (:use [gsim.draw :only [line arc current-location]]
+  (:use [gsim.draw :only [line cw-arc ccw-arc current-location]]
 	[gsim.console :only [message]]))
 ;;   (:use-macros [gsim.gcode :only [def-gcode]]))
 
@@ -90,17 +90,22 @@
     (let [new-m (-> m
 		    (update-location (merge (location m) args))
 		    (update-modal :g :1 2))]
-      (arc (location m) (location new-m) (:r args) true)
+      (cw-arc (location m) (location new-m) (:r args))
       (message (format "Clockwise circular interpolation: %s" (location-str (location new-m))))
-;;      (current-location (:location new-m))
+      (current-location (:location new-m))
       new-m)
     m))
 (add-code! :g2 1 20.2 "Circular interpolation, clockwise" [:f :x :y :z :r] g2)
 
 (defn g3
-  [m {:keys  [ f x y z r ]} e]
-  (message (str "G3" x y z f r))
-  (update-modal m :g :1 3))
+  [m args e]
+  (if (not (empty? args))
+    (let [new-m (-> m (update-location (merge (location m) args)) (update-modal :g :1 3))]
+      (ccw-arc (location m) (location new-m) (:r args))
+      (message (format "Counter-clockwise circular interpolation: %s" (location-str (location new-m))))
+      (current-location (:location new-m))
+      new-m)
+    m))
 (add-code! :g3 1 20.2 "Circular interpolation, counter-clockwise" [:f :x :y :z :r] g3)
 
 ;; (def-gcode g0 1 20.0

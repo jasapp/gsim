@@ -99,6 +99,19 @@
 			(+ (* x1 x2) (* y1 y2)))
 	 (* 2 js/Math.PI))))
 
+(defn clockwise? [center p1 p2]
+  (let [{x1 :x y1 :y} p1
+	{x2 :x y2 :y} p2]
+    (< (- (* (- x1 (:x center))
+	     (- y2 (:y center)))
+	  (* (- y2 (:y center))
+	     (- x2 (:x center))))
+       0)))
+
+(defn find-circle [p1 p2 r cw]
+  (let [circles (find-circles p1 p2 r)]
+    (first (filter #(= cw (clockwise? % p1 p2)) circles))))
+    
 ;; maybe we should leave everything in radians?
 ;; (defn find-angles [center & points]
 ;;  (let [radius (distance center (first points))
@@ -123,22 +136,20 @@
 	
 (defn arc [p1 p2 r cw & options]
   (let [{x1 :x y1 :y} p1 {x2 :x y2 :y} p2
-	[circle1 circle2] (find-circles p1 p2 r)
-	[start-angle1 end-angle1] (find-angles circle1 p1 p2)
-	[start-angle2 end-angle2] (find-angles circle2 p1 p2)
-	geometry1 (arc-geometry (:x circle1) (:y circle1) 0 start-angle1 end-angle1 r)
-	geometry2 (arc-geometry (:x circle2) (:y circle2) 0 start-angle2 end-angle2 r)
+	circle-center (find-circle p1 p2 r cw)
+	[start-angle end-angle] (find-angles circle-center p1 p2)
+	geometry (arc-geometry (:x circle-center) (:y circle-center) 0 start-angle end-angle r)
 	line-material (apply make-line-material options)
-	l1 (js/THREE.Line. geometry1 line-material)
-	l2 (js/THREE.Line. geometry2 line-material)]
-    (.add scene (sphere (merge circle1 {:z 0})))
-    (.add scene (sphere (merge circle2 {:z 0})))    
-    (.add scene (sphere {:x 1 :y 1 :z 0}))
-;;    (set! (.-line l1) true)
-;;    (set! (.-line l2) true)    
-    (.add scene l1)
-    (.add scene l2)    
+	l (js/THREE.Line. geometry line-material)]
+    (set! (.-line l) true)
+    (.add scene l)
     (render))) ;; just render everything now, maybe later we should only render selectively
+
+(defn cw-arc [p1 p2 r & options]
+  (arc p1 p2 r true options))
+
+(defn ccw-arc [p1 p2 r & options]
+  (arc p1 p2 r false options))
 
 ;; should this return a function to highlight the line on mouseOver?
 ;; (later of course)
@@ -149,12 +160,6 @@
     (set! (.-line l) true)
     (.add scene l)
     (render))) ;; just render everything now, maybe later we should only render selectively
-
-(defn cw-curve [p1 p2 r & options]
-  )
-
-(defn ccw-curve [p1 p2 r & options]
-  )
 
 ;; there must be a better way to clear the scene?
 (defn clear []
