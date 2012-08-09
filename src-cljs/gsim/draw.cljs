@@ -146,10 +146,10 @@
     (render))) ;; just render everything now, maybe later we should only render selectively
 
 (defn cw-arc [p1 p2 r & options]
-  (arc p1 p2 r true options))
+  (apply arc p1 p2 r true options))
 
 (defn ccw-arc [p1 p2 r & options]
-  (arc p1 p2 r false options))
+  (apply arc p1 p2 r false options))
 
 ;; should this return a function to highlight the line on mouseOver?
 ;; (later of course)

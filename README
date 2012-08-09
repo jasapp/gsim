@@ -6,18 +6,15 @@ lein cljsbuild auto [dev|prod]
 /usr/local/bin/cljs-repl 
 
 Stuff to do next:
-1. Put a big title bar at the top for navigating back to other pages
-2. Put some kind of step forward, play, step backward, reset thing at the top of the text area
-3. Finish the line drawing functions
-4. Hook up evaluation stuff to codemirror 
+1. Clean up interaction between the editor and draw. 
 5. Sending messages back to the server about errors
 6. Sending file saves back to the server
 8. Better ngc mode, and custom css for error words
+1. Testing stuff.
 
 Stuff to think about:
 - Hover over commands, highlight result. Hover over lines, highlight commands. 
 - Handle \r \r\n badness correctly. 
-- Testing stuff. Soon. 
 - Storing files
 - User accounts
 - Uploading new files
@@ -26,6 +23,10 @@ Stuff to think about:
 - How do we want to evaluate the code -
  * On change?
  * On run (switching to read-only)?
+
+Wait On:
+1. Put a big title bar at the top for navigating back to other pages
+2. Put some kind of step forward, play, step backward, reset thing at the top of the text area
 
 Bigger ideas to think about:
 - support newer gcodes on older machines by compiling them into supported gcodes. (!)
@@ -49,5 +50,7 @@ Done:
 2. Do the page layout in view.clj or whatever
 5. Codemirror mode for ngc
 7. Writing messages to our little console thing
+3. Finish the line drawing functions
+4. Hook up evaluation stuff to codemirror 
 
 Copyright (C) 2010 Jeff Sapp

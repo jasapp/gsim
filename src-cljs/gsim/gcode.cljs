@@ -90,7 +90,7 @@
     (let [new-m (-> m
 		    (update-location (merge (location m) args))
 		    (update-modal :g :1 2))]
-      (cw-arc (location m) (location new-m) (:r args))
+      (cw-arc (location m) (location new-m) (:r args) "color" 0x00ff00)
       (message (format "Clockwise circular interpolation: %s" (location-str (location new-m))))
       (current-location (:location new-m))
       new-m)
@@ -101,7 +101,7 @@
   [m args e]
   (if (not (empty? args))
     (let [new-m (-> m (update-location (merge (location m) args)) (update-modal :g :1 3))]
-      (ccw-arc (location m) (location new-m) (:r args))
+      (ccw-arc (location m) (location new-m) (:r args) "color" 0x00ff00)
       (message (format "Counter-clockwise circular interpolation: %s" (location-str (location new-m))))
       (current-location (:location new-m))
       new-m)
