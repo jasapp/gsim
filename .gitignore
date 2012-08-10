@@ -1,6 +1,8 @@
 out/
 .crossover-cljs
 cljs-devmode-example.js
+resources/private/js/unit-test.js
+resources/public/js/main.js
 resources/public/js/main-debug.js
 lib/
 .lein*

@@ -106,7 +106,7 @@
       (current-location (:location new-m))
       new-m)
     m))
-(add-code! :g3 1 20.2 "Circular interpolation, counter-clockwise" [:f :x :y :z :r] g3)
+(add-code! :g3 1 20.3 "Circular interpolation, counter-clockwise" [:f :x :y :z :r] g3)
 
 ;; (def-gcode g0 1 20.0
 ;;  "Rapid positioning"

@@ -1,7 +1,7 @@
 (ns gsim.machine
-  (:use [gsim.draw :only [clear drop-line current-location]])
-  (:require [gsim.parse :as p]
-	    [gsim.gcode :as g]))
+  [:use [gsim.draw :only [clear drop-line current-location]]]
+  [:require [gsim.parse :as p]
+	    [gsim.gcode :as g]])
 
 (def b1 "N100 G1 X1.0 Z1.0 F0.0123")
 (def b2
@@ -18,14 +18,10 @@
 (defn modal-words [machine]
   (let [modals (:modals machine)
 	modal-types (keys modals)]
-    ;; just try returning keywords instead of strings
     (mapcat (fn [t] (map #(keyword (str (name t) %)) (vals (t modals)))) modal-types)))
-;;    (mapcat (fn [t] (map #(str t %) (vals (t modals)))) modal-types)))
 
 (defn modal-blocks [machine]
   (let [[blocks _]
-	;; why are we calling name here? should modal-words return keywords instead
-	;; of strings? 
 	(p/parse-block (apply str (map name (modal-words machine))))]
     (filter #(-> % :details :fn) (map g/decorate blocks))))
 
