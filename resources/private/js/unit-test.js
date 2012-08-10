@@ -20540,12 +20540,114 @@ goog.provide("gsim.test.parse");
 goog.require("cljs.core");
 goog.require("gsim.parse");
 gsim.test.parse.success = 0;
-gsim.test.parse.run = function run() {
-  if(true) {
+gsim.test.parse.test_is_comment_QMARK_ = function test_is_comment_QMARK_() {
+  var comment__6238 = "(this is a comment)";
+  var not_comments__6239 = cljs.core.PersistentVector.fromArray(["this is not a comment)", "(this is also not a comment", "definitely not a comment", "G20"], true);
+  if(cljs.core.truth_(gsim.parse.is_comment_QMARK_.call(null, comment__6238))) {
   }else {
-    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, true))].join(""));
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'parse/is-comment?", "\ufdd1'comment"), cljs.core.hash_map("\ufdd0'line", 12))))].join(""));
   }
+  var G__6240__6241 = cljs.core.seq.call(null, not_comments__6239);
+  if(G__6240__6241) {
+    var not_comment__6242 = cljs.core.first.call(null, G__6240__6241);
+    var G__6240__6243 = G__6240__6241;
+    while(true) {
+      if(gsim.parse.is_comment_QMARK_.call(null, not_comment__6242) === false) {
+      }else {
+        throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'false?", cljs.core.with_meta(cljs.core.list("\ufdd1'parse/is-comment?", "\ufdd1'not-comment"), cljs.core.hash_map("\ufdd0'line", 14))), cljs.core.hash_map("\ufdd0'line", 14))))].join(""));
+      }
+      var temp__3974__auto____6244 = cljs.core.next.call(null, G__6240__6243);
+      if(temp__3974__auto____6244) {
+        var G__6240__6245 = temp__3974__auto____6244;
+        var G__6246 = cljs.core.first.call(null, G__6240__6245);
+        var G__6247 = G__6240__6245;
+        not_comment__6242 = G__6246;
+        G__6240__6243 = G__6247;
+        continue
+      }else {
+        return null
+      }
+      break
+    }
+  }else {
+    return null
+  }
+};
+gsim.test.parse.test_split_comment = function test_split_comment() {
+  var command__6262 = "G96 M3 S300 ";
+  var comment__6263 = "(set the speed, mode, and start the spindle)";
+  var vec__6264__6265 = gsim.parse.split_comment.call(null, command__6262);
+  var c1__6266 = cljs.core.nth.call(null, vec__6264__6265, 0, null);
+  var c2__6267 = cljs.core.nth.call(null, vec__6264__6265, 1, null);
+  if(cljs.core._EQ_.call(null, c1__6266, command__6262)) {
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'=", "\ufdd1'c1", "\ufdd1'command"), cljs.core.hash_map("\ufdd0'line", 20))))].join(""));
+  }
+  if(c2__6267 == null) {
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'nil?", "\ufdd1'c2"), cljs.core.hash_map("\ufdd0'line", 21))))].join(""));
+  }
+  var vec__6268__6269 = gsim.parse.split_comment.call(null, [cljs.core.str(command__6262), cljs.core.str(comment__6263)].join(""));
+  var c1__6270 = cljs.core.nth.call(null, vec__6268__6269, 0, null);
+  var c2__6271 = cljs.core.nth.call(null, vec__6268__6269, 1, null);
+  if(cljs.core._EQ_.call(null, c1__6270, command__6262)) {
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'=", "\ufdd1'c1", "\ufdd1'command"), cljs.core.hash_map("\ufdd0'line", 23))))].join(""));
+  }
+  if(cljs.core._EQ_.call(null, c2__6271, comment__6263)) {
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'=", "\ufdd1'c2", "\ufdd1'comment"), cljs.core.hash_map("\ufdd0'line", 24))))].join(""));
+  }
+  var vec__6272__6273 = gsim.parse.split_comment.call(null, comment__6263);
+  var c1__6274 = cljs.core.nth.call(null, vec__6272__6273, 0, null);
+  var c2__6275 = cljs.core.nth.call(null, vec__6272__6273, 1, null);
+  if(cljs.core.empty_QMARK_.call(null, c1__6274)) {
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'empty?", "\ufdd1'c1"), cljs.core.hash_map("\ufdd0'line", 26))))].join(""));
+  }
+  if(cljs.core._EQ_.call(null, c2__6275, comment__6263)) {
+    return null
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'=", "\ufdd1'c2", "\ufdd1'comment"), cljs.core.hash_map("\ufdd0'line", 27))))].join(""));
+  }
+};
+gsim.test.parse.test_tokenize_block = function test_tokenize_block() {
+  var commands__6287 = "G03X1.0 G96 s300 ";
+  var comment__6288 = "(comment)";
+  var vec__6289__6291 = gsim.parse.tokenize_block.call(null, [cljs.core.str(commands__6287), cljs.core.str(comment__6288)].join(""));
+  var vec__6290__6292 = cljs.core.nth.call(null, vec__6289__6291, 0, null);
+  var G03__6293 = cljs.core.nth.call(null, vec__6290__6292, 0, null);
+  var X10__6294 = cljs.core.nth.call(null, vec__6290__6292, 1, null);
+  var G96__6295 = cljs.core.nth.call(null, vec__6290__6292, 2, null);
+  var s300__6296 = cljs.core.nth.call(null, vec__6290__6292, 3, null);
+  var c2__6297 = cljs.core.nth.call(null, vec__6289__6291, 1, null);
+  if(cljs.core._EQ_.call(null, "G03", G03__6293)) {
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'=", "G03", "\ufdd1'G03"), cljs.core.hash_map("\ufdd0'line", 33))))].join(""));
+  }
+  if(cljs.core._EQ_.call(null, "X1.0", X10__6294)) {
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'=", "X1.0", "\ufdd1'X10"), cljs.core.hash_map("\ufdd0'line", 34))))].join(""));
+  }
+  if(cljs.core._EQ_.call(null, "G96", G96__6295)) {
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'=", "G96", "\ufdd1'G96"), cljs.core.hash_map("\ufdd0'line", 35))))].join(""));
+  }
+  if(cljs.core._EQ_.call(null, "s300", s300__6296)) {
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'=", "s300", "\ufdd1's300"), cljs.core.hash_map("\ufdd0'line", 36))))].join(""));
+  }
+  if(cljs.core._EQ_.call(null, c2__6297, comment__6288)) {
+    return null
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'=", "\ufdd1'c2", "\ufdd1'comment"), cljs.core.hash_map("\ufdd0'line", 37))))].join(""));
+  }
+};
+gsim.test.parse.run = function run() {
   console.log("Testing parse.");
+  gsim.test.parse.test_is_comment_QMARK_.call(null);
+  gsim.test.parse.test_split_comment.call(null);
+  gsim.test.parse.test_tokenize_block.call(null);
   return gsim.test.parse.success
 };
 goog.provide("gsim.test.machine");
