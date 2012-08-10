@@ -1,7 +1,7 @@
 (ns gsim.machine
-  [:use [gsim.draw :only [clear drop-line current-location]]]
-  [:require [gsim.parse :as p]
-	    [gsim.gcode :as g]])
+  (:use [gsim.draw :only [clear drop-line current-location]])
+  (:require [gsim.parse :as p]
+	    [gsim.gcode :as g]))
 
 (def b1 "N100 G1 X1.0 Z1.0 F0.0123")
 (def b2
