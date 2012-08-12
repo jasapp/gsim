@@ -6,12 +6,6 @@
 (def db-name (atom "dev"))
 (def db (atom nil))
 
-(defn fetch-latest-file [owner filename]
-  (m/with-mongo @db
-    (let [files (m/fetch-files :file :where {:filename filename :metadata.owner owner})
-	  file (first (sort #(compare (:uploadDate %2) (:uploadDate %1)) files))]
-      (slurp (m/stream-from :file file)))))
-
 (defn init-db [name]
   (if (nil? @db)
     (swap! db
@@ -19,8 +13,23 @@
 				      :host (:host mongo-server)
 				      :port (:port mongo-server))))))
 
+(defn fetch-latest-file [owner filename]
+  (m/with-mongo @db
+    (let [files (m/fetch-files :file :where {:filename filename :metadata.owner owner})
+	  file (first (sort #(compare (:uploadDate %2) (:uploadDate %1)) files))]
+      (slurp (m/stream-from :file file)))))
+
+(defn list-mongo-files [owner]
+  (m/with-mongo @db
+    (->> (m/fetch-files :file :where {:metadata.owner owner})
+	 (map :filename)
+	 set)))
+
 (deftype MongoFileStorage [db-name]
   FileStorage
+  (list-files [this owner]
+    (init-db db-name)
+    (list-mongo-files owner))
   (fetch [this owner filename]
     ;; look at just streaming this out maybe?
     (init-db db-name)

@@ -1,5 +1,4 @@
 (ns gsim.views
-  (:use [gsim.demo :only [gcode-demo-1 gcode-demo-3]])
   (:require
    [hiccup
     [page :refer [html5]]
@@ -37,17 +36,13 @@
       "/js/main-debug.js"
       "gsim.repl.connect()")]]))
 
-(defn index-page []
+(defn files-page [filenames]
   (html5
-    [:head
-      [:title "fyyff!"]]
-    [:body
-      [:h1 "fyyff!"]
-     (include-js "/js/Three.js")
-     (include-js "/js/codemirror.js")
-     (run-clojurescript
-        "/js/main-debug.js"
-        "example.hello.say_hello()")]))
+   [:head
+    [:title "view files"]]
+   [:body
+    (for [filename filenames]
+      [:li [:a {:href (str "/edit/" filename)} filename]])]))
 
 (defn repl-demo-page []
   (html5

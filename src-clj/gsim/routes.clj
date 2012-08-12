@@ -1,7 +1,7 @@
 (ns gsim.routes
   (:use compojure.core
         gsim.views
-	[gsim.storage.storage :only [save fetch]]
+	[gsim.storage.storage :only [save fetch list-files]]
 	[gsim.storage.mongo :only [new-storage]]
         [hiccup.middleware :only (wrap-base-url)])
   (:require [compojure.route :as route]
@@ -16,8 +16,12 @@
 	contents (fetch @storage "jeff" filename)]
     (edit-page filename contents)))
 
+(defn view-files [request]
+  (let [filenames (list-files @storage "jeff")]
+    (files-page filenames)))
+
 (defroutes main-routes
-  (GET "/" [] (index-page))
+  (GET "/" {p :params} (view-files p))
   (GET "/edit/:filename" {p :params} (edit-file p))
   (GET "/repl-demo" [] (repl-demo-page))
   (route/resources "/")
