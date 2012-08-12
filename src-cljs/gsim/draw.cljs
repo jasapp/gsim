@@ -190,7 +190,7 @@
 	c (js/THREE.PerspectiveCamera. 35 ratio 0.1 10000)]
     (.setSize renderer (.-offsetWidth canvas) (.-offsetHeight canvas))
     (.appendChild canvas (. renderer -domElement))
-    (.set (. c -position) 0 0 10)
+    (.set (. c -position) 5 5 5)
     (.lookAt c (. scene -position))
     (.add scene c)
     (set! camera c)

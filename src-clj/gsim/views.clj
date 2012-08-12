@@ -12,10 +12,10 @@
     (include-js path)
     (javascript-tag init)))
 
-(defn draw-page []
+(defn edit-page [filename contents]
   (html5
    [:head
-    [:title "code!"]
+    [:title (format "Editing - %s" filename)]
     (include-css "/css/codemirror.css")
     (include-css "/css/ngc.css")
     (include-js "/js/codemirror.js")
@@ -26,8 +26,7 @@
      [:div {:id "canvas"}
       [:div {:id "console"}]]
      [:div {:id "editor"}
-      [:textarea {:name "code" :id "code"}
-       gcode-demo-3]]
+      [:textarea {:name "code" :id "code"} contents]]
      (run-clojurescript
       "/js/main-debug.js"
       "gsim.editor.init('code')")
