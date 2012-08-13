@@ -8,8 +8,14 @@ lein cljsbuild auto [dev|prod]
 # run tests like this:
 lein test
 
+Before Launch:
+1. Logging
+2. Authentication
+3. More gcodes
+4. Error handling in editor
+5. Simple website wrapper
+
 Stuff to do next:
-1. File storage. Git, Mongo, Couch, Redis?
 1. Clean up interaction between the editor and draw. 
 2. More tests.
 5. Sending messages back to the server about errors.
@@ -57,5 +63,6 @@ Done:
 3. Finish the line drawing functions
 4. Hook up evaluation stuff to codemirror 
 1. Testing stuff.
+1. File storage. Git, Mongo, Couch, Redis?
 
 Copyright (C) 2010 Jeff Sapp

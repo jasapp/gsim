@@ -42,7 +42,7 @@
     [:title "view files"]]
    [:body
     (for [filename filenames]
-      [:li [:a {:href (str "/edit/" filename)} filename]])]))
+      [:li [:a {:href (str "/edit/" filename) } filename]])]))
 
 (defn repl-demo-page []
   (html5

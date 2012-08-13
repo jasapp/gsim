@@ -3,7 +3,7 @@
         gsim.views
 	[gsim.storage.storage :only [save fetch list-files]]
 	[gsim.storage.mongo :only [new-storage]]
-        [hiccup.middleware :only (wrap-base-url)])
+        [hiccup.middleware :only [wrap-base-url]])
   (:require [compojure.route :as route]
 	    [gsim.storage.mongo :only [new-storage]]
             [compojure.handler :as handler]
