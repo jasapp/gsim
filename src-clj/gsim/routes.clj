@@ -3,6 +3,7 @@
         gsim.views
 	[gsim.storage.storage :only [save fetch list-files]]
 	[gsim.storage.mongo :only [new-storage]]
+	[gsim.logging :only [logging-middleware]]
 	[gsim.users :only [load-user-record]]
 	[ring.util.response :only [redirect]]
 	[ring.middleware.params :only [wrap-params]]
@@ -29,17 +30,8 @@
 	filenames (list-files @storage username)]
     (files-page filenames)))
 
-(defn login-page [request]
-  "<form method='post' action='/login'>
-   Username <input type='text' name='username' />
-   Password <input type='text' name='password' />
-   <input type='submit' /></form>")
-
-(defroutes user-routes
-  (GET "/edit/:filename" {p :params} (edit-file p)))
-
 (defroutes main-routes
-  (GET "/" request (view-files request))
+  (GET "/" request (friend/authorize #{:admin :user} (view-files request)))
   (GET "/login" request (login-page request))
   (GET "/admin" request (friend/authorize #{:admin} "admin page."))
   (GET "/edit/:filename" request (friend/authorize #{:user} (edit-file request)))
@@ -50,6 +42,7 @@
 (def app
   (-> main-routes
       (wrap-base-url)
+      (logging-middleware)
       (friend/authenticate
        {:credential-fn (partial creds/bcrypt-credential-fn load-user-record)
 	:unauthorized-redirect-uri "/login"

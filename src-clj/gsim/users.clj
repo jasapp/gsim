@@ -1,15 +1,14 @@
 (ns gsim.users
-  (:use [gsim.config :only [mongo-server]]
+  (:use [gsim.config :only [mongo-server db-name]]
 	[cemerick.friend.credentials :only [hash-bcrypt bcrypt-credential-fn]])
   (:require [somnium.congomongo :as m]))
 
-(def db-name (atom "dev"))
 (def db (atom nil))
 
 (defn init-db []
   (if (nil? @db)
     (swap! db
-	   (fn [_] (m/make-connection @db-name
+	   (fn [_] (m/make-connection db-name
 				      :host (:host mongo-server)
 				      :port (:port mongo-server))))))
 

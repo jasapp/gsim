@@ -44,6 +44,13 @@
     (for [filename filenames]
       [:li [:a {:href (str "/edit/" filename) } filename]])]))
 
+(defn login-page [request]
+  (html5
+   [:form {:method "post" :action "/login"}
+    "Username: " [:input {:type "text" :name "username"}]
+    "Password: " [:input {:type "text" :name "password"}]
+    [:input {:type "submit"}]]))
+
 (defn repl-demo-page []
   (html5
     [:head

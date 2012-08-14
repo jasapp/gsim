@@ -1,9 +1,8 @@
 (ns gsim.storage.mongo
   (:use [gsim.storage.storage]
-	[gsim.config :only [mongo-server]])
+	[gsim.config :only [mongo-server db-name]])
   (:require [somnium.congomongo :as m]))
 
-(def db-name (atom "dev"))
 (def db (atom nil))
 
 (defn init-db [name]
@@ -25,7 +24,7 @@
 	 (map :filename)
 	 set)))
 
-(deftype MongoFileStorage [db-name]
+(deftype MongoFileStorage []
   FileStorage
   (list-files [this owner]
     (init-db db-name)
@@ -43,4 +42,4 @@
 
 ;; this seems a little wrong. 
 (defn new-storage []
-  (MongoFileStorage. @db-name))
+  (MongoFileStorage.))

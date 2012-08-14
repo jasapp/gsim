@@ -10,7 +10,6 @@ lein test
 
 Before Launch:
 1. Logging
-2. Authentication
 3. More gcodes
 4. Error handling in editor
 5. Simple website wrapper
@@ -66,5 +65,6 @@ Done:
 4. Hook up evaluation stuff to codemirror 
 1. Testing stuff.
 1. File storage. Git, Mongo, Couch, Redis?
+2. Authentication
 
 Copyright (C) 2010 Jeff Sapp
