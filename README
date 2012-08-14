@@ -23,6 +23,8 @@ Stuff to do next:
 8. Better ngc mode, and custom css for error words.
 
 Stuff to think about:
+- Have line color based on feed rates and cutting speeds. 
+- Have lines color "cool off" as more lines are drawn and time goes by
 - Hover over commands, highlight result. Hover over lines, highlight commands. 
 - Handle \r \r\n badness correctly. 
 - Storing files
