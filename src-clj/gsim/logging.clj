@@ -1,5 +1,6 @@
 (ns gsim.logging
-  (:use [gsim.config :only [mongo-server db-name]])
+  (:use [gsim.config :only [mongo-server db-name]]
+	[cemerick.friend :only [identity]])
   (:require [somnium.congomongo :as m]))
 
 (def db (atom nil))
@@ -11,13 +12,24 @@
 				      :host (:host mongo-server)
 				      :port (:port mongo-server))))))
 
+(defn format-request [request]
+  (format "%s - %s %s - %s"
+	  (java.util.Date.)
+	  (:remote-addr request)
+	  (:uri request)
+	  (:current (identity request))))
+
 (defn log [request]
   (init-db)
+  (println (format-request request))
   (m/with-mongo @db
     (m/insert! :http_log
-	       (select-keys request
+	       (assoc 
+		   (select-keys request
 			    [:host :remote-addr :scheme :request-method :uri
-			     :query-params :server-name :headers :server-port]))))
+			     :query-params :server-name :headers :server-port])
+		 :username (:current (identity request))
+		 :time (java.util.Date.)))))
 
 (defn log-json [json]
   (init-db)
