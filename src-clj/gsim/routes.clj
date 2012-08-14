@@ -19,12 +19,14 @@
 (def storage (atom (new-storage)))
 
 (defn edit-file [request]
-  (let [{filename :filename} request
-	contents (fetch @storage "jeff" filename)]
+  (let [{filename :filename} (:params request)
+	username (:current (friend/identity request))
+	contents (fetch @storage username filename)]
     (edit-page filename contents)))
 
 (defn view-files [request]
-  (let [filenames (list-files @storage "jeff")]
+  (let [username (:current (friend/identity request))
+	filenames (list-files @storage username)]
     (files-page filenames)))
 
 (defn login-page [request]
@@ -37,10 +39,10 @@
   (GET "/edit/:filename" {p :params} (edit-file p)))
 
 (defroutes main-routes
-  (GET "/" {p :params} (view-files p))
+  (GET "/" request (view-files request))
   (GET "/login" request (login-page request))
   (GET "/admin" request (friend/authorize #{:admin} "admin page."))
-  (GET "/edit/:filename" {p :params} (friend/authorize #{:user} (edit-file p)))
+  (GET "/edit/:filename" request (friend/authorize #{:user} (edit-file request)))
   (friend/logout (ANY "/logout" request (redirect "/")))
   (route/resources "/")
   (route/not-found "Page not found"))
