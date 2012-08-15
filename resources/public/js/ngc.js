@@ -33,7 +33,8 @@ CodeMirror.defineMode("ngc", function() {
 		stream.eatWhile(/\d/);
 		returnType = "tag";
 	    } else if (/[a-z]/i.test(ch)) {
-		stream.eatWhile(/(\+|\-|\d|\.)/);
+		stream.eat(/(\+|\-)?/);
+		stream.eatWhile(/(\d|\.)/);
 		returnType = "builtin";
 	    } else if (ch == '(') {
 		stream.skipToEnd();
