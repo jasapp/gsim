@@ -8,17 +8,17 @@ lein cljsbuild auto [dev|prod]
 # run tests like this:
 lein test
 
-Before Launch:
-3. More gcodes (wrap this in a protocol)
-4. Error handling in editor
-5. Simple website wrapper
-
 Stuff to do next:
-1. Clean up interaction between the editor and draw. 
-2. More tests.
+1. Clean up the editor code (maybe split our code with the codemirror stuff?)
+2. Error handling in editor
+1. Clean up the drawing code (maybe split our code with the Three.js stuff?)
 5. Sending messages back to the server about errors.
 6. Sending file saves back to the server.
-8. Better ngc mode, and custom css for error words.
+8. Better ngc mode, and custom css for error words (in clojurescript?)
+3. More gcodes (wrap this in a protocol)
+5. Simple website wrapper
+2. More tests.
+1. Delete files (or make invisible)
 
 Stuff to think about:
 - Have line color based on feed rates and cutting speeds. 

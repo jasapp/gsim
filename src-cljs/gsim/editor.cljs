@@ -43,6 +43,6 @@
 	 (.getElement goog.dom element-name)
 	 (js-obj "lineNumbers" true
 		 "lineWrapping" true
+		 "autofocus" true
 		 "onCursorActivity" on-cursor-activity)))
-  (focus)
   (set! hl-line (set-line-class 0 "activeline")))
