@@ -25,8 +25,6 @@ Stuff to think about:
 - Have lines color "cool off" as more lines are drawn and time goes by
 - Hover over commands, highlight result. Hover over lines, highlight commands. 
 - Handle \r \r\n badness correctly. 
-- Storing files
-- User accounts
 - Managing files
 - Maybe using git?
 - How do we want to evaluate the code -
