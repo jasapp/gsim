@@ -50,9 +50,8 @@
 (defn login-page [request]
   (html5
    [:form {:method "post" :action "/login"}
-    "Username: " [:input {:type "text" :name "username"}]
-    [:br]
-    "Password: " [:input {:type "password" :name "password"}]
+    "Username: " [:input {:type "text" :name "username"}] [:br]
+    "Password: " [:input {:type "password" :name "password"}] [:br]
     [:input {:type "submit"}]]))
 
 (defn repl-demo-page []
