@@ -42,7 +42,10 @@
     [:title "view files"]]
    [:body
     (for [filename filenames]
-      [:li [:a {:href (str "/edit/" filename) } filename]])]))
+      [:li [:a {:href (str "/edit/" filename) } filename]])
+    [:form {:method "post" :action "/upload" :enctype "multipart/form-data"}
+     "Upload:" [:input {:type "file" :name "file" :size 20}]
+     [:input {:type "submit" :name "submit" :value "submit"}]]]))
 
 (defn login-page [request]
   (html5

@@ -9,7 +9,6 @@ lein cljsbuild auto [dev|prod]
 lein test
 
 Before Launch:
-1. Simple console logging
 3. More gcodes (wrap this in a protocol)
 4. Error handling in editor
 5. Simple website wrapper
@@ -28,7 +27,6 @@ Stuff to think about:
 - Handle \r \r\n badness correctly. 
 - Storing files
 - User accounts
-- Uploading new files
 - Managing files
 - Maybe using git?
 - How do we want to evaluate the code -
@@ -66,6 +64,8 @@ Done:
 1. Testing stuff.
 1. File storage. Git, Mongo, Couch, Redis?
 1. Logging
+1. Simple console logging
 2. Authentication
+1. File uploading
 
 Copyright (C) 2010 Jeff Sapp

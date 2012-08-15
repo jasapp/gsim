@@ -7,6 +7,7 @@
 	[gsim.users :only [load-user-record]]
 	[ring.util.response :only [redirect]]
 	[ring.middleware.params :only [wrap-params]]
+	[ring.middleware.multipart-params :only [wrap-multipart-params]]	
         [hiccup.middleware :only [wrap-base-url]])
   (:require [compojure.route :as route]
 	    [gsim.storage.mongo :only [new-storage]]
@@ -30,11 +31,19 @@
 	filenames (list-files @storage username)]
     (files-page filenames)))
 
+(defn upload-file [request]
+  (let [username (:current (friend/identity request))
+	{filename :filename file :tempfile size :size} (:file (:params request))]
+    (save @storage username filename (slurp file))
+    (redirect "/")))
+
 (defroutes main-routes
   (GET "/" request (friend/authorize #{:admin :user} (view-files request)))
   (GET "/login" request (login-page request))
   (GET "/admin" request (friend/authorize #{:admin} "admin page."))
   (GET "/edit/:filename" request (friend/authorize #{:user} (edit-file request)))
+  (wrap-multipart-params
+   (POST "/upload" request (friend/authorize #{:user} (upload-file request))))
   (friend/logout (ANY "/logout" request (redirect "/")))
   (route/resources "/")
   (route/not-found "Page not found"))
