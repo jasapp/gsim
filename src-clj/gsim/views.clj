@@ -51,7 +51,8 @@
   (html5
    [:form {:method "post" :action "/login"}
     "Username: " [:input {:type "text" :name "username"}]
-    "Password: " [:input {:type "text" :name "password"}]
+    [:br]
+    "Password: " [:input {:type "password" :name "password"}]
     [:input {:type "submit"}]]))
 
 (defn repl-demo-page []
