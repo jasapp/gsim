@@ -1,4 +1,4 @@
-(ns gsim.draw)
+(ns gsim.machine.draw)
 
 (def renderer (js/THREE.WebGLRenderer. (js-obj "antialias" true)))
 (def scene (js/THREE.Scene.))

@@ -29,9 +29,10 @@
      (run-clojurescript
       "/js/main-debug.js"
       "gsim.editor.init('code')")
+     ;; this is bad. The editor should initialize the machine
      (run-clojurescript
       "/js/main-debug.js"
-      "gsim.draw.init('canvas')")
+      "gsim.machine.draw.init('canvas')")
      (run-clojurescript
       "/js/main-debug.js"
       "gsim.repl.connect()")]]))

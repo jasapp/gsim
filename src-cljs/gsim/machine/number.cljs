@@ -1,4 +1,4 @@
-(ns gsim.number
+(ns gsim.machine.number
   (:require [goog.string :as gstr]))
 
 (def number-length 8)

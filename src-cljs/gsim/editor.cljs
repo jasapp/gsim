@@ -1,6 +1,6 @@
 (ns gsim.editor
   (:use [gsim.console :only [message]]
-	[gsim.machine :only [machine-eval step-back]]))
+	[gsim.machine.machine :only [machine-eval step-back]]))
 
 (def hl-line nil)
 (def editor nil)

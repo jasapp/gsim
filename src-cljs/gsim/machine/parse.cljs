@@ -1,7 +1,7 @@
-(ns gsim.parse
+(ns gsim.machine.parse
   (:require [clojure.string :as s]
 	    [goog.string :as gstr]
-	    [gsim.number :as n]))
+	    [gsim.machine.number :as n]))
 
 (defn- is-comment? [word-str]
   (and (gstr/startsWith word-str "(")

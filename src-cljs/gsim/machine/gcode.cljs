@@ -1,5 +1,5 @@
-(ns gsim.gcode
-  (:use [gsim.draw :only [line cw-arc ccw-arc current-location]]
+(ns gsim.machine.gcode
+  (:use [gsim.machine.draw :only [line cw-arc ccw-arc current-location]]
 	[gsim.console :only [message]]))
 ;;   (:use-macros [gsim.gcode :only [def-gcode]]))
 
