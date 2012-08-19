@@ -5,6 +5,16 @@
 
 (def machines (atom nil))
 
+;;(defprotocol AMachine
+;;  "The machine protocol."
+  ;; (init [initial-location canvas-options])
+  ;; (machine-eval [lines])
+  ;; (step-back [line-count])
+  ;; (location []))
+
+;;(deftype Machine []
+;;   AMachine)
+
 (def default-modals
   {:g { :1 0 :2 17 :3 90 :5 93 :6 20 :7 40 :8 43 :10 98 :12 54 :13 61 }
    :m { :4 0 :6 6 :7 3 :8 7 :9 48 }})
