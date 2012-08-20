@@ -133,3 +133,13 @@
 ;;   (Thread/sleep (* 1000 p))
 ;;   (throw (Exception. "G4 requires a value for P"))
 ;;   m)
+
+(defn- g96
+  [m args e]
+  (message "Spindle CSS Mode"))
+(add-code! :g96 13 1.0 "Spindle CSS Mode" [] g96)
+
+(defn- g97 
+  [m args e]
+  (message (format "Spindle RPM Mode (%s RPM)" (:s args)))
+(add-code! :g97 13 1.0 "Spindle RPM Mode" [:s] g97)
