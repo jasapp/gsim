@@ -12,6 +12,14 @@
 	   (merge (:modals machine)
 		  {modal-type (assoc current modal-group value)}))))
 
+(defn- update-speed [machine speed]
+  (assoc-in machine [:registers :speed] speed))
+
+(defn- update-tool [machine tool offset]
+  (-> machine
+      (assoc-in [:registers :tool] tool)
+      (assoc-in [:registers :offset] offset)))
+
 (defn location [machine]
   (:location machine))
 
@@ -159,13 +167,13 @@
 (defn t [word-args]
   (fn [m args e]
     (message (str "Tool change: " word-args))
-    m))
+    (update-tool m word-args word-args)))
 (add-code! :t 0 1.0 "Tool Change" [] t)
 
 (defn s [word-args]
   (fn [m args e]
     (message (str "Spindle speed: " word-args))
-    m))
+    (update-speed m word-args))
 (add-code! :s 0 1.0 "Spindle Speed" [] s)
 
 
