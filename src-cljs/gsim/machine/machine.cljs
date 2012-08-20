@@ -87,7 +87,7 @@
     (recur (block-eval machine (first blocks)) (rest blocks))))
 
 (defn line-eval
-  ([gcode-str] (line-eval (default-machine) gcode-str))
+  ([gcode-str] (line-eval (new-machine) gcode-str))
   ([machine gcode-str]
      (block-eval machine (p/parse-block gcode-str))))
 

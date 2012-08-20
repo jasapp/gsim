@@ -12,6 +12,12 @@
 	   (merge (:modals machine)
 		  {modal-type (assoc current modal-group value)}))))
 
+(defn- speed [machine]
+  (-> machine :registers :speed))
+
+(defn- tool [machine]
+  (-> machine :registers :tool))
+
 (defn- update-speed [machine speed]
   (assoc-in machine [:registers :speed] speed))
 
@@ -164,6 +170,19 @@
     m))
 (add-code! :g97 5 1.0 "Spindle RPM Mode" [:s] g97)
 
+;; (defn m3 [m args e]
+;;   (if e
+;;     (do (message (str "Starting Spindle: " (speed m)))
+;;         (update-modal m :m :7 3))
+;;     m))
+;; (add-code! :m3 7 1.0 "Starting Spindle" [] m3)
+
+;; (defn m4 [m args e]
+;;   m)
+
+;; (defn m5 [m args e]
+;;   m)
+
 (defn t [word-args]
   (fn [m args e]
     (message (str "Tool change: " word-args))
@@ -173,7 +192,5 @@
 (defn s [word-args]
   (fn [m args e]
     (message (str "Spindle speed: " word-args))
-    (update-speed m word-args))
+    (update-speed m word-args)))
 (add-code! :s 0 1.0 "Spindle Speed" [] s)
-
-
