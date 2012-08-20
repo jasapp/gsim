@@ -1,9 +1,10 @@
 (ns gsim.editor
   (:use [gsim.console :only [message]]
-	[gsim.machine.machine :only [machine-eval step-back]]))
+	[gsim.machine.machine :only [machine-eval step-back new-machine]]))
 
 (def hl-line nil)
 (def editor nil)
+(def machine (atom nil))
 
 (defn cursor-line-number []
   (-> editor .getCursor .-line))
@@ -33,14 +34,21 @@
 	line-difference (- line-number previous-line-number)]
     (set-line-class hl-line)
     (set! hl-line (set-line-class line-number "activeline"))
-    (cond (pos? line-difference) (apply machine-eval
-					(get-lines previous-line-number line-difference))
-	  (neg? line-difference) (step-back (* -1 line-difference)))))
+    (cond (pos? line-difference) 
+          (swap! machine 
+                 (fn [] 
+                   (apply machine-eval @machine 
+                          (get-lines previous-line-number line-difference))))
+	  (neg? line-difference) 
+          (swap! machine
+                 (fn []
+                   (step-back @machine (* -1 line-difference)))))))
 
-(defn init [element-name]
+(defn init [textarea]
+  (swap! machine new-machine)
   (set! editor
 	(js/CodeMirror.fromTextArea
-	 (.getElement goog.dom element-name)
+	 (.getElement goog.dom textarea)
 	 (js-obj "lineNumbers" true
 		 "lineWrapping" true
 		 "autofocus" true

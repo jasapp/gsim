@@ -1,5 +1,5 @@
 (ns gsim.machine.gcode
-  (:use [gsim.machine.draw :only [line cw-arc ccw-arc current-location]]
+  (:use [gsim.machine.draw :only [line cw-arc ccw-arc redraw-location]]
 	[gsim.console :only [message]]))
 ;;   (:use-macros [gsim.gcode :only [def-gcode]]))
 
@@ -12,8 +12,7 @@
 	   (merge (:modals machine)
 		  {modal-type (assoc current modal-group value)}))))
 
-;; I don't like this location business in gcode
-(defn- location [machine]
+(defn location [machine]
   (:location machine))
 
 (defn- update-location [machine location-map]
@@ -66,7 +65,7 @@
 		    (g0-inside (select-keys args [:z]))	
 		    (update-modal :g :1 0))]
       (message (format "Rapid to: %s" (location-str (merge-locations (location m) args))))
-      (current-location (:location new-m))
+      (redraw-location (:location new-m))
       new-m)
     m))
 (add-code! :g0 1 20.0 "Rapid positioning" [:x :y :z] g0)
@@ -79,7 +78,7 @@
 		    (update-modal :g :1 1))]
       (line (location m) (location new-m) "color" 0x00ff00)
       (message (format "Linear interpolation to: %s" (location-str (location new-m))))
-      (current-location (:location new-m))
+      (redraw-location (:location new-m))
       new-m)
     m))
 (add-code! :g1 1 20.1 "Linear interpolation" [:f :x :y :z] g1)
@@ -92,7 +91,7 @@
 		    (update-modal :g :1 2))]
       (cw-arc (location m) (location new-m) (:r args) "color" 0x00ff00)
       (message (format "Clockwise circular interpolation: %s" (location-str (location new-m))))
-      (current-location (:location new-m))
+      (redraw-location (:location new-m))
       new-m)
     m))
 (add-code! :g2 1 20.2 "Circular interpolation, clockwise" [:f :x :y :z :r] g2)
@@ -103,7 +102,7 @@
     (let [new-m (-> m (update-location (merge (location m) args)) (update-modal :g :1 3))]
       (ccw-arc (location m) (location new-m) (:r args) "color" 0x00ff00)
       (message (format "Counter-clockwise circular interpolation: %s" (location-str (location new-m))))
-      (current-location (:location new-m))
+      (redraw-location (:location new-m))
       new-m)
     m))
 (add-code! :g3 1 20.3 "Circular interpolation, counter-clockwise" [:f :x :y :z :r] g3)

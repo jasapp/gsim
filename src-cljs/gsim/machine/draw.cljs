@@ -41,7 +41,7 @@
     (if (.-location child)
       (.remove scene child))))
 
-(defn current-location [p]
+(defn redraw-location [p]
   (remove-current-location)
   (let [s (sphere p)]
     (set! (.-location s) true)
@@ -194,4 +194,4 @@
     (.lookAt c (. scene -position))
     (.add scene c)
     (set! camera c)
-    (current-location {:x 0 :y 0 :z 0})))
+    (redraw-location {:x 0 :y 0 :z 0})))

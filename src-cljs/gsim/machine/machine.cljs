@@ -1,19 +1,7 @@
 (ns gsim.machine.machine
-  (:use [gsim.machine.draw :only [clear drop-line current-location]])
+  (:use [gsim.machine.draw :only [clear drop-line redraw-location]])
   (:require [gsim.machine.parse :as p]
 	    [gsim.machine.gcode :as g]))
-
-(def machines (atom nil))
-
-;;(defprotocol AMachine
-;;  "The machine protocol."
-  ;; (init [initial-location canvas-options])
-  ;; (machine-eval [lines])
-  ;; (step-back [line-count])
-  ;; (location []))
-
-;;(deftype Machine []
-;;   AMachine)
 
 (def default-modals
   {:g { :1 0 :2 17 :3 90 :5 93 :6 20 :7 40 :8 43 :10 98 :12 54 :13 61 }
@@ -29,10 +17,12 @@
 	(p/parse-block (apply str (map name (modal-words machine))))]
     (filter #(-> % :details :fn) (map g/decorate blocks))))
 
-(defn- new-machine [ ]
+(defn new-machine [ ]
   {:location {:x 0 :y 0 :z 0}
    :registers { }
-   :modals default-modals})
+   :modals default-modals
+   :previous-machine nil
+   })
 
 (defn- next-word [block]
   (let [sorted-block (g/sort-block block)
@@ -70,7 +60,7 @@
     machine
     (let [[next-words left-overs] (split-block args)]
       (if (not (empty? next-words))
-	(recur (word-eval machine (first next-words) (rest next-words)) left-overs)
+        (recur (word-eval machine (first next-words) (rest next-words)) left-overs)
 	machine))))
 
 (defn- block-eval-inside [machine block]
@@ -92,36 +82,28 @@
     (recur (block-eval machine (first blocks)) (rest blocks))))
 
 (defn line-eval
-  ([gcode-str] (line-eval (new-machine) gcode-str))
+  ([gcode-str] (line-eval (default-machine) gcode-str))
   ([machine gcode-str]
      (block-eval machine (p/parse-block gcode-str))))
 
-(defn current-machine []
-  (peek @machines))
+(defn previous-machine [m]
+  (:previous-machine m))
 
-(defn drop-machine []
-  (swap! machines pop))
+(defn add-machine [new old]
+  (assoc new :previous-machine old))
 
-(defn add-machine [m]
-  (swap! machines conj m))
-
-(defn startup-machine []
-  (if (empty? @machines)
-    (add-machine (new-machine))))
-
-(defn machine-eval [& gcode-lines]
-  (startup-machine)
-  (doseq [gcode-line gcode-lines]
-    ;; we should probably check to see if the line parsed correctly before trying
-    ;; to evaluate it. :-/
-    (let [blocks (p/parse gcode-line)]
-      (add-machine (machine-eval-inside (current-machine) blocks)))))
+(defn machine-eval [m & gcode-lines]
+  (reduce (fn [n gcode-line] 
+            (let [blocks (p/parse gcode-line)]
+              (assoc (machine-eval-inside n blocks)
+                :previous-machine n))) 
+          m gcode-lines))
 
 ;; Uck. Not digging this :location reference. This needs to be cleaned up soon. 
 (defn step-back
-  ([] (step-back 1))
-  ([steps]
-     (doseq [_ (range 0 steps)]
-       (drop-machine))
-     (drop-line steps)
-     (current-location (:location (current-machine)))))
+  ([m] (step-back m 1))
+  ([m steps]
+     (let [new-old-machine (reduce :previous-machine m (range 0 steps))]
+       (drop-line steps)
+       (redraw-location (:location new-old-machine))
+       new-old-machine)))
