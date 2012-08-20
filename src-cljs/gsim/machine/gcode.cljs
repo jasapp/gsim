@@ -22,7 +22,7 @@
 
 (def codes (atom {}))
 
-(defn- add-code! [ code-name modal precedence doc args f]
+(defn- add-code! [code-name modal precedence doc args f]
   (swap! codes assoc (keyword code-name)
          {:modal modal :doc doc :precedence precedence :args args :fn f}))
 
@@ -32,11 +32,17 @@
 (defn- has-fn? [code]
   (-> @codes code))
 
+;;
+;; make sure we handle words like G03 AND words with arguments like T1010 and S300
+;; 
 (defn decorate [word]
-  (let [code (:word word)]
+  (let [code (:word word)
+        address (:address word)]
     (if (has-fn? code)
       (assoc word :details (-> @codes code))
-      word)))
+      (if (has-fn? address)
+        (assoc word :details {:fn ((-> @codes address :fn) (:arg word))})
+        word))))
 
 (defn sort-block [block]
   (reverse (sort-by #(-> % :details :precedence) block)))
@@ -136,10 +142,30 @@
 
 (defn- g96
   [m args e]
-  (message "Spindle CSS Mode"))
-(add-code! :g96 13 1.0 "Spindle CSS Mode" [] g96)
+  (if e 
+    (do (message (str "Spindle CSS Mode: " e))
+        (update-modal m :g :5 96))
+    m))
+(add-code! :g96 5 1.1 "Spindle CSS Mode" [] g96)
 
 (defn- g97 
   [m args e]
-  (message (format "Spindle RPM Mode (%s RPM)" (:s args)))
-(add-code! :g97 13 1.0 "Spindle RPM Mode" [:s] g97)
+  (if e
+    (do (message (str "Spindle RPM Mode: " e))
+        (update-modal m :g :5 97))
+    m))
+(add-code! :g97 5 1.0 "Spindle RPM Mode" [:s] g97)
+
+(defn t [word-args]
+  (fn [m args e]
+    (message (str "Tool change: " word-args))
+    m))
+(add-code! :t 0 1.0 "Tool Change" [] t)
+
+(defn s [word-args]
+  (fn [m args e]
+    (message (str "Spindle speed: " word-args))
+    m))
+(add-code! :s 0 1.0 "Spindle Speed" [] s)
+
+

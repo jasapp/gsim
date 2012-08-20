@@ -52,8 +52,13 @@
    (map :address args)
    (map #(or (:arg %) (:imperial-arg %) (:metric-arg %)) args)))
 
-(defn- word-eval [machine word args]
-  ((-> word :details :fn) machine (keyword-map args) nil))
+;; the explicit arg is used to distinguish between words being evaluated
+;; from strings we've parsed, or modal words in the machine already
+(defn- word-eval 
+  ([machine word args]
+     (word-eval machine word args false))
+  ([machine word args explicit]
+     ((-> word :details :fn) machine (keyword-map args) explicit)))
 
 (defn modal-eval [machine args]
   (if (empty? args)
@@ -66,7 +71,7 @@
 (defn- block-eval-inside [machine block]
   (let [[next-words left-overs] (split-block block)]
     (if (not (empty? next-words))
-      (recur (word-eval machine (first next-words) (rest next-words)) left-overs)
+      (recur (word-eval machine (first next-words) (rest next-words) true) left-overs)
       (if (not (empty? left-overs))
 	(let [modal-words (modal-blocks machine)]
 	  (modal-eval machine (concat modal-words left-overs)))
