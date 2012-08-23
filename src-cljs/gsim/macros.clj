@@ -15,4 +15,4 @@
          (gsim.console/message 
           ((gsim.machine.gcode/message-fn ~(keyword (name code))) new-m# args# e#))
          new-m#))
-     (gsim.machine.gcode/add-code! ~(keyword (name code)) 0 0 "DOC" nil ~code)))
+     (gsim.machine.gcode/add-code! ~(keyword (name code)) ~code ~args)))

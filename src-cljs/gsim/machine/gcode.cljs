@@ -36,9 +36,12 @@
 
 (def codes (atom {}))
 
-(defn- add-code! [code-name modal precedence doc args f]
+(defn- add-code! [code-name f args]
   (swap! codes assoc (keyword code-name)
-         {:modal modal :doc doc :precedence precedence :args args :fn f}))
+         {:modal 0 :precedence 1.0 :args args :fn f}))
+
+(defn add-message! [code-name f]
+  (swap! codes assoc (keyword code-name) :message-fn f))
 
 (defn- args-used [code]
   (-> @codes code :args))
@@ -94,7 +97,7 @@
       (redraw-location (:location new-m))
       new-m)
     m))
-(add-code! :g0 1 20.0 "Rapid positioning" [:x :y :z] g0)
+(add-code! :g0 g0 [:x :y :z])
 
 (defn- g1
   [m args e]
@@ -107,7 +110,7 @@
       (redraw-location (:location new-m))
       new-m)
     m))
-(add-code! :g1 1 20.1 "Linear interpolation" [:f :x :y :z] g1)
+(add-code! :g1 g1 [:f :x :y :z])
 
 ;; (add-message! (fn [m args e]
 ;;                 (format "Linear interpolation to: %s" (location-str (location e)))))
@@ -125,7 +128,7 @@
       new-m)
     m))
 
-(add-code! :g2 1 20.2 "Circular interpolation, clockwise" [:f :x :y :z :r] g2)
+(add-code! :g2 g2 [:f :x :y :z :r])
 
 (defn g3
   [m args e]
@@ -136,34 +139,7 @@
       (redraw-location (:location new-m))
       new-m)
     m))
-(add-code! :g3 1 20.3 "Circular interpolation, counter-clockwise" [:f :x :y :z :r] g3)
-
-;; (def-gcode g0 1 20.0
-;;  "Rapid positioning"
-;; [ a b c x y z ]
-;; m)
-
-;; (def-gcode g1 1 20.1
-;;   "Linear interpolation"
-;;   [ f x y z ]
-;;   m)
-
-;; (def-gcode g2 1 20.2
-;;   "Circular interpolation, clockwise"
-;;   [ f x y z r ]
-;;   m)
-
-;; (def-gcode g3 1 20.3
-;;   "Circular interpolation, counterclockwise"
-;;   [ f x y z r ]
-;;   m)
-
-;; (def-gcode g4 0 10.0
-;;   "Pause"
-;;   [ p ]
-;;   (Thread/sleep (* 1000 p))
-;;   (throw (Exception. "G4 requires a value for P"))
-;;   m)
+(add-code! :g3 g3 [:f :x :y :z :r])
 
 (defn- g96
   [m args e]
@@ -171,7 +147,7 @@
     (do (message (str "Spindle CSS Mode: " e))
         (update-modal m :g :5 96))
     m))
-(add-code! :g96 5 1.1 "Spindle CSS Mode" [] g96)
+(add-code! :g96 g96 [])
 
 (defn- g97 
   [m args e]
@@ -179,40 +155,40 @@
     (do (message (str "Spindle RPM Mode: " e))
         (update-modal m :g :5 97))
     m))
-(add-code! :g97 5 1.0 "Spindle RPM Mode" [:s] g97)
+(add-code! :g97 g97 [:s])
 
 (defn m3 [m args e]
   (if e
     (do (message (str "Starting Spindle: " (speed m)))
         (update-modal m :m :7 3))
     m))
-(add-code! :m3 7 1.0 "Starting Spindle" [] m3)
+(add-code! :m3 m3 [])
 
 (defn m4 [m args e]
   (if e
     (do (message (str "Starting Spindle CCW: " (speed m)))
         (update-modal m :m :7 4))
     m))
-(add-code! :m4 7 1.0 "Starting Spindle CCW" [] m4)
+(add-code! :m4 m4 [])
 
 (defn m5 [m args e]
   (if e 
     (do (message "Stopping Spindle")
         (update-modal m :m :7 5))
     m))
-(add-code! :m5 7 1.0 "Starting Spindle" [] m5)
+(add-code! :m5 m5 [])
 
 (defn t [word-args]
   (fn [m args e]
     (message (str "Tool change: " word-args))
     (update-tool m word-args word-args)))
-(add-code! :t 0 1.0 "Tool Change" [] t)
+(add-code! :t t [])
 
 (defn s [word-args]
   (fn [m args e]
     (message (str "Spindle speed: " word-args))
     (update-speed m word-args)))
-(add-code! :s 0 1.0 "Spindle Speed" [] s)
+(add-code! :s s [])
 
 ;; prune down add-code! next
 (def-code g99 [x y z] (assoc m :foo 1))
