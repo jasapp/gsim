@@ -1,7 +1,7 @@
 (ns gsim.machine.gcode
   (:use [gsim.machine.draw :only [line cw-arc ccw-arc redraw-location]]
-	[gsim.console :only [message]]))
-;;   (:use-macros [gsim.gcode :only [def-gcode]]))
+	[gsim.console :only [message]])
+  (:use-macros [gsim.macros :only [def-code]]))
 
 (defn- modal-value [machine modal-type modal-group]
   (-> machine :modals modal-type modal-group))
@@ -45,6 +45,12 @@
 
 (defn- has-fn? [code]
   (-> @codes code))
+
+(defn message-fn [code]
+  ({:g99 (fn [m args e] "MORLOCK! (g99)")} code))
+
+(defn modal-fn [code]
+  (fn [m args e] ""))
 
 ;;
 ;; make sure we handle words like G03 AND words with arguments like T1010 and S300
@@ -103,6 +109,10 @@
     m))
 (add-code! :g1 1 20.1 "Linear interpolation" [:f :x :y :z] g1)
 
+;; (add-message! (fn [m args e]
+;;                 (format "Linear interpolation to: %s" (location-str (location e)))))
+;; (modal-group [g0 g1 g2 g3])
+
 (defn g2
   [m args e]
   (if (not (empty? args))
@@ -114,6 +124,7 @@
       (redraw-location (:location new-m))
       new-m)
     m))
+
 (add-code! :g2 1 20.2 "Circular interpolation, clockwise" [:f :x :y :z :r] g2)
 
 (defn g3
@@ -202,3 +213,7 @@
     (message (str "Spindle speed: " word-args))
     (update-speed m word-args)))
 (add-code! :s 0 1.0 "Spindle Speed" [] s)
+
+;; prune down add-code! next
+(def-code g99 [x y z] (assoc m :foo 1))
+
