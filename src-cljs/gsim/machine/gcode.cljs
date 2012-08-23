@@ -40,20 +40,20 @@
   (swap! codes assoc (keyword code-name)
          {:modal 0 :precedence 1.0 :args args :fn f}))
 
-(defn add-message! [code-name f]
-  (swap! codes assoc (keyword code-name) :message-fn f))
-
 (defn- args-used [code]
   (-> @codes code :args))
 
 (defn- has-fn? [code]
-  (-> @codes code))
+  (-> @codes code)) ;; why is this not returning the value of :fn?
+
+(defn add-message! [code-name f]
+  (swap! codes #(assoc-in % [(keyword code-name) :message-fn] f)))
 
 (defn message-fn [code]
-  ({:g99 (fn [m args e] "MORLOCK! (g99)")} code))
+  (get-in @codes [code :message-fn] (fn [m args e] nil)))
 
 (defn modal-fn [code]
-  (fn [m args e] ""))
+  (fn [m args e] m))
 
 ;;
 ;; make sure we handle words like G03 AND words with arguments like T1010 and S300
@@ -190,6 +190,7 @@
     (update-speed m word-args)))
 (add-code! :s s [])
 
-;; prune down add-code! next
+;; can we put the message in the def-code easily?
 (def-code g99 [x y z] (assoc m :foo 1))
+(add-message! :g99 (fn [m a e] "SATAN!!!")) 
 
