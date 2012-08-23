@@ -11,7 +11,7 @@
 		     [ring-mock "0.1.3"]
 		     [ring/ring-jetty-adapter "1.1.1"]
                      [jline "0.9.94"]]
-  :plugins [[lein-cljsbuild "0.2.4"]]
+  :plugins [[lein-cljsbuild "0.2.5"]]
   ; Enable the lein hooks for: clean, compile, test, and jar.
   :hooks [leiningen.cljsbuild]
   :cljsbuild {
