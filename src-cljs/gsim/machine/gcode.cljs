@@ -38,7 +38,7 @@
 
 (defn- add-code! [code-name f args]
   (swap! codes assoc (keyword code-name)
-         {:modal 0 :precedence 1.0 :args args :fn f}))
+         {:args args :fn f}))
 
 (defn- args-used [code]
   (-> @codes code :args))
@@ -51,6 +51,14 @@
 
 (defn message-fn [code]
   (get-in @codes [code :message-fn] (fn [m args e] nil)))
+
+(defn add-modal! [code-name n p]
+  (swap! codes #(assoc-in % [(keyword code-name) :modal] n))
+  (swap! codes #(assoc-in % [(keyword code-name) :precedence] p)))
+
+(defn modal-group [group-num & code-pairs]
+  (doseq [[code precedence] code-pairs]
+    (add-modal! code group-num precedence)))
 
 (defn modal-fn [code]
   (fn [m args e] m))
@@ -141,21 +149,21 @@
     m))
 (add-code! :g3 g3 [:f :x :y :z :r])
 
-(defn- g96
-  [m args e]
-  (if e 
-    (do (message (str "Spindle CSS Mode: " e))
-        (update-modal m :g :5 96))
-    m))
-(add-code! :g96 g96 [])
+(modal-group 1 [:g0 20.0] [:g1 20.1] [:g2 20.2] [:g3 20.3])
 
-(defn- g97 
-  [m args e]
-  (if e
-    (do (message (str "Spindle RPM Mode: " e))
-        (update-modal m :g :5 97))
-    m))
-(add-code! :g97 g97 [:s])
+;; what about a with-modal-group macro that wraps 
+;; the defined codes with a modal group and precedence based on definition order?
+
+;; much better, but still not quite right
+;; let's make the messages defined in def-code somehow
+;; what about binding to variables into a string?
+(def-code g96 [])
+(add-message! :g96 (fn [m a e] "Spindle CSS Mode"))
+
+(def-code g97 [])
+(add-message! :g97 (fn [m a e] "Spindle RPM Mode"))
+
+(modal-group 5 [:g97 1.1] [:g96 1.0])
 
 (def-code m3 [])
 (add-message! :m3 (fn [m a e] "Starting spindle"))
@@ -165,6 +173,8 @@
 
 (def-code m5 [])
 (add-message! :m5 (fn [m a e] "Stopping spindle"))
+
+(modal-group 7 [:m3 1.0] [:m4 1.0] [:m5 1.0])
 
 (defn t [word-args]
   (fn [m args e]
@@ -177,8 +187,3 @@
     (message (str "Spindle speed: " word-args))
     (update-speed m word-args)))
 (add-code! :s s [])
-
-;; can we put the message in the def-code easily?
-(def-code g99 [x y z] (assoc m :foo 1))
-(add-message! :g99 (fn [m a e] "SATAN!!!")) 
-
