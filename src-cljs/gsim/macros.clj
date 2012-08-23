@@ -12,7 +12,8 @@
                     m#))
              new-m# (-> m#
                         (f# args# e#))]
-         (gsim.console/message 
-          ((gsim.machine.gcode/message-fn ~(keyword (name code))) new-m# args# e#))
+         (if (or (not (empty? args#)) e#)
+           (gsim.console/message 
+            ((gsim.machine.gcode/message-fn ~(keyword (name code))) new-m# args# e#)))
          new-m#))
      (gsim.machine.gcode/add-code! ~(keyword (name code)) ~code ~args)))

@@ -157,26 +157,11 @@
     m))
 (add-code! :g97 g97 [:s])
 
-(defn m3 [m args e]
-  (if e
-    (do (message (str "Starting Spindle: " (speed m)))
-        (update-modal m :m :7 3))
-    m))
-(add-code! :m3 m3 [])
+(def-code m3 [])
+(add-message! :m3 (fn [m a e] "Starting spindle"))
 
-(defn m4 [m args e]
-  (if e
-    (do (message (str "Starting Spindle CCW: " (speed m)))
-        (update-modal m :m :7 4))
-    m))
-(add-code! :m4 m4 [])
-
-;; (defn m5 [m args e]
-;;   (if e 
-;;     (do (message "Stopping Spindle")
-;;         (update-modal m :m :7 5))
-;;     m))
-;; (add-code! :m5 m5 [])
+(def-code m4 [])
+(add-message! :m4 (fn [m a e] "Starting spindle CCW"))
 
 (def-code m5 [])
 (add-message! :m5 (fn [m a e] "Stopping spindle"))
