@@ -171,12 +171,15 @@
     m))
 (add-code! :m4 m4 [])
 
-(defn m5 [m args e]
-  (if e 
-    (do (message "Stopping Spindle")
-        (update-modal m :m :7 5))
-    m))
-(add-code! :m5 m5 [])
+;; (defn m5 [m args e]
+;;   (if e 
+;;     (do (message "Stopping Spindle")
+;;         (update-modal m :m :7 5))
+;;     m))
+;; (add-code! :m5 m5 [])
+
+(def-code m5 [])
+(add-message! :m5 (fn [m a e] "Stopping spindle"))
 
 (defn t [word-args]
   (fn [m args e]
