@@ -156,22 +156,21 @@
 ;; much better, but still not quite right
 ;; let's make the messages defined in def-code somehow
 ;; what about binding to variables into a string?
-(def-code g96 [] m)
+(def-code g96 [] (update-modal m :g :5 96))
 (add-message! :g96 (fn [m a e] "Spindle CSS Mode"))
 
-(def-code g97 [] m)
+(def-code g97 [] (update-modal m :g :5 97))
 (add-message! :g97 (fn [m a e] "Spindle RPM Mode"))
 (modal-group 5 [:g97 1.1] [:g96 1.0])
 
-(def-code m3 [] m)
+(def-code m3 [] (update-modal m :m :7 3))
 (add-message! :m3 (fn [m a e] "Starting spindle"))
 
-(def-code m4 [] m)
+(def-code m4 [] (update-modal m :m :7 4))
 (add-message! :m4 (fn [m a e] "Starting spindle CCW"))
 
-(def-code m5 [] m)
+(def-code m5 [] (update-modal m :m :7 5))
 (add-message! :m5 (fn [m a e] "Stopping spindle"))
-
 (modal-group 7 [:m3 1.0] [:m4 1.0] [:m5 1.0])
 
 (defn t [word-args]
