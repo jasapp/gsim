@@ -93,17 +93,14 @@
       m)))
 
 ;; looks at x,y,z
-(defn- g0
-  [m args e]
-  (if (not (empty? args))
-    (let [new-m (-> m
-		    (g0-inside (select-keys args [:x]))
-		    (g0-inside (select-keys args [:y]))
-		    (g0-inside (select-keys args [:z]))	
-		    (update-modal :g :1 0))]
-      (redraw-location (location new-m))
-      new-m)
-    m))
+(def-code g0 [] 
+  (let [new-m (-> m
+                  (g0-inside (select-keys args [:x]))
+                  (g0-inside (select-keys args [:y]))
+                  (g0-inside (select-keys args [:z]))	
+                  (update-modal :g :1 0))]
+    (redraw-location (location new-m))
+    new-m))
 (add-code! :g0 g0 [:x :y :z])
 (add-message! :g0 (fn [m a e] 
                     (format "Rapid to: %s" (location-str (merge-locations (location m) a)))))
