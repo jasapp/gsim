@@ -93,7 +93,7 @@
       m)))
 
 ;; looks at x,y,z
-(def-code g0 [] 
+(def-code g0 [:x :y :z :f] 
   (let [new-m (-> m
                   (g0-inside (select-keys args [:x]))
                   (g0-inside (select-keys args [:y]))
@@ -101,50 +101,37 @@
                   (update-modal :g :1 0))]
     (redraw-location (location new-m))
     new-m))
-(add-code! :g0 g0 [:x :y :z])
 (add-message! :g0 (fn [m a e] 
                     (format "Rapid to: %s" (location-str (merge-locations (location m) a)))))
 
-(defn- g1
-  [m args e]
-  (if (not (empty? args))
-    (let [new-m (-> m
-		    (update-location (merge (location m) args))
-		    (update-modal :g :1 1))]
-      (line (location m) (location new-m) "color" 0x00ff00)
-      (message (format "Linear interpolation to: %s" (location-str (location new-m))))
-      (redraw-location (:location new-m))
-      new-m)
-    m))
-(add-code! :g1 g1 [:f :x :y :z])
+(def-code g1 [:f :x :y :z]
+  (let [new-m (-> m
+                  (update-location (merge (location m) args))
+                  (update-modal :g :1 1))]
+    (line (location m) (location new-m) "color" 0x00ff00)
+    (redraw-location (:location new-m))
+    new-m))
+(add-message! (fn [m args e]
+                (format "Linear interpolation to: %s" (location-str (location m)))))
 
-;; (add-message! (fn [m args e]
-;;                 (format "Linear interpolation to: %s" (location-str (location e)))))
-;; (modal-group [g0 g1 g2 g3])
+(def-code g2 [:f :x :y :z :r]
+  (let [new-m (-> m
+                  (update-location (merge (location m) args))
+                  (update-modal :g :1 2))]
+    (cw-arc (location m) (location new-m) (:r args) "color" 0x00ff00)
+    (redraw-location (:location new-m))
+    new-m))
+(add-message! (fn [m a e] 
+                (format "Clockwise circular interpolation: %s" (location-str (location m)))))
 
-(defn g2
-  [m args e]
-  (if (not (empty? args))
-    (let [new-m (-> m
-		    (update-location (merge (location m) args))
-		    (update-modal :g :1 2))]
-      (cw-arc (location m) (location new-m) (:r args) "color" 0x00ff00)
-      (message (format "Clockwise circular interpolation: %s" (location-str (location new-m))))
-      (redraw-location (:location new-m))
-      new-m)
-    m))
-(add-code! :g2 g2 [:f :x :y :z :r])
-
-(defn g3
-  [m args e]
-  (if (not (empty? args))
-    (let [new-m (-> m (update-location (merge (location m) args)) (update-modal :g :1 3))]
-      (ccw-arc (location m) (location new-m) (:r args) "color" 0x00ff00)
-      (message (format "Counter-clockwise circular interpolation: %s" (location-str (location new-m))))
-      (redraw-location (:location new-m))
-      new-m)
-    m))
-(add-code! :g3 g3 [:f :x :y :z :r])
+(def-code g3 [:f :x :y :z :r]
+  (let [new-m (-> m (update-location (merge (location m) args)) (update-modal :g :1 3))]
+    (ccw-arc (location m) (location new-m) (:r args) "color" 0x00ff00)
+    (redraw-location (:location new-m))
+    new-m))
+(add-message! (fn [m a e] 
+                (format "Counter-clockwise circular interpolation: %s" 
+                        (location-str (location m)))))
 (modal-group 1 [:g0 20.0] [:g1 20.1] [:g2 20.2] [:g3 20.3])
 
 ;; what about a with-modal-group macro that wraps 
