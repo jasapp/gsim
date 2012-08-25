@@ -101,11 +101,12 @@
 		    (g0-inside (select-keys args [:y]))
 		    (g0-inside (select-keys args [:z]))	
 		    (update-modal :g :1 0))]
-      (message (format "Rapid to: %s" (location-str (merge-locations (location m) args))))
-      (redraw-location (:location new-m))
+      (redraw-location (location new-m))
       new-m)
     m))
 (add-code! :g0 g0 [:x :y :z])
+(add-message! :g0 (fn [m a e] 
+                    (format "Rapid to: %s" (location-str (merge-locations (location m) a)))))
 
 (defn- g1
   [m args e]
@@ -135,7 +136,6 @@
       (redraw-location (:location new-m))
       new-m)
     m))
-
 (add-code! :g2 g2 [:f :x :y :z :r])
 
 (defn g3
@@ -148,7 +148,6 @@
       new-m)
     m))
 (add-code! :g3 g3 [:f :x :y :z :r])
-
 (modal-group 1 [:g0 20.0] [:g1 20.1] [:g2 20.2] [:g3 20.3])
 
 ;; what about a with-modal-group macro that wraps 
@@ -157,21 +156,20 @@
 ;; much better, but still not quite right
 ;; let's make the messages defined in def-code somehow
 ;; what about binding to variables into a string?
-(def-code g96 [])
+(def-code g96 [] m)
 (add-message! :g96 (fn [m a e] "Spindle CSS Mode"))
 
-(def-code g97 [])
+(def-code g97 [] m)
 (add-message! :g97 (fn [m a e] "Spindle RPM Mode"))
-
 (modal-group 5 [:g97 1.1] [:g96 1.0])
 
-(def-code m3 [])
+(def-code m3 [] m)
 (add-message! :m3 (fn [m a e] "Starting spindle"))
 
-(def-code m4 [])
+(def-code m4 [] m)
 (add-message! :m4 (fn [m a e] "Starting spindle CCW"))
 
-(def-code m5 [])
+(def-code m5 [] m)
 (add-message! :m5 (fn [m a e] "Stopping spindle"))
 
 (modal-group 7 [:m3 1.0] [:m4 1.0] [:m5 1.0])
@@ -187,3 +185,10 @@
     (message (str "Spindle speed: " word-args))
     (update-speed m word-args)))
 (add-code! :s s [])
+
+
+
+
+
+
+
