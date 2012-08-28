@@ -134,6 +134,7 @@
                         (location-str (location m)))))
 (modal-group 1 [:g0 20.0] [:g1 20.1] [:g2 20.2] [:g3 20.3])
 
+
 ;; what about a with-modal-group macro that wraps 
 ;; the defined codes with a modal group and precedence based on definition order?
 

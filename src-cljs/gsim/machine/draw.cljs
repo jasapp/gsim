@@ -1,7 +1,9 @@
-(ns gsim.machine.draw)
+(ns gsim.machine.draw
+  (:require [cljsthree.renderers.webgl :as r]
+            [cljsthree.scene.scene :as s]))
 
-(def renderer (js/THREE.WebGLRenderer. (js-obj "antialias" true)))
-(def scene (js/THREE.Scene.))
+(def renderer (r/webgl {:antialias true}))
+(def scene (s/scene))
 (def camera nil)
 
 (defn three-vector [x y z]
@@ -36,7 +38,7 @@
     (.set (.-position s) (:x p) (:y p) (:z p))
     s))
 
-(defn remove-current-location []
+ (defn remove-current-location []
   (doseq [child (.-children scene)]
     (if (.-location child)
       (.remove scene child))))
@@ -177,12 +179,6 @@
      (doseq [o (take num (filter #(and % (.-line %)) (reverse (.-children scene))))]
        (.remove scene o))
      (render)))
-
-;; (defn sample [change]
-;;   (if (pos? change)
-;;     (doseq [_ (range 0 change)] (add-line))
-;;     (doseq [_ (range change 0)] (drop-last-line)))
-;;   (.render renderer scene camera))
 
 (defn init [element-name]
   (let [canvas (.getElement goog.dom element-name)

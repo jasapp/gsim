@@ -6,6 +6,7 @@
                  [crate "0.1.0-SNAPSHOT"]
                  [hiccup "1.0.0"]
 		 [com.cemerick/friend "0.0.9"]
+                 [cljsthree "0.1.0"]
 		 [congomongo "0.1.11-SNAPSHOT"]]
   :dev-dependencies [[lein-ring "0.7.0"]
 		     [ring-mock "0.1.3"]
