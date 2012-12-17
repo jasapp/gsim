@@ -1,5 +1,7 @@
 (ns gsim.machine.draw
   (:require [cljsthree.renderers.webgl :as r]
+            [cljsthree.core.geometry :as g]
+            [cljsthree.core.vector3 :as v]
             [cljsthree.scene.scene :as s]))
 
 (def renderer (r/webgl {:antialias true}))
@@ -19,10 +21,11 @@
   {"color" 0x000000 "linewidth" 1})
 
 (defn make-geometry [& points]
-  (let [g (js/THREE.Geometry.)]
-    (doseq [{x :x y :y z :z} points]
-      (.push (. g -vertices) (three-vector x y z)))
-    g))
+  (let [geo (g/geometry)]
+    (apply g/add-verticies geo (map #(v/vector3 (:x %) (:y %) (:x %)) points))))
+   ;; (doseq [{x :x y :y z :z} points]
+   ;;   (.push (. geo -vertices) (v/vector3 x y z)))
+   ;; geo))
 
 (defn make-line-material [& args]
   (js/THREE.LineBasicMaterial.
@@ -47,7 +50,7 @@
   (remove-current-location)
   (let [s (sphere p)]
     (set! (.-location s) true)
-    (.add scene s)
+    (s/add scene s)
     (render)))
 
 (defn sq [x]
@@ -144,7 +147,7 @@
 	line-material (apply make-line-material options)
 	l (js/THREE.Line. geometry line-material)]
     (set! (.-line l) true)
-    (.add scene l)
+    (s/add scene l)
     (render))) ;; just render everything now, maybe later we should only render selectively
 
 (defn cw-arc [p1 p2 r & options]
@@ -160,7 +163,7 @@
 	line-material (apply make-line-material options)
 	l (js/THREE.Line. geometry line-material)]
     (set! (.-line l) true)
-    (.add scene l)
+    (s/add scene l)
     (render))) ;; just render everything now, maybe later we should only render selectively
 
 ;; there must be a better way to clear the scene?
