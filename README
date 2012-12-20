@@ -8,7 +8,6 @@ lein cljsbuild auto [dev|prod]
 # run tests like this:
 lein test
 
-
 Stuff to do next:
 1. Clean up machine code
    * clean up drawing code
