@@ -22,10 +22,7 @@
 
 (defn make-geometry [& points]
   (let [geo (g/geometry)]
-    (apply g/add-verticies geo (map #(v/vector3 (:x %) (:y %) (:x %)) points))))
-   ;; (doseq [{x :x y :y z :z} points]
-   ;;   (.push (. geo -vertices) (v/vector3 x y z)))
-   ;; geo))
+    (apply g/add-vertices geo (map #(v/vector3 (:x %) (:y %) (:z %)) points))))
 
 (defn make-line-material [& args]
   (js/THREE.LineBasicMaterial.
@@ -41,7 +38,7 @@
     (.set (.-position s) (:x p) (:y p) (:z p))
     s))
 
- (defn remove-current-location []
+(defn remove-current-location []
   (doseq [child (.-children scene)]
     (if (.-location child)
       (.remove scene child))))
